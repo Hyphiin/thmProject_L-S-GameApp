@@ -3,8 +3,9 @@
     <q-page-container class="game col">
       <game-tic-tac-toe/>
     </q-page-container>
-    <q-page-container class="tree col">
-      <h1>TREE</h1>
+    <q-page-container class="tree col text-center">
+      <h2>TREE</h2>
+      <h2>...</h2>
     </q-page-container>
   </q-layout>
 </template>

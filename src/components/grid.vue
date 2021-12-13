@@ -1,24 +1,20 @@
 <template>
-    <div>
+    <div class="grid-item">
         <img src="../assets/circleWhite.png" alt="" 
         class="img-fluid zoomIn"
-        v-if="iconname === 'circle'"
+        v-if="iconname === 'kreis'"
         />
         <img src="../assets/crossWhite.png" alt="" 
         class="img-fluid zoomIn"
-        v-else-if="iconname === 'cross'"
+        v-else-if="iconname === 'kreuz'"
         />
-        <img src="../assets/logo.png" alt="" 
-        class="img-fluid zoomIn"
-        v-else-if="iconname === 'empty'"
-         />
     </div>
 </template>
 
 
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted } from 'vue';
 export default defineComponent({
   name: 'GridTicTacToe',
   components: { },
@@ -29,6 +25,9 @@ export default defineComponent({
         }
     },
   setup () {
+      onMounted(() => {
+      console.log('mounted!')
+    })
 
     return
   }
@@ -41,6 +40,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 img {
   width: 80px;
+  height: 80px;
 }
 
 @keyframes zoomIn {
@@ -57,5 +57,12 @@ img {
 .zoomIn {
   animation-name: zoomIn;
   animation-duration: 1s;
+}
+
+.grid-item{
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
