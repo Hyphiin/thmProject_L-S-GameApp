@@ -2,18 +2,6 @@
   <main class="d-flex flex-column justify-content-center align-items-center bg-dark">
     <div class="container__top">
        <div class="row justify-content-center mt-3">
-          
-          <div class="col">
-            <q-toggle              
-              :label="`Spiel als ${signToggleName}`"
-              color="blue"
-              size="xl"    
-              checked-icon="radio_button_unchecked"
-              unchecked-icon="close"        
-              v-model="signToggle"              
-            />
-          </div>
-         
           <div class="col">
             <q-toggle              
               :label="`Spiel gegen ${modiToggleName}`"
@@ -24,7 +12,18 @@
               v-model="modiToggle"              
             />
           </div>
-           <div class="col"></div>
+          <div v-if="modiToggle === true" class="col">
+            <q-toggle              
+              :label="`Spiel als ${signToggleName}`"
+              color="blue"
+              size="xl"    
+              checked-icon="radio_button_unchecked"
+              unchecked-icon="close"        
+              v-model="signToggle"              
+            />
+          </div>     
+          <div v-else class="col"></div>             
+          <div class="col"></div>
           
        </div>
     </div>
