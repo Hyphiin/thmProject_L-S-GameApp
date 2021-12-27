@@ -49,7 +49,7 @@
             <div 
             v-for="(item, i) in itemArray"
             :key="i"
-            @click="handleClick(i)"
+            @click="makeMove(i)"
             class="grid-div card card-body box justify-content-center align-items-center bg-light">
                 <Grid :iconname="item"></Grid>
             </div>
@@ -76,8 +76,14 @@ export default defineComponent({
 
     let winMessage = ref('');
     let isCross = ref(true);
+
+    let p1 = 'P1'
+    let p2 = 'P2'
+    let currentPlayer = p1
+    let winner = ref('')
     
-    const itemArray = ref(['a','b','c','a','b','c','a','b','c'])    
+    const itemArray = ref(['1:1','1:2','1:3','2:1','2:2','2:3','3:1','3:2','3:3'])
+    const possibleMovesArray = ref([]) 
 
     let modiToggle = ref(false)
     let modiToggleName = ref('Mensch')
@@ -87,16 +93,8 @@ export default defineComponent({
     for (let i = 0; i < itemArray.value.length; i++){
         itemArray.value[i] = 'empty'
     }
-    console.log(itemArray.value)
 
-    const showDialog = () => {
-      alert(winMessage.value)
-    }
-
-    const handleClick = (itemNumber) => {
-      if(winMessage.value) {
-        return showDialog()
-      }
+    const makeMove = (itemNumber) => {
       if (typeof itemNumber === 'number'){
         if(itemArray.value[itemNumber] === 'empty') {
             itemArray.value[itemNumber] = isCross.value ? 'kreuz' : 'kreis'
@@ -105,68 +103,144 @@ export default defineComponent({
             alert('Already Filled!')
         }
 
-        checkWinner()        
+        console.log(currentPlayer)
+        checkWinner(currentPlayer)
+        let end = possibleMoves()
+        if (end) {
+          winMessage.value = 'Remis'
+          console.log(winMessage.value)
+        }
+
+
+        if (currentPlayer === p1) {
+          currentPlayer = p2
+        } else {
+          currentPlayer = p1
+        }
       }     
-       console.log(itemArray.value)
+      
+      console.log(itemArray.value)
+
+      if (modiToggle.value === true) {
+        if (winner.value === '') {
+          makeComputerMove()
+        }
+      }
     }
 
-    const checkWinner = () => {
+    const makeComputerMove = () => {
+      var move = Math.floor(Math.random() * itemArray.value.length)
+      if(itemArray.value[move] === 'empty') {
+            itemArray.value[move] = isCross.value ? 'kreuz' : 'kreis'
+            isCross.value = !isCross.value
+
+            console.log(currentPlayer)
+            checkWinner(currentPlayer)
+            let end = possibleMoves()
+            if (end) {
+            winMessage.value = 'Remis'
+            console.log(winMessage.value)
+        }
+
+            if (currentPlayer === p1) {
+              currentPlayer = p2
+            } else {
+              currentPlayer = p1
+            }
+
+            console.log(itemArray.value)
+      }else{
+            makeComputerMove()
+      }
+    }
+
+    const checkWinner = (currentPlayer) => {
       //  checking  winner of the game
-      if (
+      if (typeof currentPlayer === 'string') {
+        if (
         itemArray.value[0] === itemArray.value[1] &&
         itemArray.value[0] === itemArray.value[2] &&
         itemArray.value[0] !== 'empty'
       ) {
-        winMessage.value = `${itemArray.value[0]} hat gewonnen!`;
+        winMessage.value = `${currentPlayer} hat gewonnen!`;
+        winner.value = currentPlayer
       } else if (
         itemArray.value[3] !== 'empty' &&
         itemArray.value[3] === itemArray.value[4] &&
         itemArray.value[4] === itemArray.value[5]
       ) {
-        winMessage.value = `${itemArray.value[3]} hat gewonnen!`;
+        winMessage.value = `${currentPlayer} hat gewonnen!`;
+        winner.value = currentPlayer
       } else if (
         itemArray.value[6] !== 'empty' &&
         itemArray.value[6] === itemArray.value[7] &&
         itemArray.value[7] === itemArray.value[8]
       ) {
-        winMessage.value = `${itemArray.value[6]} hat gewonnen!`;
+        winMessage.value = `${currentPlayer} hat gewonnen!`;
+        winner.value = currentPlayer
       } else if (
         itemArray.value[0] !== 'empty' &&
         itemArray.value[0] === itemArray.value[3] &&
         itemArray.value[3] === itemArray.value[6]
       ) {
-        winMessage.value = `${itemArray.value[0]} hat gewonnen!`;
+        winMessage.value = `${currentPlayer} hat gewonnen!`;
+        winner.value = currentPlayer
       } else if (
         itemArray.value[1] !== 'empty' &&
         itemArray.value[1] === itemArray.value[4] &&
         itemArray.value[4] === itemArray.value[7]
       ) {
-        winMessage.value = `${itemArray.value[1]} hat gewonnen!`;
+        winMessage.value = `${currentPlayer} hat gewonnen!`;
+        winner.value = currentPlayer
       } else if (
         itemArray.value[2] !== 'empty' &&
         itemArray.value[2] === itemArray.value[5] &&
         itemArray.value[5] === itemArray.value[8]
       ) {
-        winMessage.value = `${itemArray.value[2]} hat gewonnen!`;
+        winMessage.value = `${currentPlayer} hat gewonnen!`;
+        winner.value = currentPlayer
       } else if (
         itemArray.value[0] !== 'empty' &&
         itemArray.value[0] === itemArray.value[4] &&
         itemArray.value[4] === itemArray.value[8]
       ) {
-        winMessage.value = `${itemArray.value[0]} hat gewonnen!`;
+        winMessage.value = `${currentPlayer} hat gewonnen!`;
+        winner.value = currentPlayer
       } else if (
         itemArray.value[2] !== 'empty' &&
         itemArray.value[2] === itemArray.value[4] &&
         itemArray.value[4] === itemArray.value[6]
       ) {
-        winMessage.value = `${itemArray.value[2]} hat gewonnen!`;
+        winMessage.value = `${currentPlayer} hat gewonnen!`;
+        winner.value = currentPlayer
       }
-       console.log(itemArray.value)
+      }
+      
+      console.log(itemArray.value)
+    }
+
+    const possibleMoves = () => {
+      let flag = false
+      possibleMovesArray.value = []
+        for (let i= 0; i<itemArray.value.length; i++) {
+          if (itemArray.value[i] === 'empty') {
+            possibleMovesArray.value.push(itemArray.value[i])
+          }
+        }
+
+        console.log(possibleMovesArray.value)
+
+        if (possibleMovesArray.value.length > 0) {
+          return flag
+        } else {
+          return !flag
+        }
     }
 
     const reloadGame = () => {
-      winMessage.value = '';
-      isCross.value = true;
+      winMessage.value = ''
+      isCross.value = true
+      winner.value = ''
       for (let i = 0; i < itemArray.value.length; i ++){
           itemArray.value[i] = 'empty'
       }
@@ -184,7 +258,7 @@ export default defineComponent({
       console.log(modiToggle.value, modiToggleName.value)
     });
 
-     watch (() => (signToggle.value), 
+    watch (() => (signToggle.value), 
     () => { 
       if (signToggleName.value ==='Kreuz') {
         signToggleName.value = 'Kreis'
@@ -204,7 +278,7 @@ export default defineComponent({
       signToggle,
       signToggleName,
       reloadGame,
-      handleClick
+      makeMove
     }
   } 
 
