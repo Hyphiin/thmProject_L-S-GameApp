@@ -14,7 +14,7 @@
             v-model="modiToggle"
           />
         </div>
-        <div v-if="modiToggle === true" class="col">
+        <div class="col">
           <q-toggle
             :label="`Spiel als ${signToggleName}`"
             color="blue"
@@ -24,7 +24,6 @@
             v-model="signToggle"
           />
         </div>
-        <div v-else class="col"></div>
         <div class="col"></div>
       </div>
     </div>
@@ -203,13 +202,14 @@ export default defineComponent({
       ['', '', ''],
     ];
 
-    let p1 = 'P1';
-    let p2 = 'P2';
-    let currentPlayer = p1;
     let modiToggle = ref(false);
     let modiToggleName = ref('Mensch');
     let signToggle = ref(false);
     let signToggleName = ref('X');
+
+    let ai = 'X';
+    let human = 'O';
+    let currentPlayer = human;
 
     const makeMove = (itemNumberCol, itemNumberRow) => {
       console.log(itemNumberCol, itemNumberRow);
@@ -224,19 +224,20 @@ export default defineComponent({
           alert('Already Filled!');
         }
 
-        console.log(currentPlayer);
-        checkWinner();
+        let result = checkWinner();
 
-        if (checkWinner() === 'X' || checkWinner() === 'O') {
-          console.log('Sieger ist: ', currentPlayer);
-          winMessage.value = `${currentPlayer} hat gewonnen!`;
-          console.log(winMessage.value);
+        if (result === 'X' || result === 'O') {
+          console.log('Sieger ist: ', result);
+          winMessage.value = `${result} hat gewonnen!`;
+        } else if (result === 'tie') {
+          console.log('Unentschieden!');
+          winMessage.value = 'Unentschieden!';
         }
 
-        if (currentPlayer === p1) {
-          currentPlayer = p2;
+        if (currentPlayer === human) {
+          currentPlayer = ai;
         } else {
-          currentPlayer = p1;
+          currentPlayer = human;
         }
       }
 
@@ -255,11 +256,11 @@ export default defineComponent({
         for (let j = 0; j < 3; j++) {
           // Is the spot available?
           if (board[i][j] == '') {
-            board[i][j] = isCross.value ? 'X' : 'O';
+            board[i][j] = ai;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             let score = minimax(board, 10, false);
             board[i][j] = '';
-            console.log(score, bestScore)
+            //console.log(score, bestScore)
             if (score > bestScore) {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               bestScore = score;
@@ -269,21 +270,23 @@ export default defineComponent({
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      board[move.i][move.j] = isCross.value ? 'X' : 'O';
+      board[move.i][move.j] = ai;
       isCross.value = !isCross.value;
 
-      checkWinner();
+      let result = checkWinner();
 
-      if (checkWinner() === 'X' || checkWinner() === 'O') {
-        console.log('Sieger ist: ', currentPlayer);
-        winMessage.value = `${currentPlayer} hat gewonnen!`;
-        console.log(winMessage.value);
+      if (result === 'X' || result === 'O') {
+        console.log('Sieger ist: ', result);
+        winMessage.value = `${result} hat gewonnen!`;
+      } else if (result === 'tie') {
+        console.log('Unentschieden!');
+        winMessage.value = 'Unentschieden!';
       }
 
-      if (currentPlayer === p1) {
-        currentPlayer = p2;
+      if (currentPlayer === human) {
+        currentPlayer = ai;
       } else {
-        currentPlayer = p1;
+        currentPlayer = human;
       }
     };
 
@@ -308,11 +311,12 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (board[i][j] == '' && typeof depth === 'number') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              board[i][j] = isCross.value ? 'X' : 'O';
+              board[i][j] = ai;
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               let score = minimax(board, depth + 1, false);
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               board[i][j] = '';
+              // console.log(score)
               bestScore = Math.max(score, bestScore);
             }
           }
@@ -326,11 +330,12 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (board[i][j] == '' && typeof depth === 'number') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              board[i][j] = isCross.value ? 'X' : 'O';
+              board[i][j] = human;
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               let score = minimax(board, depth + 1, true);
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               board[i][j] = '';
+              // console.log(score)
               bestScore = Math.min(score, bestScore);
             }
           }
@@ -378,8 +383,7 @@ export default defineComponent({
         }
       }
 
-      if (winner == null && openSpots == 0) {
-        winMessage.value = 'Remis';
+      if (winner === null && openSpots === 0) {
         return 'tie';
       } else {
         return winner;
@@ -402,9 +406,11 @@ export default defineComponent({
       () => {
         if (modiToggleName.value === 'Mensch') {
           modiToggleName.value = 'KI';
+          signToggleName.value = 'O';
           makeComputerMove();
         } else {
           modiToggleName.value = 'Mensch';
+          signToggleName.value = 'X';
         }
         console.log(modiToggle.value, modiToggleName.value);
       }
