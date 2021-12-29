@@ -257,7 +257,7 @@ export default defineComponent({
           if (board[i][j] == '') {
             board[i][j] = ai;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score = minimax(board, 10, false);
+            let score = minimax(board, 0, false);
             board[i][j] = '';
             //console.log(score, bestScore)
             if (score > bestScore) {
