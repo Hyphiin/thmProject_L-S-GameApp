@@ -241,14 +241,13 @@ export default defineComponent({
         }
       }
 
-      console.log(board);
-
       if (modiToggle.value === true) {
         makeComputerMove();
       }
     };
 
     const makeComputerMove = () => {
+      console.log("ComputerMove")
       // AI to make its turn
       let bestScore = -Infinity;
       let move;
@@ -393,12 +392,15 @@ export default defineComponent({
     const reloadGame = () => {
       winMessage.value = '';
       isCross.value = true;
+      modiToggle.value = false;
+      signToggle.value = false;
+      modiToggleName.value = 'Mensch';
+      signToggleName.value = 'X';
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
           board[i][j] = '';
         }
       }
-      makeComputerMove();
     };
 
     watch(
@@ -421,8 +423,14 @@ export default defineComponent({
       () => {
         if (signToggleName.value === 'X') {
           signToggleName.value = 'O';
+          isCross.value = !isCross.value;
+          ai = 'O';
+          human = 'X';
         } else {
           signToggleName.value = 'X';
+          isCross.value = !isCross.value;
+          ai = 'X';
+          human = 'O';
         }
         console.log(signToggle.value, signToggleName.value);
       }
