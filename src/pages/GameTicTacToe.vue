@@ -318,7 +318,7 @@ export default defineComponent({
               // console.log(score)
               bestScore = Math.max(score, bestScore);
               // check for alpha
-              alpha = Math.max(alpha, score);
+              alpha = Math.max(alpha, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
                 console.log('Prune', alpha, beta);
@@ -344,7 +344,7 @@ export default defineComponent({
               // console.log(score)
               bestScore = Math.min(score, bestScore);
               // check for beta
-              beta = Math.min(beta, score);
+              beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
                 console.log('Prune', alpha, beta);
