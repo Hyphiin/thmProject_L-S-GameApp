@@ -247,7 +247,7 @@ export default defineComponent({
     };
 
     const makeComputerMove = () => {
-      console.log("ComputerMove")
+      console.log('ComputerMove');
       // AI to make its turn
       let bestScore = -Infinity;
       let move;
@@ -257,7 +257,7 @@ export default defineComponent({
           if (board[i][j] == '') {
             board[i][j] = ai;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score = minimax(board, 0, false);
+            let score = minimax(board, 0, false, -Infinity, Infinity);
             board[i][j] = '';
             //console.log(score, bestScore)
             if (score > bestScore) {
@@ -295,7 +295,7 @@ export default defineComponent({
       tie: 0,
     };
 
-    const minimax = (board, depth, isMaximizing) => {
+    const minimax = (board, depth, isMaximizing, alpha, beta) => {
       let result = checkWinner();
       if (result !== null) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -317,6 +317,13 @@ export default defineComponent({
               board[i][j] = '';
               // console.log(score)
               bestScore = Math.max(score, bestScore);
+              // check for alpha
+              alpha = Math.max(alpha, score);
+              // Check for alpha beta pruning
+              if (beta <= alpha) {
+                console.log('Prune', alpha, beta);
+                break;
+              }
             }
           }
         }
@@ -336,6 +343,13 @@ export default defineComponent({
               board[i][j] = '';
               // console.log(score)
               bestScore = Math.min(score, bestScore);
+              // check for beta
+              beta = Math.min(beta, score);
+              // Check for alpha beta pruning
+              if (beta <= alpha) {
+                console.log('Prune', alpha, beta);
+                break;
+              }
             }
           }
         }
