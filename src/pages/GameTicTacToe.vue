@@ -312,7 +312,7 @@ export default defineComponent({
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               board[i][j] = ai;
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(board, depth + 1, false);
+              let score = minimax(board, depth + 1, false, alpha, beta);
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               board[i][j] = '';
               // console.log(score)
@@ -338,7 +338,7 @@ export default defineComponent({
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               board[i][j] = human;
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(board, depth + 1, true);
+              let score = minimax(board, depth + 1, true, alpha, beta);
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               board[i][j] = '';
               // console.log(score)
