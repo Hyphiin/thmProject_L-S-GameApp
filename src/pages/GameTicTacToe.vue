@@ -185,34 +185,43 @@
   </main>
 </template>
 
-<script>
-//import Grid from '../components/grid.vue';
+<script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
+import {aiMove} from './aiMove';
+
+interface aMove {
+  i: number,
+  j: number
+}
 
 export default defineComponent({
   name: 'GameTicTacToe',
   components: {},
-  setup() {
-    let winMessage = ref('');
-    let isCross = ref(true);
+  props: {
+    boardGame: {
+      type : Array,
+      required: true
+    }
+  },
+  setup(props, context) {
+    
+    let winMessage = ref<string>('');
+    let isCross = ref<boolean>(true);
 
-    let board = [
-      ['', '', ''],
-      ['', '', ''],
-      ['', '', ''],
-    ];
+    let board: Array<Array<string>> = props.boardGame as Array<Array<string>>
 
-    let modiToggle = ref(false);
-    let modiToggleName = ref('Mensch');
-    let signToggle = ref(false);
-    let signToggleName = ref('X');
+    const possibleMoves = ref<aiMove[]>([])
+
+    let modiToggle = ref<boolean>(false);
+    let modiToggleName = ref<string>('Mensch');
+    let signToggle = ref<boolean>(false);
+    let signToggleName = ref<string>('X');
 
     let ai = 'X';
     let human = 'O';
     let currentPlayer = human;
 
-    const makeMove = (itemNumberCol, itemNumberRow) => {
-      console.log(itemNumberCol, itemNumberRow);
+    const makeMove = (itemNumberCol: number, itemNumberRow: number) => {
       if (
         typeof itemNumberCol === 'number' &&
         typeof itemNumberRow === 'number'
@@ -250,27 +259,53 @@ export default defineComponent({
       console.log('ComputerMove');
       // AI to make its turn
       let bestScore = -Infinity;
-      let move;
+      let move: aMove = {i: 0, j: 0};
+
+      possibleMoves.value = []
+
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
           // Is the spot available?
           if (board[i][j] == '') {
             board[i][j] = ai;
+
+            // exact copy of the gameboard
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score = minimax(board, 0, false, -Infinity, Infinity);
+            //const gameState = JSON.parse(JSON.stringify(board));
+            //console.log('______________________')
+            // console.log('Spalte: ', i, 'Reihe: ',j);
+            // console.log('______________________')
+            //console.log(gameState)
+            //context.emit('emitGameState', gameState);
+            // console.log('______________________')
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            let score: number = minimax(board, 0, false, -Infinity, Infinity);
+ 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            let scoreCopy: number = JSON.parse(JSON.stringify(score));
+            // console.log('Score: ', scoreCopy);
+            // console.log('______________________')
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            possibleMoves.value.push({x: i, y: j, score: scoreCopy})
+
             board[i][j] = '';
             //console.log(score, bestScore)
-            if (score > bestScore) {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            if (score > bestScore) {    
               bestScore = score;
               move = { j, i };
             }
           }
         }
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      
       board[move.i][move.j] = ai;
       isCross.value = !isCross.value;
+
+      console.log(possibleMoves.value)
+      context.emit('possibleMoves', possibleMoves.value)
+      context.emit('boardState', board)
 
       let result = checkWinner();
 
@@ -289,17 +324,20 @@ export default defineComponent({
       }
     };
 
-    let scores = {
-      X: 10,
-      O: -10,
-      tie: 0,
-    };
-
-    const minimax = (board, depth, isMaximizing, alpha, beta) => {
+    const minimax = (board: Array<Array<string>>, depth: number, isMaximizing: boolean, alpha: number, beta: number) => {
       let result = checkWinner();
       if (result !== null) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return scores[result];
+        switch(result) {
+          case 'X': {
+            return 10;
+          }
+          case 'O': {
+            return -10;
+          }
+          case 'tie': {
+            return 0;
+          }
+        }
       }
 
       if (isMaximizing) {
@@ -307,13 +345,12 @@ export default defineComponent({
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
             // Is the spot available?
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (board[i][j] == '' && typeof depth === 'number') {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               board[i][j] = ai;
+              
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               let score = minimax(board, depth + 1, false, alpha, beta);
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              //console.log('Maximizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
               board[i][j] = '';
               // console.log(score)
               bestScore = Math.max(score, bestScore);
@@ -321,7 +358,7 @@ export default defineComponent({
               alpha = Math.max(alpha, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                console.log('Prune', alpha, beta);
+                //console.log('Maximizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
                 break;
               }
             }
@@ -333,13 +370,12 @@ export default defineComponent({
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
             // Is the spot available?
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (board[i][j] == '' && typeof depth === 'number') {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               board[i][j] = human;
+              
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               let score = minimax(board, depth + 1, true, alpha, beta);
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              //console.log('Minimizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
               board[i][j] = '';
               // console.log(score)
               bestScore = Math.min(score, bestScore);
@@ -347,7 +383,7 @@ export default defineComponent({
               beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                console.log('Prune', alpha, beta);
+                //console.log('Minimizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
                 break;
               }
             }
@@ -357,7 +393,7 @@ export default defineComponent({
       }
     };
 
-    function equals3(a, b, c) {
+    function equals3(a: string, b: string, c: string) {
       return a == b && b == c && a != '';
     }
 
