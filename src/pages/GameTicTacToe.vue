@@ -194,23 +194,28 @@ interface aMove {
   j: number
 }
 
+interface boardState {
+  state: Array<Array<string>>,
+  round: number
+}
+
 export default defineComponent({
   name: 'GameTicTacToe',
   components: {},
-  props: {
-    boardGame: {
-      type : Array,
-      required: true
-    }
-  },
   setup(props, context) {
     
     let winMessage = ref<string>('');
     let isCross = ref<boolean>(true);
 
-    let board: Array<Array<string>> = props.boardGame as Array<Array<string>>
+    let board: Array<Array<string>> = [
+      ['', '', ''],
+      ['', '', ''],
+      ['', '', ''],
+    ];
 
     const possibleMoves = ref<aiMove[]>([])
+
+    const round = ref<number>(0);
 
     let modiToggle = ref<boolean>(false);
     let modiToggleName = ref<string>('Mensch');
@@ -271,27 +276,22 @@ export default defineComponent({
 
             // exact copy of the gameboard
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            //const gameState = JSON.parse(JSON.stringify(board));
-            //console.log('______________________')
-            // console.log('Spalte: ', i, 'Reihe: ',j);
-            // console.log('______________________')
+            const gameState = JSON.parse(JSON.stringify(board));
             //console.log(gameState)
-            //context.emit('emitGameState', gameState);
-            // console.log('______________________')
-
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            const boardStatus: boardState = {state: gameState, round: round.value}
+            context.emit('boardState', boardStatus);
+            
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             let score: number = minimax(board, 0, false, -Infinity, Infinity);
  
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             let scoreCopy: number = JSON.parse(JSON.stringify(score));
-            // console.log('Score: ', scoreCopy);
-            // console.log('______________________')
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             possibleMoves.value.push({x: i, y: j, score: scoreCopy})
 
             board[i][j] = '';
-            //console.log(score, bestScore)
             if (score > bestScore) {    
               bestScore = score;
               move = { j, i };
@@ -299,13 +299,15 @@ export default defineComponent({
           }
         }
       }
+
+      round.value ++;
       
       board[move.i][move.j] = ai;
       isCross.value = !isCross.value;
 
-      console.log(possibleMoves.value)
+      //console.log(possibleMoves.value)
       context.emit('possibleMoves', possibleMoves.value)
-      context.emit('boardState', board)
+      context.emit('board', board)
 
       let result = checkWinner();
 

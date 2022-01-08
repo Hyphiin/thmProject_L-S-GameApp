@@ -148,9 +148,15 @@
         </div>
       </div>
       <h5>Possible Moves:</h5>
+      <div class="possibleMoves">
+        <div v-for="(entry, index) in boardStates" :key="index">
+          <view-board :current-board="entry.state" />
+        </div>
+      </div>
+      <!-- <h5>Possible Moves:</h5>
       <div v-for="(entry, index) in possibleMoves" :key="index">
         X: {{ entry.x }}, Y: {{ entry.y }}, Score: {{ entry.score }}
-      </div>
+      </div> -->
     </q-page-container>
   </q-layout>
 </template>
@@ -158,16 +164,18 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import GameTicTacToe from './GameTicTacToe.vue';
+import viewBoard from './viewBoard.vue';
 import { aiMove } from './aiMove';
 
 interface boardState {
-  state: Array<Array<string>>,
-  round: number
+  [index: string]: Array<Array<string>> | number;
+  state: Array<Array<string>>;
+  round: number;
 }
 
 export default defineComponent({
   name: 'TicTacToe',
-  components: { GameTicTacToe },
+  components: { GameTicTacToe, viewBoard },
   setup() {
     let board: Array<Array<string>> = [
       ['', '', ''],
@@ -186,17 +194,20 @@ export default defineComponent({
     };
 
     const receiveBoard = (board: Array<Array<string>>) => {
-      console.log(receiveBoard);
+      //console.log(receiveBoard);
       currentBoard.value = board;
     };
 
     const receiveBoardState = (boardState: boardState) => {
       if (round.value === boardState.round) {
-        boardStates.value.push(boardState)
+        boardStates.value.push(boardState);
+        console.log(boardStates.value);
       } else {
-        boardStates.value = []
+        boardStates.value = [];
+        round.value++;
+        boardStates.value.push(boardState);
       }
-    }
+    };
 
     return {
       board,
@@ -205,7 +216,7 @@ export default defineComponent({
       boardStates,
       receivePossibleMoves,
       receiveBoard,
-      receiveBoardState
+      receiveBoardState,
     };
   },
 });
@@ -372,5 +383,9 @@ export default defineComponent({
     height: calc(calc(var(10px) * 0.9) * 0.7);
     background-color: white;
   }
+}
+.possibleMoves {
+  display: flex;
+  flex-direction: row;
 }
 </style>
