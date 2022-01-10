@@ -10,11 +10,20 @@
       />
     </q-page-container>
     <q-page-container class="tree col text-center">
-      <h3>Current Board:</h3>
-      <div
-        class="placeholder d-flex flex-column justify-content-center align-items-center bg-dark"
-      >
-        <div class="container">
+      <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5>
+      <div class="possibleMoves" v-if="boardStates.length > 1">
+        <div v-for="(entry, index) in boardStates" :key="index">
+          <view-board :current-board="entry.state" :id="index" />
+        </div>
+      </div>
+      <div v-if="possibleMoves.length > 1" class="scoreBoard">
+        <div v-for="(entry, index) in possibleMoves" :key="index">
+          Score: {{ entry.score }}
+        </div>
+      </div>
+      <h4>Ausgewählter Zug:</h4>
+      <div class="placeholder">
+        <div class="container bg-dark">
           <div class="justify-content-center mt-3">
             <div class="board" id="board">
               <div class="cell">
@@ -147,22 +156,12 @@
           </div>
         </div>
       </div>
-      <h5>Possible Moves:</h5>
-      <div class="possibleMoves">
-        <div v-for="(entry, index) in boardStates" :key="index">
-          <view-board :current-board="entry.state" />
-        </div>
-      </div>
-      <!-- <h5>Possible Moves:</h5>
-      <div v-for="(entry, index) in possibleMoves" :key="index">
-        X: {{ entry.x }}, Y: {{ entry.y }}, Score: {{ entry.score }}
-      </div> -->
     </q-page-container>
   </q-layout>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import GameTicTacToe from './GameTicTacToe.vue';
 import viewBoard from './viewBoard.vue';
 import { aiMove } from './aiMove';
@@ -209,6 +208,10 @@ export default defineComponent({
       }
     };
 
+    const states = computed(() => {
+      return boardStates;
+    });
+
     return {
       board,
       possibleMoves,
@@ -217,6 +220,7 @@ export default defineComponent({
       receivePossibleMoves,
       receiveBoard,
       receiveBoardState,
+      states,
     };
   },
 });
@@ -224,8 +228,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 .placeholder {
   height: 20vh;
-  width: 20vh;
-  margin-left: 25vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 
   .container__top {
     color: white;
@@ -387,5 +392,11 @@ export default defineComponent({
 .possibleMoves {
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
+}
+.scoreBoard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
 </style>

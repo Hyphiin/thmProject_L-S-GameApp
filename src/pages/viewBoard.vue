@@ -132,17 +132,13 @@
             />
           </div>
         </div>
-
-        <div class="col col-6">
-          Score:
-        </div>
       </div>
     </div>
   </main>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, toRef } from 'vue';
 
 export default defineComponent({
   name: 'viewBoard',
@@ -155,7 +151,7 @@ export default defineComponent({
   },
   setup(props) {
 
-    let board = ref<Array<Array<string>>>(props.currentBoard as Array<Array<string>>);
+    let board = toRef(props, 'currentBoard');
 
     return {
       board
@@ -238,8 +234,8 @@ main {
   }
 
   .cell {
-    width: 15px;
-    height: 15px;
+    width: 25px;
+    height: 25px;
     border: 1px solid white;
     display: flex;
     justify-content: center;
