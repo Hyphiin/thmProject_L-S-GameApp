@@ -162,8 +162,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 main {
-  height: 10vh;
-  width: 10vh;
+  //height: 10vh;
+  //width: 10vh;
   margin-left: 5px;
 
   .container__top {
