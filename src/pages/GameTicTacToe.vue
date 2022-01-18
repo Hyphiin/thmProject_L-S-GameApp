@@ -443,11 +443,25 @@ export default defineComponent({
 
     const reloadGame = () => {
       winMessage.value = '';
-      isCross.value = true;
-      modiToggle.value = false;
+      if(!signToggle.value){
+        isCross.value = true;
+        signToggleName.value = 'X';
+      } else {
+        isCross.value = false;
+        signToggleName.value = 'O';
+      }
+      if(!modiToggle.value){
+        modiToggleName.value = 'Mensch';
+      } else {
+        modiToggleName.value = 'KI';
+      }
+
+      /*modiToggle.value = false;
       signToggle.value = false;
       modiToggleName.value = 'Mensch';
       signToggleName.value = 'X';
+      */
+
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
           board[i][j] = '';
@@ -475,12 +489,12 @@ export default defineComponent({
       () => {
         if (signToggleName.value === 'X') {
           signToggleName.value = 'O';
-          isCross.value = !isCross.value;
+          isCross.value = false
           ai = 'O';
           human = 'X';
         } else {
           signToggleName.value = 'X';
-          isCross.value = !isCross.value;
+          isCross.value = true
           ai = 'X';
           human = 'O';
         }

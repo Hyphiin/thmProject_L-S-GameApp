@@ -290,6 +290,10 @@ export default defineComponent({
     animation-duration: 1s;
   }
 
+  .container.bg-dark{
+    max-height: 80%;
+  }
+
   .board {
     display: grid;
     justify-content: center;
