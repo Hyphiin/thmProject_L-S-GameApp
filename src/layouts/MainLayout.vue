@@ -13,7 +13,7 @@
 
       <q-tabs align="left">
         <q-route-tab to="/" label="Tic Tac Toe" />      
-         <q-route-tab to="/" label="4 Gewinnt" />       
+         <!-- <q-route-tab to="/" label="4 Gewinnt" />        -->
       </q-tabs>
     </q-header>
 

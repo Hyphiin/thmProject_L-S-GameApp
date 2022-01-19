@@ -227,7 +227,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .placeholder {
-  height: 20vh;
+  //height: 20vh;
   width: 100%;
   display: flex;
   justify-content: center;

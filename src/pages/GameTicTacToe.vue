@@ -45,13 +45,13 @@
         <div class="board" id="board">
           <div class="cell" @click="makeMove(0, 0)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[0][0] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/crossBlack.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[0][0] === 'X'"
@@ -59,13 +59,13 @@
           </div>
           <div class="cell" @click="makeMove(1, 0)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[0][1] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/crossBlack.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[0][1] === 'X'"
@@ -73,13 +73,13 @@
           </div>
           <div class="cell" @click="makeMove(2, 0)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[0][2] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/crossBlack.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[0][2] === 'X'"
@@ -87,13 +87,13 @@
           </div>
           <div class="cell" @click="makeMove(0, 1)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[1][0] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/crossBlack.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[1][0] === 'X'"
@@ -101,13 +101,13 @@
           </div>
           <div class="cell" @click="makeMove(1, 1)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[1][1] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/crossBlack.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[1][1] === 'X'"
@@ -115,13 +115,13 @@
           </div>
           <div class="cell" @click="makeMove(2, 1)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[1][2] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/crossBlack.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[1][2] === 'X'"
@@ -129,13 +129,13 @@
           </div>
           <div class="cell" @click="makeMove(0, 2)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[2][0] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/crossBlack.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[2][0] === 'X'"
@@ -143,13 +143,13 @@
           </div>
           <div class="cell" @click="makeMove(1, 2)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[2][1] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/crossBlack.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[2][1] === 'X'"
@@ -157,13 +157,13 @@
           </div>
           <div class="cell" @click="makeMove(2, 2)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[2][2] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/crossBlack.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[2][2] === 'X'"
@@ -283,7 +283,7 @@ export default defineComponent({
             context.emit('boardState', boardStatus);
             
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board, 0, false, -Infinity, Infinity);
+            let score: number = minimax(board, 5, false, -Infinity, Infinity);
  
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             let scoreCopy: number = JSON.parse(JSON.stringify(score));
@@ -331,10 +331,10 @@ export default defineComponent({
       if (result !== null) {
         switch(result) {
           case 'X': {
-            return 10;
+            return 10 - depth;
           }
           case 'O': {
-            return -10;
+            return -10 + depth;
           }
           case 'tie': {
             return 0;
@@ -574,6 +574,8 @@ main {
   }
 
   .board {
+    max-width: 316px;
+    max-height: 316px;
     display: grid;
     justify-content: center;
     align-content: center;
@@ -585,7 +587,9 @@ main {
   .cell {
     width: 100px;
     height: 100px;
-    border: 1px solid black;
+    background-color: whitesmoke;
+    border: 4px solid #201c1c;
+    border-radius: 4px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -627,7 +631,7 @@ main {
   .board.x .cell:not(.x):not(.circle):hover::before,
   .board.x .cell:not(.x):not(.circle):hover::after,
   .board.circle .cell:not(.x):not(.circle):hover::before {
-    background-color: lightgrey;
+    background-color: #201c1c;
   }
 
   .cell.x::before,
@@ -669,7 +673,7 @@ main {
   .board.circle .cell:not(.x):not(.circle):hover::after {
     width: calc(calc(var(100px) * 0.9) * 0.7);
     height: calc(calc(var(100px) * 0.9) * 0.7);
-    background-color: white;
+    background-color: #201c1c;
   }
 }
 </style>
