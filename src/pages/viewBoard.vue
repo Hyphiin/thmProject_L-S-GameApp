@@ -1,6 +1,6 @@
 <template>
   <main
-    class="d-flex flex-column justify-content-center align-items-center bg-dark"
+    class="d-flex flex-column justify-content-center align-items-center"
   >
     <div class="container">
       <div class="justify-content-center mt-3">
@@ -144,17 +144,16 @@ export default defineComponent({
   name: 'viewBoard',
   components: {},
   props: {
-      currentBoard: {
-          type: Array,
-          required: true
-      }
+    currentBoard: {
+      type: Array,
+      required: true,
+    },
   },
   setup(props) {
-
     let board = toRef(props, 'currentBoard');
 
     return {
-      board
+      board,
     };
   },
 });
@@ -165,6 +164,9 @@ main {
   //height: 10vh;
   //width: 10vh;
   margin-left: 5px;
+  border: solid 1px #201c24;
+  border-radius: 12px;
+  padding: 4px;
 
   .container__top {
     color: white;
@@ -236,12 +238,19 @@ main {
   .cell {
     width: 25px;
     height: 25px;
-    border: 1px solid white;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     cursor: pointer;
+    margin: 2px;
+    background-color: #201c24;
+    border-radius: 8px;
+
+    .img-fluid {
+      filter: invert(34%) sepia(99%) saturate(1121%) hue-rotate(191deg)
+        brightness(88%) contrast(88%);
+    }
   }
 
   .cell:first-child,

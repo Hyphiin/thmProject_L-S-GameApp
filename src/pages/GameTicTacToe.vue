@@ -1,57 +1,55 @@
 <template>
-  <main
-    class="d-flex flex-column justify-content-center align-items-center bg-dark"
-  >
-    <div class="container__top">
-      <div class="row justify-content-center mt-3">
-        <div class="col">
-          <q-toggle
-            :label="`Spiel gegen ${modiToggleName}`"
-            color="blue"
-            size="xl"
-            checked-icon="computer"
-            unchecked-icon="person"
-            v-model="modiToggle"
-          />
-        </div>
-        <div class="col">
-          <q-toggle
-            :label="`Spiel als ${signToggleName}`"
-            color="blue"
-            size="xl"
-            checked-icon="radio_button_unchecked"
-            unchecked-icon="close"
-            v-model="signToggle"
-          />
-        </div>
-        <div class="col"></div>
-      </div>
-    </div>
-
+  <main class="d-flex flex-column justify-content-center align-items-center">
     <div class="container">
-      <div class="justify-content-center mt-3">
+      <div class="justify-content-center mt-3 container__container">
+        <div class="container__top">
+          <div class="row justify-content-center mt-3">
+            <div class="col">
+              <q-toggle
+                class="toggle"
+                :label="`${modiToggleName}`"
+                color="blue"
+                size="xl"
+                checked-icon="computer"
+                unchecked-icon="person"
+                v-model="modiToggle"
+              />
+            </div>
+            <div class="col">
+              <q-toggle
+                class="toggle"
+                :label="`${signToggleName}`"
+                color="blue"
+                size="xl"
+                checked-icon="radio_button_unchecked"
+                unchecked-icon="close"
+                v-model="signToggle"
+              />
+            </div>
+          </div>
+        </div>
         <div class="text-message text-center">
           <div v-if="!winMessage">
-            <h4 class="text-info" v-if="isCross">X ist dran!</h4>
-            <h4 class="text-info" v-if="!isCross">O ist dran!</h4>
+            <h4 class="headline" v-if="isCross">X ist dran!</h4>
+            <h4 class="headline" v-if="!isCross">O ist dran!</h4>
           </div>
           <div v-else>
-            <h3 class="text-warning">
+            <h4 class="text-warning">
               {{ winMessage.toUpperCase() }}
-            </h3>
+            </h4>
           </div>
         </div>
 
         <div class="board" id="board">
           <div class="cell" @click="makeMove(0, 0)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[0][0] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/Feather-core-triangle.svg"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[0][0] === 'X'"
@@ -59,13 +57,13 @@
           </div>
           <div class="cell" @click="makeMove(1, 0)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[0][1] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/Feather-core-triangle.svg"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[0][1] === 'X'"
@@ -73,13 +71,13 @@
           </div>
           <div class="cell" @click="makeMove(2, 0)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[0][2] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/Feather-core-triangle.svg"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[0][2] === 'X'"
@@ -87,13 +85,13 @@
           </div>
           <div class="cell" @click="makeMove(0, 1)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[1][0] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/Feather-core-triangle.svg"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[1][0] === 'X'"
@@ -101,13 +99,13 @@
           </div>
           <div class="cell" @click="makeMove(1, 1)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[1][1] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/Feather-core-triangle.svg"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[1][1] === 'X'"
@@ -115,13 +113,13 @@
           </div>
           <div class="cell" @click="makeMove(2, 1)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[1][2] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/Feather-core-triangle.svg"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[1][2] === 'X'"
@@ -129,13 +127,13 @@
           </div>
           <div class="cell" @click="makeMove(0, 2)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[2][0] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/Feather-core-triangle.svg"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[2][0] === 'X'"
@@ -143,13 +141,13 @@
           </div>
           <div class="cell" @click="makeMove(1, 2)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[2][1] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/Feather-core-triangle.svg"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[2][1] === 'X'"
@@ -157,13 +155,13 @@
           </div>
           <div class="cell" @click="makeMove(2, 2)">
             <img
-              src="../assets/circleWhite.png"
+              src="../assets/circle-regular.svg"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[2][2] === 'O'"
             />
             <img
-              src="../assets/crossWhite.png"
+              src="../assets/Feather-core-triangle.svg"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[2][2] === 'X'"
@@ -187,23 +185,22 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
-import {aiMove} from './aiMove';
+import { aiMove } from './aiMove';
 
 interface aMove {
-  i: number,
-  j: number
+  i: number;
+  j: number;
 }
 
 interface boardState {
-  state: Array<Array<string>>,
-  round: number
+  state: Array<Array<string>>;
+  round: number;
 }
 
 export default defineComponent({
   name: 'GameTicTacToe',
   components: {},
   setup(props, context) {
-    
     let winMessage = ref<string>('');
     let isCross = ref<boolean>(true);
 
@@ -213,7 +210,7 @@ export default defineComponent({
       ['', '', ''],
     ];
 
-    const possibleMoves = ref<aiMove[]>([])
+    const possibleMoves = ref<aiMove[]>([]);
 
     const round = ref<number>(0);
 
@@ -264,9 +261,9 @@ export default defineComponent({
       console.log('ComputerMove');
       // AI to make its turn
       let bestScore = -Infinity;
-      let move: aMove = {i: 0, j: 0};
+      let move: aMove = { i: 0, j: 0 };
 
-      possibleMoves.value = []
+      possibleMoves.value = [];
 
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
@@ -275,24 +272,29 @@ export default defineComponent({
             board[i][j] = ai;
 
             // exact copy of the gameboard
+
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const gameState = JSON.parse(JSON.stringify(board));
             //console.log(gameState)
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const boardStatus: boardState = {state: gameState, round: round.value}
+            const boardStatus: boardState = {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              state: gameState,
+              round: round.value,
+            };
             context.emit('boardState', boardStatus);
-            
+
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             let score: number = minimax(board, 0, false, -Infinity, Infinity);
- 
+
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             let scoreCopy: number = JSON.parse(JSON.stringify(score));
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            possibleMoves.value.push({x: i, y: j, score: scoreCopy})
+            possibleMoves.value.push({ x: i, y: j, score: scoreCopy });
 
             board[i][j] = '';
-            if (score > bestScore) {    
+            if (score > bestScore) {
               bestScore = score;
               move = { j, i };
             }
@@ -300,14 +302,14 @@ export default defineComponent({
         }
       }
 
-      round.value ++;
-      
+      round.value++;
+
       board[move.i][move.j] = ai;
       isCross.value = !isCross.value;
 
       //console.log(possibleMoves.value)
-      context.emit('possibleMoves', possibleMoves.value)
-      context.emit('board', board)
+      context.emit('possibleMoves', possibleMoves.value);
+      context.emit('board', board);
 
       let result = checkWinner();
 
@@ -326,10 +328,16 @@ export default defineComponent({
       }
     };
 
-    const minimax = (board: Array<Array<string>>, depth: number, isMaximizing: boolean, alpha: number, beta: number) => {
+    const minimax = (
+      board: Array<Array<string>>,
+      depth: number,
+      isMaximizing: boolean,
+      alpha: number,
+      beta: number
+    ) => {
       let result = checkWinner();
       if (result !== null) {
-        switch(result) {
+        switch (result) {
           case 'X': {
             return 10;
           }
@@ -349,7 +357,7 @@ export default defineComponent({
             // Is the spot available?
             if (board[i][j] == '' && typeof depth === 'number') {
               board[i][j] = ai;
-              
+
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               let score = minimax(board, depth + 1, false, alpha, beta);
               //console.log('Maximizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
@@ -374,7 +382,7 @@ export default defineComponent({
             // Is the spot available?
             if (board[i][j] == '' && typeof depth === 'number') {
               board[i][j] = human;
-              
+
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               let score = minimax(board, depth + 1, true, alpha, beta);
               //console.log('Minimizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
@@ -516,39 +524,22 @@ main {
     margin-top: 10px;
     justify-content: center;
 
-    .text-message {
-      margin-bottom: 50px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-gap: 0px;
-      width: 550px;
-
-      .grid-div {
-        border: 3px solid white;
+    .container__container {
+      background-color: whitesmoke;
+      border-radius: 12px;
+      padding: 50px;
+      box-shadow: 0px 0px 10px whitesmoke;
+      .text-message {
+        margin-bottom: 50px;
       }
 
-      :nth-child(3n) {
-        border-right: none;
+      .box {
+        height: 150px;
       }
-      .grid-div:nth-child(-n + 3) {
-        border-top: none;
-      }
-      .grid-div:nth-child(3n - 2) {
-        border-left: none;
-      }
-      .grid-div:nth-child(n + 7) {
-        border-bottom: none;
-      }
-    }
 
-    .box {
-      height: 150px;
-    }
-
-    .resetBtn {
-      margin-top: 50px;
+      .resetBtn {
+        margin-top: 50px;
+      }
     }
   }
 
@@ -568,6 +559,17 @@ main {
     }
   }
 
+  .col {
+    margin: 5px;
+    .toggle {
+      color: #201c24;
+    }
+  }
+
+  .headline{
+    color: #2074d4;
+  }
+
   .zoomIn {
     animation-name: zoomIn;
     animation-duration: 1s;
@@ -580,17 +582,25 @@ main {
     justify-items: center;
     align-items: center;
     grid-template-columns: repeat(3, auto);
+    border-radius: 8px;
   }
 
   .cell {
     width: 100px;
     height: 100px;
-    border: 1px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     cursor: pointer;
+    margin: 2px;
+    background-color: #201c24;
+    border-radius: 8px;
+
+    .img-fluid {
+      filter: invert(34%) sepia(99%) saturate(1121%) hue-rotate(191deg)
+        brightness(88%) contrast(88%);
+    }
   }
 
   .cell:first-child,
