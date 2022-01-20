@@ -11,10 +11,9 @@
         </q-toolbar-title>
       </q-toolbar>
 
-      <q-tabs align="left">
-        <q-route-tab to="/" label="Tic Tac Toe" />      
-         <q-route-tab to="/" label="4 Gewinnt" />       
-      </q-tabs>
+      <!-- <q-tabs align="left">
+        <q-route-tab to="/" label="Tic Tac Toe" />          
+      </q-tabs> -->
     </q-header>
 
     <q-page-container>

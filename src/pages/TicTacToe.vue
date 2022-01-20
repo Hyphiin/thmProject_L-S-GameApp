@@ -17,24 +17,24 @@
         </div>
       </div>
       <div v-if="possibleMoves.length > 1" class="scoreBoard">
-        <div v-for="(entry, index) in possibleMoves" :key="index">
+        <div v-for="(entry, index) in possibleMoves" :key="index" class="scorefield">
           Score: {{ entry.score }}
         </div>
       </div>
-      <h4>Ausgewählter Zug:</h4>
+      <h5>Ausgewählter Zug:</h5>
       <div class="placeholder">
-        <div class="container bg-dark">
+        <div class="container">
           <div class="justify-content-center mt-3">
             <div class="board" id="board">
               <div class="cell">
                 <img
-                  src="../assets/circleWhite.png"
+                  src="../assets/circle-regular.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-if="currentBoard[0][0] === 'O'"
                 />
                 <img
-                  src="../assets/crossWhite.png"
+                  src="../assets/Feather-core-triangle.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-else-if="currentBoard[0][0] === 'X'"
@@ -42,13 +42,13 @@
               </div>
               <div class="cell">
                 <img
-                  src="../assets/circleWhite.png"
+                  src="../assets/circle-regular.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-if="currentBoard[0][1] === 'O'"
                 />
                 <img
-                  src="../assets/crossWhite.png"
+                  src="../assets/Feather-core-triangle.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-else-if="currentBoard[0][1] === 'X'"
@@ -56,13 +56,13 @@
               </div>
               <div class="cell">
                 <img
-                  src="../assets/circleWhite.png"
+                  src="../assets/circle-regular.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-if="currentBoard[0][2] === 'O'"
                 />
                 <img
-                  src="../assets/crossWhite.png"
+                  src="../assets/Feather-core-triangle.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-else-if="currentBoard[0][2] === 'X'"
@@ -70,13 +70,13 @@
               </div>
               <div class="cell">
                 <img
-                  src="../assets/circleWhite.png"
+                  src="../assets/circle-regular.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-if="currentBoard[1][0] === 'O'"
                 />
                 <img
-                  src="../assets/crossWhite.png"
+                  src="../assets/Feather-core-triangle.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-else-if="currentBoard[1][0] === 'X'"
@@ -84,13 +84,13 @@
               </div>
               <div class="cell">
                 <img
-                  src="../assets/circleWhite.png"
+                  src="../assets/circle-regular.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-if="currentBoard[1][1] === 'O'"
                 />
                 <img
-                  src="../assets/crossWhite.png"
+                  src="../assets/Feather-core-triangle.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-else-if="currentBoard[1][1] === 'X'"
@@ -98,13 +98,13 @@
               </div>
               <div class="cell">
                 <img
-                  src="../assets/circleWhite.png"
+                  src="../assets/circle-regular.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-if="currentBoard[1][2] === 'O'"
                 />
                 <img
-                  src="../assets/crossWhite.png"
+                  src="../assets/Feather-core-triangle.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-else-if="currentBoard[1][2] === 'X'"
@@ -112,13 +112,13 @@
               </div>
               <div class="cell">
                 <img
-                  src="../assets/circleWhite.png"
+                  src="../assets/circle-regular.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-if="currentBoard[2][0] === 'O'"
                 />
                 <img
-                  src="../assets/crossWhite.png"
+                  src="../assets/Feather-core-triangle.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-else-if="currentBoard[2][0] === 'X'"
@@ -126,13 +126,13 @@
               </div>
               <div class="cell">
                 <img
-                  src="../assets/circleWhite.png"
+                  src="../assets/circle-regular.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-if="currentBoard[2][1] === 'O'"
                 />
                 <img
-                  src="../assets/crossWhite.png"
+                  src="../assets/Feather-core-triangle.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-else-if="currentBoard[2][1] === 'X'"
@@ -140,13 +140,13 @@
               </div>
               <div class="cell">
                 <img
-                  src="../assets/circleWhite.png"
+                  src="../assets/circle-regular.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-if="currentBoard[2][2] === 'O'"
                 />
                 <img
-                  src="../assets/crossWhite.png"
+                  src="../assets/Feather-core-triangle.svg"
                   alt=""
                   class="img-fluid zoomIn"
                   v-else-if="currentBoard[2][2] === 'X'"
@@ -290,7 +290,7 @@ export default defineComponent({
     animation-duration: 1s;
   }
 
-  .container.bg-dark{
+  .container.bg-dark {
     max-height: 80%;
   }
 
@@ -306,12 +306,19 @@ export default defineComponent({
   .cell {
     width: 50px;
     height: 50px;
-    border: 1px solid white;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     cursor: pointer;
+    margin: 2px;
+    background-color: #201c24;
+    border-radius: 8px;
+
+    .img-fluid {
+      filter: invert(34%) sepia(99%) saturate(1121%) hue-rotate(191deg)
+        brightness(88%) contrast(88%);
+    }
   }
 
   .cell:first-child,
@@ -402,5 +409,11 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+
+  .scorefield {
+    min-width: 50px;
+    margin-right: 20px;
+    color: #201c24;
+  }
 }
 </style>
