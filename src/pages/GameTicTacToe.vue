@@ -456,6 +456,10 @@ export default defineComponent({
         modiToggleName.value = 'KI';
       }
 
+      if(modiToggleName.value == 'KI'){
+         makeComputerMove();
+      }
+
       /*modiToggle.value = false;
       signToggle.value = false;
       modiToggleName.value = 'Mensch';
@@ -471,14 +475,16 @@ export default defineComponent({
 
     watch(
       () => modiToggle.value,
-      () => {
+      () => {        
         if (modiToggleName.value === 'Mensch') {
           modiToggleName.value = 'KI';
-          signToggleName.value = 'O';
+          //signToggleName.value = 'O';
+          reloadGame()
           makeComputerMove();
         } else {
           modiToggleName.value = 'Mensch';
-          signToggleName.value = 'X';
+          reloadGame()
+          //signToggleName.value = 'X';
         }
         console.log(modiToggle.value, modiToggleName.value);
       }
