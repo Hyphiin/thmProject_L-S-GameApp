@@ -44,3 +44,9 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="scss" scoped>
+.q-toolbar{
+  box-shadow: 3px 3px 10px grey;
+}
+</style>

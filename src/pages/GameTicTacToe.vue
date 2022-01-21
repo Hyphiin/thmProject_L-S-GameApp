@@ -533,7 +533,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 main {
-  height: 100vh;
+  height: 92vh;
+  box-shadow: 3px 3px 10px grey;
+  margin: 10px 5px;
 
   .container__top {
     color: white;
@@ -545,10 +547,8 @@ main {
     justify-content: center;
 
     .container__container {
-      background-color: whitesmoke;
       border-radius: 12px;
       padding: 50px;
-      box-shadow: 0px 0px 10px whitesmoke;
       .text-message {
         margin-bottom: 50px;
       }

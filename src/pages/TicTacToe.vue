@@ -10,6 +10,7 @@
       />
     </q-page-container>
     <q-page-container class="tree col text-center">
+      <main class="d-flex flex-column justify-content-center align-items-center">
       <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5>
       <div class="possibleMoves" v-if="boardStates.length > 1">
         <div v-for="(entry, index) in boardStates" :key="index">
@@ -156,6 +157,7 @@
           </div>
         </div>
       </div>
+      </main>
     </q-page-container>
   </q-layout>
 </template>
