@@ -1,7 +1,5 @@
 <template>
-  <main
-    class="d-flex flex-column justify-content-center align-items-center"
-  >
+  <main class="d-flex flex-column justify-content-center align-items-center">
     <div class="container">
       <div class="justify-content-center mt-3">
         <div class="board" id="board">
@@ -134,6 +132,7 @@
         </div>
       </div>
     </div>
+    <div class="scorefield">Score: {{ score }}</div>
   </main>
 </template>
 
@@ -146,6 +145,10 @@ export default defineComponent({
   props: {
     currentBoard: {
       type: Array,
+      required: true,
+    },
+    score: {
+      type: Number,
       required: true,
     },
   },

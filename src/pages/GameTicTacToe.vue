@@ -1,5 +1,6 @@
 <template>
   <main class="d-flex flex-column justify-content-center align-items-center">
+    <button @click="undoMove">Undo</button>
     <div class="container">
       <div class="justify-content-center mt-3 container__container">
         <div class="container__top">
@@ -195,6 +196,7 @@ interface aMove {
 interface boardState {
   state: Array<Array<string>>;
   round: number;
+  score: number;
 }
 
 export default defineComponent({
@@ -223,6 +225,9 @@ export default defineComponent({
     let human = 'O';
     let currentPlayer = human;
 
+    const lastAIMove = ref<aMove>();
+    const lastHumanMove = ref<aMove>();
+
     const makeMove = (itemNumberCol: number, itemNumberRow: number) => {
       if (
         typeof itemNumberCol === 'number' &&
@@ -231,6 +236,7 @@ export default defineComponent({
         if (board[itemNumberRow][itemNumberCol] === '') {
           board[itemNumberRow][itemNumberCol] = isCross.value ? 'X' : 'O';
           isCross.value = !isCross.value;
+          lastHumanMove.value = { i: itemNumberRow, j: itemNumberCol };
         } else {
           alert('Already Filled!');
         }
@@ -258,7 +264,6 @@ export default defineComponent({
     };
 
     const makeComputerMove = () => {
-      console.log('ComputerMove');
       // AI to make its turn
       let bestScore = -Infinity;
       let move: aMove = { i: 0, j: 0 };
@@ -276,16 +281,18 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const gameState = JSON.parse(JSON.stringify(board));
             //console.log(gameState)
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            let score: number = minimax(board, 0, false, -Infinity, Infinity);
+
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const boardStatus: boardState = {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               state: gameState,
               round: round.value,
+              score: score,
             };
             context.emit('boardState', boardStatus);
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board, 0, false, -Infinity, Infinity);
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             let scoreCopy: number = JSON.parse(JSON.stringify(score));
@@ -306,6 +313,7 @@ export default defineComponent({
 
       board[move.i][move.j] = ai;
       isCross.value = !isCross.value;
+      lastAIMove.value = { i: move.i, j: move.j };
 
       //console.log(possibleMoves.value)
       context.emit('possibleMoves', possibleMoves.value);
@@ -407,6 +415,15 @@ export default defineComponent({
       return a == b && b == c && a != '';
     }
 
+    const undoMove = () => {
+      if (lastHumanMove.value != undefined && lastAIMove.value != undefined) {
+        board[lastAIMove.value.i][lastAIMove.value.j] = '';
+        board[lastHumanMove.value.i][lastHumanMove.value.j] = '';
+      }
+      context.emit('possibleMoves', possibleMoves.value);
+      context.emit('board', board);
+    };
+
     const checkWinner = () => {
       //  checking  winner of the game
       let winner = null;
@@ -474,7 +491,6 @@ export default defineComponent({
           modiToggleName.value = 'Mensch';
           signToggleName.value = 'X';
         }
-        console.log(modiToggle.value, modiToggleName.value);
       }
     );
 
@@ -492,7 +508,6 @@ export default defineComponent({
           ai = 'X';
           human = 'O';
         }
-        console.log(signToggle.value, signToggleName.value);
       }
     );
 
@@ -506,6 +521,7 @@ export default defineComponent({
       signToggleName,
       reloadGame,
       makeMove,
+      undoMove,
     };
   },
 });
@@ -522,7 +538,8 @@ main {
   .container {
     display: flex;
     margin-top: 10px;
-    justify-content: center;
+    margin-left: 10px;
+    justify-content: flex-start;
 
     .container__container {
       background-color: whitesmoke;
@@ -566,7 +583,7 @@ main {
     }
   }
 
-  .headline{
+  .headline {
     color: #2074d4;
   }
 
