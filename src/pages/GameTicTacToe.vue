@@ -27,6 +27,32 @@
                 v-model="signToggle"
               />
             </div>
+            <div class="col ">
+              <q-btn
+                class="resetBtn"
+                round 
+                color="primary" 
+                icon="restart_alt"
+                @click="reloadGame()"
+              >
+               <q-tooltip>
+                Neues Spiel
+              </q-tooltip>
+            </q-btn>
+            </div>
+            <div class="col ">
+              <q-btn
+                class="undoBtn"
+                 round 
+                 color="secondary" 
+                 icon="undo" 
+                @click="undo()"
+              >
+              <q-tooltip>
+                Zug zurücksetzen
+              </q-tooltip>
+            </q-btn>
+            </div>
           </div>
         </div>
         <div class="text-message text-center">
@@ -168,17 +194,7 @@
               v-else-if="board[2][2] === 'X'"
             />
           </div>
-        </div>
-
-        <div class="col col-6">
-          <q-btn
-            class="resetBtn"
-            outline
-            style="color: goldenrod"
-            label="Reset the game"
-            @click="reloadGame()"
-          />
-        </div>
+        </div>        
       </div>
     </div>
   </main>
@@ -220,6 +236,8 @@ export default defineComponent({
     let modiToggleName = ref<string>('Mensch');
     let signToggle = ref<boolean>(false);
     let signToggleName = ref<string>('X');
+    let lastItemNumberCol: number;
+    let lastItemNumberRow: number;
 
     let ai = 'X';
     let human = 'O';
@@ -229,6 +247,9 @@ export default defineComponent({
     const lastHumanMove = ref<aMove>();
 
     const makeMove = (itemNumberCol: number, itemNumberRow: number) => {
+      lastItemNumberCol = itemNumberCol;
+      lastItemNumberRow = itemNumberRow;
+
       if (
         typeof itemNumberCol === 'number' &&
         typeof itemNumberRow === 'number'
@@ -262,6 +283,17 @@ export default defineComponent({
         makeComputerMove();
       }
     };
+
+     const undo = () => {
+      if (
+        typeof lastItemNumberCol === 'number' &&
+        typeof lastItemNumberRow === 'number'
+      ) {
+        board[lastItemNumberCol][lastItemNumberRow] = '';
+        isCross.value = !isCross.value;
+      }
+    };
+
 
     const makeComputerMove = () => {
       // AI to make its turn
@@ -466,13 +498,32 @@ export default defineComponent({
       }
     };
 
+   
     const reloadGame = () => {
       winMessage.value = '';
-      isCross.value = true;
-      modiToggle.value = false;
+      if(!signToggle.value){
+        isCross.value = true;
+        signToggleName.value = 'X';
+      } else {
+        isCross.value = false;
+        signToggleName.value = 'O';
+      }
+      if(!modiToggle.value){
+        modiToggleName.value = 'Mensch';
+      } else {
+        modiToggleName.value = 'KI';
+      }
+
+      if(modiToggleName.value == 'KI'){
+         makeComputerMove();
+      }
+
+      /*modiToggle.value = false;
       signToggle.value = false;
       modiToggleName.value = 'Mensch';
       signToggleName.value = 'X';
+      */
+
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
           board[i][j] = '';
@@ -482,14 +533,16 @@ export default defineComponent({
 
     watch(
       () => modiToggle.value,
-      () => {
+      () => {        
         if (modiToggleName.value === 'Mensch') {
           modiToggleName.value = 'KI';
-          signToggleName.value = 'O';
+          //signToggleName.value = 'O';
+          reloadGame()
           makeComputerMove();
         } else {
           modiToggleName.value = 'Mensch';
-          signToggleName.value = 'X';
+          reloadGame()
+          //signToggleName.value = 'X';
         }
       }
     );
@@ -499,12 +552,12 @@ export default defineComponent({
       () => {
         if (signToggleName.value === 'X') {
           signToggleName.value = 'O';
-          isCross.value = !isCross.value;
+          isCross.value = false
           ai = 'O';
           human = 'X';
         } else {
           signToggleName.value = 'X';
-          isCross.value = !isCross.value;
+          isCross.value = true
           ai = 'X';
           human = 'O';
         }
@@ -529,7 +582,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 main {
-  height: 100vh;
+  height: 92vh;
+  //box-shadow: 3px 3px 10px grey;
+  margin: 10px 5px;
 
   .container__top {
     color: white;
@@ -542,10 +597,8 @@ main {
     justify-content: flex-start;
 
     .container__container {
-      background-color: whitesmoke;
       border-radius: 12px;
       padding: 50px;
-      box-shadow: 0px 0px 10px whitesmoke;
       .text-message {
         margin-bottom: 50px;
       }
@@ -555,7 +608,10 @@ main {
       }
 
       .resetBtn {
-        margin-top: 50px;
+        margin-top: 15px;
+      }
+      .undoBtn {
+        margin-top: 15px;
       }
     }
   }

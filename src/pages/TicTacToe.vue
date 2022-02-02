@@ -159,7 +159,8 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
+      </main>
     </q-page-container>
   </q-layout>
 </template>
@@ -232,12 +233,23 @@ export default defineComponent({
   },
 });
 </script>
+
 <style lang="scss" scoped>
+
+h5{
+margin-top: 160px;
+}
+img {
+  width: 500px;
+  
+}
 .placeholder {
   height: 20vh;
   width: 100%;
   display: flex;
   justify-content: center;
+
+  
 
   .container__top {
     color: white;
@@ -276,10 +288,7 @@ export default defineComponent({
     }
   }
 
-  img {
-    width: 25px;
-    height: 25px;
-  }
+  
 
   @keyframes zoomIn {
     from {
