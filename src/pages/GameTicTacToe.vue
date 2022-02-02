@@ -575,6 +575,7 @@ export default defineComponent({
       reloadGame,
       makeMove,
       undoMove,
+      undo
     };
   },
 });
