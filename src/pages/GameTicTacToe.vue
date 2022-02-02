@@ -26,6 +26,32 @@
                 v-model="signToggle"
               />
             </div>
+            <div class="col ">
+              <q-btn
+                class="resetBtn"
+                round 
+                color="primary" 
+                icon="restart_alt"
+                @click="reloadGame()"
+              >
+               <q-tooltip>
+                Neues Spiel
+              </q-tooltip>
+            </q-btn>
+            </div>
+            <div class="col ">
+              <q-btn
+                class="undoBtn"
+                 round 
+                 color="secondary" 
+                 icon="undo" 
+                @click="undo()"
+              >
+              <q-tooltip>
+                Zug zurücksetzen
+              </q-tooltip>
+            </q-btn>
+            </div>
           </div>
         </div>
         <div class="text-message text-center">
@@ -167,17 +193,7 @@
               v-else-if="board[2][2] === 'X'"
             />
           </div>
-        </div>
-
-        <div class="col col-6">
-          <q-btn
-            class="resetBtn"
-            outline
-            style="color: goldenrod"
-            label="Reset the game"
-            @click="reloadGame()"
-          />
-        </div>
+        </div>        
       </div>
     </div>
   </main>
@@ -218,12 +234,17 @@ export default defineComponent({
     let modiToggleName = ref<string>('Mensch');
     let signToggle = ref<boolean>(false);
     let signToggleName = ref<string>('X');
+    let lastItemNumberCol: number;
+    let lastItemNumberRow: number;
 
     let ai = 'X';
     let human = 'O';
     let currentPlayer = human;
 
     const makeMove = (itemNumberCol: number, itemNumberRow: number) => {
+      lastItemNumberCol = itemNumberCol;
+      lastItemNumberRow = itemNumberRow;
+
       if (
         typeof itemNumberCol === 'number' &&
         typeof itemNumberRow === 'number'
@@ -256,6 +277,17 @@ export default defineComponent({
         makeComputerMove();
       }
     };
+
+     const undo = () => {
+      if (
+        typeof lastItemNumberCol === 'number' &&
+        typeof lastItemNumberRow === 'number'
+      ) {
+        board[lastItemNumberCol][lastItemNumberRow] = '';
+        isCross.value = !isCross.value;
+      }
+    };
+
 
     const makeComputerMove = () => {
       console.log('ComputerMove');
@@ -449,6 +481,7 @@ export default defineComponent({
       }
     };
 
+   
     const reloadGame = () => {
       winMessage.value = '';
       if(!signToggle.value){
@@ -526,6 +559,7 @@ export default defineComponent({
       signToggleName,
       reloadGame,
       makeMove,
+      undo
     };
   },
 });
@@ -534,7 +568,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 main {
   height: 92vh;
-  box-shadow: 3px 3px 10px grey;
+  //box-shadow: 3px 3px 10px grey;
   margin: 10px 5px;
 
   .container__top {
@@ -542,10 +576,6 @@ main {
   }
 
   .container {
-    display: flex;
-    margin-top: 10px;
-    justify-content: center;
-
     .container__container {
       border-radius: 12px;
       padding: 50px;
@@ -558,7 +588,10 @@ main {
       }
 
       .resetBtn {
-        margin-top: 50px;
+        margin-top: 15px;
+      }
+      .undoBtn {
+        margin-top: 15px;
       }
     }
   }

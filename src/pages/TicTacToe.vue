@@ -22,7 +22,11 @@
           Score: {{ entry.score }}
         </div>
       </div>
-      <h5>Ausgewählter Zug:</h5>
+      <div v-else>
+        <h5 >algorithm is sleeping...</h5>
+        <img src="../assets/bear.webp"/>
+      </div>
+      <!-- <h5>Ausgewählter Zug:</h5>
       <div class="placeholder">
         <div class="container">
           <div class="justify-content-center mt-3">
@@ -156,7 +160,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       </main>
     </q-page-container>
   </q-layout>
@@ -227,12 +231,23 @@ export default defineComponent({
   },
 });
 </script>
+
 <style lang="scss" scoped>
+
+h5{
+margin-top: 160px;
+}
+img {
+  width: 500px;
+  
+}
 .placeholder {
   height: 20vh;
   width: 100%;
   display: flex;
   justify-content: center;
+
+  
 
   .container__top {
     color: white;
@@ -271,10 +286,7 @@ export default defineComponent({
     }
   }
 
-  img {
-    width: 25px;
-    height: 25px;
-  }
+  
 
   @keyframes zoomIn {
     from {
