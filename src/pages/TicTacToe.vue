@@ -206,7 +206,7 @@ export default defineComponent({
     const receiveBoardState = (boardState: boardState) => {
       if (round.value === boardState.round) {
         boardStates.value.push(boardState);
-        console.log(boardStates.value);
+        //console.log(boardStates.value);
       } else {
         boardStates.value = [];
         round.value++;

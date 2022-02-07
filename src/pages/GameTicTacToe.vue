@@ -277,9 +277,6 @@ export default defineComponent({
       if (modiToggle.value === true) {
         makeComputerMove();
       }
-
-      console.log('board.value: ',board.value)
-      console.log('lastMovesArray: ', lastMovesArray.value)
     };
 
     const makeComputerMove = () => {
@@ -333,7 +330,6 @@ export default defineComponent({
       round.value++;
 
       let tempVar = Math.floor(Math.random() * bestMovesArray.length ) 
-      console.log(tempVar)
       move = {j: bestMovesArray[tempVar].j, i: bestMovesArray[tempVar].i};
 
       board.value[move.i][move.j] = ai;
@@ -511,7 +507,6 @@ export default defineComponent({
         modiToggleName.value = 'Mensch';
       } else {
         modiToggleName.value = 'KI';
-         makeComputerMove();
       }
 
       for (let i = 0; i < 3; i++) {
@@ -522,26 +517,30 @@ export default defineComponent({
       
     };
 
-    //unnütz
-    watch(
-      () => board.value,
-      () => {
-        console.log('watcher: ', board.value)
-      }
-    )
 
     watch(
       () => modiToggle.value,
-      () => {        
-        if (modiToggleName.value === 'Mensch') {
-          modiToggleName.value = 'KI';
-          //signToggleName.value = 'O';
-          reloadGame()
-          makeComputerMove();
+      () => {      
+        console.log(modiToggle.value)  
+        if (modiToggle.value === false) {
+          modiToggleName.value = 'Mensch';          
+          reloadGame()          
         } else {
-          modiToggleName.value = 'Mensch';
+          modiToggleName.value = 'KI';
           reloadGame()
-          //signToggleName.value = 'X';
+          if(signToggle.value === true){
+            isCross.value = true
+            signToggleName.value = 'X';
+            ai = 'O';
+            human = 'X';
+          } else {
+            isCross.value = false
+            signToggleName.value = 'O';
+            ai = 'X';
+            human = 'O';
+          }
+          currentPlayer = human          
+          makeComputerMove();
         }
       }
     );
