@@ -286,6 +286,7 @@ export default defineComponent({
       // AI to make its turn
       let bestScore = -Infinity;
       let move: aMove = { i: 0, j: 0};
+      let bestMovesArray = Array<aMove>()
 
       possibleMoves.value = [];
 
@@ -320,15 +321,20 @@ export default defineComponent({
             possibleMoves.value.push({ x: i, y: j, score: scoreCopy });
 
             board.value[i][j] = '';
-            if (score > bestScore) {
+            if (score >= bestScore) {              
               bestScore = score;
               move = {j, i};
+              bestMovesArray.push(move)
             }
           }
         }
       }
 
       round.value++;
+
+      let tempVar = Math.floor(Math.random() * bestMovesArray.length ) 
+      console.log(tempVar)
+      move = {j: bestMovesArray[tempVar].j, i: bestMovesArray[tempVar].i};
 
       board.value[move.i][move.j] = ai;
       isCross.value = !isCross.value;
@@ -436,7 +442,6 @@ export default defineComponent({
 
     const undoMove = () => {      
       if (lastMovesArray.value != undefined) {
-        console.log('undoMove',board.value)
         let tempMove = lastMovesArray.value[lastMovesArray.value.length-1]
         board.value[tempMove.i][tempMove.j] = '';
         lastMovesArray.value?.pop()
@@ -446,7 +451,6 @@ export default defineComponent({
       }
       context.emit('possibleMoves', possibleMoves.value);
       context.emit('board', board);
-      console.log('undoMove',board.value)
     };
 
     const checkWinner = () => {
@@ -498,11 +502,9 @@ export default defineComponent({
       if(signToggle.value === false){
         isCross.value = true;
         signToggleName.value = 'X';
-        console.log('if')
       } else {
         isCross.value = false;
         signToggleName.value = 'O';
-        console.log('else')
       }
 
       if(modiToggle.value === false){
@@ -517,13 +519,6 @@ export default defineComponent({
           board.value[i][j] = '';
         }
       }
-
-      console.log(board)
-      console.log('isCross', isCross.value)
-      console.log('signToggle', signToggle.value)
-      console.log('modiToggle', modiToggle.value)
-      console.log('signToggleName', signToggleName.value)
-      console.log('modiToggleName', modiToggleName.value)
       
     };
 
@@ -548,9 +543,6 @@ export default defineComponent({
           reloadGame()
           //signToggleName.value = 'X';
         }
-        console.log('watch isCross', isCross.value)
-        console.log('watch modiToggle', modiToggle.value)
-        console.log('watch modiToggleName', modiToggleName.value)
       }
     );
 
@@ -568,9 +560,6 @@ export default defineComponent({
           ai = 'X';
           human = 'O';
         }
-        console.log('watch isCross', isCross.value)
-        console.log('watch signToggle', signToggle.value)
-        console.log('watch signToggleName', signToggleName.value)
       }
     );
 
