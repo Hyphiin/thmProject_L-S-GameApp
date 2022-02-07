@@ -1,5 +1,6 @@
 <template>
   <main class="d-flex flex-column justify-content-center align-items-center">
+    <button @click="undoMove">Undo</button>
     <div class="container">
       <div class="justify-content-center mt-3 container__container">
         <div class="container__top">
@@ -45,7 +46,7 @@
                  round 
                  color="secondary" 
                  icon="undo" 
-                @click="undo()"
+                @click="undoMove()"
               >
               <q-tooltip>
                 Zug zurücksetzen
@@ -69,13 +70,13 @@
         <div class="board" id="board">
           <div class="cell" @click="makeMove(0, 0)">
             <img
-              src="../assets/circle-regular.svg"
+              src="../assets/circleWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[0][0] === 'O'"
             />
             <img
-              src="../assets/Feather-core-triangle.svg"
+              src="../assets/crossWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[0][0] === 'X'"
@@ -83,13 +84,13 @@
           </div>
           <div class="cell" @click="makeMove(1, 0)">
             <img
-              src="../assets/circle-regular.svg"
+              src="../assets/circleWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[0][1] === 'O'"
             />
             <img
-              src="../assets/Feather-core-triangle.svg"
+              src="../assets/crossWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[0][1] === 'X'"
@@ -97,13 +98,13 @@
           </div>
           <div class="cell" @click="makeMove(2, 0)">
             <img
-              src="../assets/circle-regular.svg"
+              src="../assets/circleWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[0][2] === 'O'"
             />
             <img
-              src="../assets/Feather-core-triangle.svg"
+              src="../assets/crossWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[0][2] === 'X'"
@@ -111,13 +112,13 @@
           </div>
           <div class="cell" @click="makeMove(0, 1)">
             <img
-              src="../assets/circle-regular.svg"
+              src="../assets/circleWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[1][0] === 'O'"
             />
             <img
-              src="../assets/Feather-core-triangle.svg"
+              src="../assets/crossWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[1][0] === 'X'"
@@ -125,13 +126,13 @@
           </div>
           <div class="cell" @click="makeMove(1, 1)">
             <img
-              src="../assets/circle-regular.svg"
+              src="../assets/circleWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[1][1] === 'O'"
             />
             <img
-              src="../assets/Feather-core-triangle.svg"
+              src="../assets/crossWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[1][1] === 'X'"
@@ -139,13 +140,13 @@
           </div>
           <div class="cell" @click="makeMove(2, 1)">
             <img
-              src="../assets/circle-regular.svg"
+              src="../assets/circleWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[1][2] === 'O'"
             />
             <img
-              src="../assets/Feather-core-triangle.svg"
+              src="../assets/crossWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[1][2] === 'X'"
@@ -153,13 +154,13 @@
           </div>
           <div class="cell" @click="makeMove(0, 2)">
             <img
-              src="../assets/circle-regular.svg"
+              src="../assets/circleWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[2][0] === 'O'"
             />
             <img
-              src="../assets/Feather-core-triangle.svg"
+              src="../assets/crossWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[2][0] === 'X'"
@@ -167,13 +168,13 @@
           </div>
           <div class="cell" @click="makeMove(1, 2)">
             <img
-              src="../assets/circle-regular.svg"
+              src="../assets/circleWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[2][1] === 'O'"
             />
             <img
-              src="../assets/Feather-core-triangle.svg"
+              src="../assets/crossWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[2][1] === 'X'"
@@ -181,13 +182,13 @@
           </div>
           <div class="cell" @click="makeMove(2, 2)">
             <img
-              src="../assets/circle-regular.svg"
+              src="../assets/circleWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-if="board[2][2] === 'O'"
             />
             <img
-              src="../assets/Feather-core-triangle.svg"
+              src="../assets/crossWhite.png"
               alt=""
               class="img-fluid zoomIn"
               v-else-if="board[2][2] === 'X'"
@@ -211,6 +212,7 @@ interface aMove {
 interface boardState {
   state: Array<Array<string>>;
   round: number;
+  score: number;
 }
 
 export default defineComponent({
@@ -220,11 +222,11 @@ export default defineComponent({
     let winMessage = ref<string>('');
     let isCross = ref<boolean>(true);
 
-    let board: Array<Array<string>> = [
+    let board = ref<Array<Array<string>>>([
       ['', '', ''],
       ['', '', ''],
       ['', '', ''],
-    ];
+    ]);
 
     const possibleMoves = ref<aiMove[]>([]);
 
@@ -234,24 +236,23 @@ export default defineComponent({
     let modiToggleName = ref<string>('Mensch');
     let signToggle = ref<boolean>(false);
     let signToggleName = ref<string>('X');
-    let lastItemNumberCol: number;
-    let lastItemNumberRow: number;
 
     let ai = 'X';
     let human = 'O';
     let currentPlayer = human;
 
-    const makeMove = (itemNumberCol: number, itemNumberRow: number) => {
-      lastItemNumberCol = itemNumberCol;
-      lastItemNumberRow = itemNumberRow;
+    const lastAIMove = ref<aMove>();
+    const lastMovesArray = ref<Array<aMove>>([])
 
+    const makeMove = (itemNumberCol: number, itemNumberRow: number) => {   
       if (
         typeof itemNumberCol === 'number' &&
         typeof itemNumberRow === 'number'
       ) {
-        if (board[itemNumberRow][itemNumberCol] === '') {
-          board[itemNumberRow][itemNumberCol] = isCross.value ? 'X' : 'O';
+        if (board.value[itemNumberRow][itemNumberCol] === '') {
+          board.value[itemNumberRow][itemNumberCol] = isCross.value ? 'X' : 'O';
           isCross.value = !isCross.value;
+          lastMovesArray.value.push( { i: itemNumberRow, j: itemNumberCol})
         } else {
           alert('Already Filled!');
         }
@@ -276,48 +277,41 @@ export default defineComponent({
       if (modiToggle.value === true) {
         makeComputerMove();
       }
-    };
 
-     const undo = () => {
-      if (
-        typeof lastItemNumberCol === 'number' &&
-        typeof lastItemNumberRow === 'number'
-      ) {
-        board[lastItemNumberCol][lastItemNumberRow] = '';
-        isCross.value = !isCross.value;
-      }
+      console.log('board.value: ',board.value)
+      console.log('lastMovesArray: ', lastMovesArray.value)
     };
-
 
     const makeComputerMove = () => {
-      console.log('ComputerMove');
       // AI to make its turn
       let bestScore = -Infinity;
-      let move: aMove = { i: 0, j: 0 };
+      let move: aMove = { i: 0, j: 0};
 
       possibleMoves.value = [];
 
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
           // Is the spot available?
-          if (board[i][j] == '') {
-            board[i][j] = ai;
+          if (board.value[i][j] == '') {
+            board.value[i][j] = ai;
 
             // exact copy of the gameboard
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const gameState = JSON.parse(JSON.stringify(board));
+            const gameState = JSON.parse(JSON.stringify(board.value));
             //console.log(gameState)
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            let score: number = minimax(board.value, 0, false, -Infinity, Infinity);
+
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const boardStatus: boardState = {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               state: gameState,
               round: round.value,
+              score: score,
             };
             context.emit('boardState', boardStatus);
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board, 0, false, -Infinity, Infinity);
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             let scoreCopy: number = JSON.parse(JSON.stringify(score));
@@ -325,10 +319,10 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             possibleMoves.value.push({ x: i, y: j, score: scoreCopy });
 
-            board[i][j] = '';
+            board.value[i][j] = '';
             if (score > bestScore) {
               bestScore = score;
-              move = { j, i };
+              move = {j, i};
             }
           }
         }
@@ -336,12 +330,13 @@ export default defineComponent({
 
       round.value++;
 
-      board[move.i][move.j] = ai;
+      board.value[move.i][move.j] = ai;
       isCross.value = !isCross.value;
-
+      lastMovesArray.value.push({ i: move.i, j: move.j})
+      
       //console.log(possibleMoves.value)
       context.emit('possibleMoves', possibleMoves.value);
-      context.emit('board', board);
+      context.emit('board.value', board.value);
 
       let result = checkWinner();
 
@@ -439,36 +434,51 @@ export default defineComponent({
       return a == b && b == c && a != '';
     }
 
+    const undoMove = () => {      
+      if (lastMovesArray.value != undefined) {
+        console.log('undoMove',board.value)
+        let tempMove = lastMovesArray.value[lastMovesArray.value.length-1]
+        board.value[tempMove.i][tempMove.j] = '';
+        lastMovesArray.value?.pop()
+      }
+      if (lastAIMove.value != undefined) {
+        board.value[lastAIMove.value.i][lastAIMove.value.j] = '';
+      }
+      context.emit('possibleMoves', possibleMoves.value);
+      context.emit('board', board);
+      console.log('undoMove',board.value)
+    };
+
     const checkWinner = () => {
       //  checking  winner of the game
       let winner = null;
 
       // horizontal
       for (let i = 0; i < 3; i++) {
-        if (equals3(board[i][0], board[i][1], board[i][2])) {
-          winner = board[i][0];
+        if (equals3(board.value[i][0], board.value[i][1], board.value[i][2])) {
+          winner = board.value[i][0];
         }
       }
 
       // Vertical
       for (let i = 0; i < 3; i++) {
-        if (equals3(board[0][i], board[1][i], board[2][i])) {
-          winner = board[0][i];
+        if (equals3(board.value[0][i], board.value[1][i], board.value[2][i])) {
+          winner = board.value[0][i];
         }
       }
 
       // Diagonal
-      if (equals3(board[0][0], board[1][1], board[2][2])) {
-        winner = board[0][0];
+      if (equals3(board.value[0][0], board.value[1][1], board.value[2][2])) {
+        winner = board.value[0][0];
       }
-      if (equals3(board[2][0], board[1][1], board[0][2])) {
-        winner = board[2][0];
+      if (equals3(board.value[2][0], board.value[1][1], board.value[0][2])) {
+        winner = board.value[2][0];
       }
 
       let openSpots = 0;
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
-          if (board[i][j] == '') {
+          if (board.value[i][j] == '') {
             openSpots++;
           }
         }
@@ -484,35 +494,46 @@ export default defineComponent({
    
     const reloadGame = () => {
       winMessage.value = '';
-      if(!signToggle.value){
+
+      if(signToggle.value === false){
         isCross.value = true;
         signToggleName.value = 'X';
+        console.log('if')
       } else {
         isCross.value = false;
         signToggleName.value = 'O';
+        console.log('else')
       }
-      if(!modiToggle.value){
+
+      if(modiToggle.value === false){
         modiToggleName.value = 'Mensch';
       } else {
         modiToggleName.value = 'KI';
-      }
-
-      if(modiToggleName.value == 'KI'){
          makeComputerMove();
       }
 
-      /*modiToggle.value = false;
-      signToggle.value = false;
-      modiToggleName.value = 'Mensch';
-      signToggleName.value = 'X';
-      */
-
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
-          board[i][j] = '';
+          board.value[i][j] = '';
         }
       }
+
+      console.log(board)
+      console.log('isCross', isCross.value)
+      console.log('signToggle', signToggle.value)
+      console.log('modiToggle', modiToggle.value)
+      console.log('signToggleName', signToggleName.value)
+      console.log('modiToggleName', modiToggleName.value)
+      
     };
+
+    //unnütz
+    watch(
+      () => board.value,
+      () => {
+        console.log('watcher: ', board.value)
+      }
+    )
 
     watch(
       () => modiToggle.value,
@@ -527,7 +548,9 @@ export default defineComponent({
           reloadGame()
           //signToggleName.value = 'X';
         }
-        console.log(modiToggle.value, modiToggleName.value);
+        console.log('watch isCross', isCross.value)
+        console.log('watch modiToggle', modiToggle.value)
+        console.log('watch modiToggleName', modiToggleName.value)
       }
     );
 
@@ -545,7 +568,9 @@ export default defineComponent({
           ai = 'X';
           human = 'O';
         }
-        console.log(signToggle.value, signToggleName.value);
+        console.log('watch isCross', isCross.value)
+        console.log('watch signToggle', signToggle.value)
+        console.log('watch signToggleName', signToggleName.value)
       }
     );
 
@@ -559,7 +584,7 @@ export default defineComponent({
       signToggleName,
       reloadGame,
       makeMove,
-      undo
+      undoMove
     };
   },
 });
@@ -567,8 +592,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 main {
-  height: 92vh;
-  //box-shadow: 3px 3px 10px grey;
   margin: 10px 5px;
 
   .container__top {
@@ -576,6 +599,11 @@ main {
   }
 
   .container {
+    display: flex;
+    margin-top: 10px;
+    margin-left: 10px;
+    justify-content: flex-start;
+
     .container__container {
       border-radius: 12px;
       padding: 50px;
@@ -619,7 +647,7 @@ main {
     }
   }
 
-  .headline{
+  .headline {
     color: #2074d4;
   }
 
