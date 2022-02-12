@@ -20,6 +20,7 @@
               <q-toggle
                 class="toggle"
                 :label="`${signToggleName}`"
+                :disable="modiToggle"
                 color="blue"
                 size="xl"
                 checked-icon="radio_button_unchecked"
@@ -318,10 +319,18 @@ export default defineComponent({
             possibleMoves.value.push({ x: i, y: j, score: scoreCopy });
 
             board.value[i][j] = '';
-            if (score >= bestScore) {              
-              bestScore = score;
-              move = {j, i};
-              bestMovesArray.push(move)
+            if (score >= bestScore) {   
+              // console.log('bestScore:', score)           
+              if (score == bestScore){                
+                move = {j, i};
+                bestMovesArray.push(move)
+              } else if (score > bestScore){
+                bestScore = score;
+                move = {j, i};
+                bestMovesArray = []    
+                bestMovesArray.push(move)
+              }
+              // console.log('bestScoreArray:', bestMovesArray) 
             }
           }
         }
@@ -355,6 +364,8 @@ export default defineComponent({
       } else {
         currentPlayer = human;
       }
+
+      console.log(board.value)
     };
 
     const minimax = (
@@ -493,26 +504,29 @@ export default defineComponent({
 
    
     const reloadGame = () => {
+      console.log('modiToggle: ', modiToggle.value)  
+      console.log('signToggle: ', signToggle.value)  
       winMessage.value = '';
-
-      if(signToggle.value === false){
-        isCross.value = true;
-        signToggleName.value = 'X';
-      } else {
-        isCross.value = false;
-        signToggleName.value = 'O';
-      }
-
-      if(modiToggle.value === false){
-        modiToggleName.value = 'Mensch';
-      } else {
-        modiToggleName.value = 'KI';
-      }
-
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
           board.value[i][j] = '';
         }
+      }
+
+      if(signToggle.value === false){
+        isCross.value = true;
+      } else {
+        isCross.value = false;       
+      }      
+
+      if(modiToggle.value === false){
+          modiToggleName.value = 'Mensch';         
+      } else {
+        modiToggleName.value = 'KI'; 
+        signToggle.value = true;
+        
+        makeComputerMove()      
+        isCross.value = false;   
       }
       
     };
@@ -521,26 +535,19 @@ export default defineComponent({
     watch(
       () => modiToggle.value,
       () => {      
-        console.log(modiToggle.value)  
+        console.log('modiToggle: ', modiToggle.value)  
+        console.log('signToggle: ', signToggle.value)  
         if (modiToggle.value === false) {
           modiToggleName.value = 'Mensch';          
           reloadGame()          
         } else {
-          modiToggleName.value = 'KI';
-          reloadGame()
-          if(signToggle.value === true){
-            isCross.value = true
-            signToggleName.value = 'X';
-            ai = 'O';
-            human = 'X';
-          } else {
-            isCross.value = false
-            signToggleName.value = 'O';
-            ai = 'X';
-            human = 'O';
-          }
-          currentPlayer = human          
-          makeComputerMove();
+          modiToggleName.value = 'KI';          
+          signToggle.value === true
+          isCross.value = false
+          signToggleName.value = 'O';
+          ai = 'X';
+          human = 'O';  
+          reloadGame()       
         }
       }
     );
@@ -548,17 +555,18 @@ export default defineComponent({
     watch(
       () => signToggle.value,
       () => {
-        if (signToggleName.value === 'X') {
+        if (signToggle.value === true) {
           signToggleName.value = 'O';
           isCross.value = false
-          ai = 'O';
-          human = 'X';
+          ai = 'X';
+          human = 'O';
         } else {
           signToggleName.value = 'X';
           isCross.value = true
-          ai = 'X';
-          human = 'O';
+          ai = 'O';
+          human = 'X';
         }
+        reloadGame()
       }
     );
 
