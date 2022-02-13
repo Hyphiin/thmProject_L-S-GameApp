@@ -134,6 +134,7 @@
         </div>
       </div>
     </div>
+    <div class="scorefield">Score: {{ score }}</div>
   </main>
 </template>
 
@@ -148,6 +149,10 @@ export default defineComponent({
       type: Array,
       required: true,
     },
+    score: {
+      type: Number,
+      required: true,
+    }
   },
   setup(props) {
     let board = toRef(props, 'currentBoard');

@@ -1,6 +1,5 @@
 <template>
   <main class="d-flex flex-column justify-content-center align-items-center">
-    <button @click="undoMove">Undo</button>
     <div class="container">
       <div class="justify-content-center mt-3 container__container">
         <div class="container__top">
@@ -28,7 +27,7 @@
                 v-model="signToggle"
               />
             </div>
-            <div class="col ">
+            <div class="col">
               <q-btn
                 class="resetBtn"
                 round 
@@ -41,7 +40,7 @@
               </q-tooltip>
             </q-btn>
             </div>
-            <div class="col ">
+            <div class="col">
               <q-btn
                 class="undoBtn"
                  round 
@@ -638,6 +637,7 @@ main {
 
   .col {
     margin: 5px;
+    min-width: 100px;
     .toggle {
       color: #201c24;
     }

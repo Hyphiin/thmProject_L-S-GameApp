@@ -6,162 +6,159 @@
         @board="receiveBoard($event)"
         @boardState="receiveBoardState($event)"
         boardState
-        :board-game="board"
+        :board-game="currentBoard"
       />
     </q-page-container>
     <q-page-container class="tree col text-center">
-      <main class="d-flex flex-column justify-content-center align-items-center">
-      <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5>
-      <div class="possibleMoves" v-if="boardStates.length > 1">
-        <div v-for="(entry, index) in boardStates" :key="index">
-          <view-board :current-board="entry.state" :id="index" />
+      <div class="possibleMoves__container">
+        <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5>
+        <div class="possibleMoves" v-if="boardStates.length > 1">
+          <div v-for="(entry, index) in boardStates" :key="index">
+            <view-board
+              :current-board="entry.state"
+              :id="index"
+              :score="entry.score"
+            />
+          </div>
         </div>
       </div>
-      <div v-if="possibleMoves.length > 1" class="scoreBoard">
-        <div v-for="(entry, index) in possibleMoves" :key="index" class="scorefield">
-          Score: {{ entry.score }}
-        </div>
-      </div>
-      <div v-else>
-        <h5 >algorithm is sleeping...</h5>
-        <img src="../assets/bear.webp"/>
-      </div>
-      <!-- <h5>Ausgewählter Zug:</h5>
-      <div class="placeholder">
-        <div class="container">
-          <div class="justify-content-center mt-3">
-            <div class="board" id="board">
-              <div class="cell">
-                <img
-                  src="../assets/circle-regular.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-if="currentBoard[0][0] === 'O'"
-                />
-                <img
-                  src="../assets/Feather-core-triangle.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-else-if="currentBoard[0][0] === 'X'"
-                />
-              </div>
-              <div class="cell">
-                <img
-                  src="../assets/circle-regular.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-if="currentBoard[0][1] === 'O'"
-                />
-                <img
-                  src="../assets/Feather-core-triangle.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-else-if="currentBoard[0][1] === 'X'"
-                />
-              </div>
-              <div class="cell">
-                <img
-                  src="../assets/circle-regular.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-if="currentBoard[0][2] === 'O'"
-                />
-                <img
-                  src="../assets/Feather-core-triangle.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-else-if="currentBoard[0][2] === 'X'"
-                />
-              </div>
-              <div class="cell">
-                <img
-                  src="../assets/circle-regular.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-if="currentBoard[1][0] === 'O'"
-                />
-                <img
-                  src="../assets/Feather-core-triangle.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-else-if="currentBoard[1][0] === 'X'"
-                />
-              </div>
-              <div class="cell">
-                <img
-                  src="../assets/circle-regular.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-if="currentBoard[1][1] === 'O'"
-                />
-                <img
-                  src="../assets/Feather-core-triangle.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-else-if="currentBoard[1][1] === 'X'"
-                />
-              </div>
-              <div class="cell">
-                <img
-                  src="../assets/circle-regular.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-if="currentBoard[1][2] === 'O'"
-                />
-                <img
-                  src="../assets/Feather-core-triangle.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-else-if="currentBoard[1][2] === 'X'"
-                />
-              </div>
-              <div class="cell">
-                <img
-                  src="../assets/circle-regular.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-if="currentBoard[2][0] === 'O'"
-                />
-                <img
-                  src="../assets/Feather-core-triangle.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-else-if="currentBoard[2][0] === 'X'"
-                />
-              </div>
-              <div class="cell">
-                <img
-                  src="../assets/circle-regular.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-if="currentBoard[2][1] === 'O'"
-                />
-                <img
-                  src="../assets/Feather-core-triangle.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-else-if="currentBoard[2][1] === 'X'"
-                />
-              </div>
-              <div class="cell">
-                <img
-                  src="../assets/circle-regular.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-if="currentBoard[2][2] === 'O'"
-                />
-                <img
-                  src="../assets/Feather-core-triangle.svg"
-                  alt=""
-                  class="img-fluid zoomIn"
-                  v-else-if="currentBoard[2][2] === 'X'"
-                />
+      <div class="chosenMove__container">
+        <h5>Ausgewählter Zug:</h5>
+        <div class="placeholder">
+          <div class="container">
+            <div class="justify-content-center mt-3">
+              <div class="board" id="board">
+                <div class="cell">
+                  <img
+                    src="../assets/circle-regular.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-if="currentBoard[0][0] === 'O'"
+                  />
+                  <img
+                    src="../assets/Feather-core-triangle.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-else-if="currentBoard[0][0] === 'X'"
+                  />
+                </div>
+                <div class="cell">
+                  <img
+                    src="../assets/circle-regular.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-if="currentBoard[0][1] === 'O'"
+                  />
+                  <img
+                    src="../assets/Feather-core-triangle.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-else-if="currentBoard[0][1] === 'X'"
+                  />
+                </div>
+                <div class="cell">
+                  <img
+                    src="../assets/circle-regular.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-if="currentBoard[0][2] === 'O'"
+                  />
+                  <img
+                    src="../assets/Feather-core-triangle.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-else-if="currentBoard[0][2] === 'X'"
+                  />
+                </div>
+                <div class="cell">
+                  <img
+                    src="../assets/circle-regular.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-if="currentBoard[1][0] === 'O'"
+                  />
+                  <img
+                    src="../assets/Feather-core-triangle.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-else-if="currentBoard[1][0] === 'X'"
+                  />
+                </div>
+                <div class="cell">
+                  <img
+                    src="../assets/circle-regular.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-if="currentBoard[1][1] === 'O'"
+                  />
+                  <img
+                    src="../assets/Feather-core-triangle.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-else-if="currentBoard[1][1] === 'X'"
+                  />
+                </div>
+                <div class="cell">
+                  <img
+                    src="../assets/circle-regular.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-if="currentBoard[1][2] === 'O'"
+                  />
+                  <img
+                    src="../assets/Feather-core-triangle.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-else-if="currentBoard[1][2] === 'X'"
+                  />
+                </div>
+                <div class="cell">
+                  <img
+                    src="../assets/circle-regular.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-if="currentBoard[2][0] === 'O'"
+                  />
+                  <img
+                    src="../assets/Feather-core-triangle.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-else-if="currentBoard[2][0] === 'X'"
+                  />
+                </div>
+                <div class="cell">
+                  <img
+                    src="../assets/circle-regular.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-if="currentBoard[2][1] === 'O'"
+                  />
+                  <img
+                    src="../assets/Feather-core-triangle.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-else-if="currentBoard[2][1] === 'X'"
+                  />
+                </div>
+                <div class="cell">
+                  <img
+                    src="../assets/circle-regular.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-if="currentBoard[2][2] === 'O'"
+                  />
+                  <img
+                    src="../assets/Feather-core-triangle.svg"
+                    alt=""
+                    class="img-fluid zoomIn"
+                    v-else-if="currentBoard[2][2] === 'X'"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div> -->
-      </main>
+      </div>
     </q-page-container>
   </q-layout>
 </template>
@@ -199,14 +196,14 @@ export default defineComponent({
     };
 
     const receiveBoard = (board: Array<Array<string>>) => {
-      //console.log(receiveBoard);
       currentBoard.value = board;
+      console.log(currentBoard.value);
     };
 
     const receiveBoardState = (boardState: boardState) => {
       if (round.value === boardState.round) {
         boardStates.value.push(boardState);
-        //console.log(boardStates.value);
+        // console.log(boardStates.value);
       } else {
         boardStates.value = [];
         round.value++;
@@ -231,23 +228,12 @@ export default defineComponent({
   },
 });
 </script>
-
 <style lang="scss" scoped>
-
-h5{
-margin-top: 160px;
-}
-img {
-  width: 500px;
-  
-}
 .placeholder {
   height: 20vh;
   width: 100%;
   display: flex;
   justify-content: center;
-
-  
 
   .container__top {
     color: white;
@@ -255,7 +241,7 @@ img {
 
   .container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
 
     .grid {
       display: grid;
@@ -286,7 +272,10 @@ img {
     }
   }
 
-  
+  img {
+    width: 25px;
+    height: 25px;
+  }
 
   @keyframes zoomIn {
     from {
@@ -414,20 +403,33 @@ img {
     background-color: white;
   }
 }
+
+.possibleMoves__container {
+  display: flex;
+  flex-direction: column;
+  background-color: whitesmoke;
+  border-radius: 12px;
+  padding: 50px;
+  box-shadow: 0px 0px 10px whitesmoke;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  min-height: 30%;
+  min-width: 50%;
+}
+
 .possibleMoves {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
 }
-.scoreBoard {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
 
-  .scorefield {
-    min-width: 50px;
-    margin-right: 20px;
-    color: #201c24;
-  }
+.chosenMove__container {
+  display: flex;
+  flex-direction: column;
+  background-color: whitesmoke;
+  border-radius: 12px;
+  padding: 50px;
+  box-shadow: 0px 0px 10px whitesmoke;
+  min-height: 50%;
 }
 </style>
