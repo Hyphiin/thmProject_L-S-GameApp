@@ -9,7 +9,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/Special',
     component: () => import('layouts/SpecialLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Index copy.vue') }],
+    children: [{ path: '', component: () => import('src/pages/Index2.vue') }],
   },
 
   // Always leave this as last one,
