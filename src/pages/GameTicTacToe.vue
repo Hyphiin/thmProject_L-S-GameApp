@@ -445,14 +445,14 @@ export default defineComponent({
 
     const undoMove = () => {      
       if (lastMovesArray.value != undefined) {
-        if(currentPlayer === human){
+        if(modiToggle.value === true){
           let tempMove = lastMovesArray.value[lastMovesArray.value.length-1]
           board.value[tempMove.i][tempMove.j] = '';
           lastMovesArray.value?.pop()
           tempMove = lastMovesArray.value[lastMovesArray.value.length-1]
           board.value[tempMove.i][tempMove.j] = '';
           lastMovesArray.value?.pop()
-        } else if (currentPlayer === ai){
+        } else{
           let tempMove = lastMovesArray.value[lastMovesArray.value.length-1]
           board.value[tempMove.i][tempMove.j] = '';
           lastMovesArray.value?.pop()
