@@ -197,7 +197,6 @@ export default defineComponent({
 
     const receiveBoard = (board: Array<Array<string>>) => {
       currentBoard.value = board;
-      console.log(currentBoard.value);
     };
 
     const receiveBoardState = (boardState: boardState) => {

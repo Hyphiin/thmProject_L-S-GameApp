@@ -241,7 +241,6 @@ export default defineComponent({
     let human = 'O';
     let currentPlayer = human;
 
-    const lastAIMove = ref<aMove>();
     const lastMovesArray = ref<Array<aMove>>([])
 
     const makeMove = (itemNumberCol: number, itemNumberRow: number) => {   
@@ -363,8 +362,6 @@ export default defineComponent({
       } else {
         currentPlayer = human;
       }
-
-      console.log(board.value)
     };
 
     const minimax = (
@@ -448,12 +445,18 @@ export default defineComponent({
 
     const undoMove = () => {      
       if (lastMovesArray.value != undefined) {
-        let tempMove = lastMovesArray.value[lastMovesArray.value.length-1]
-        board.value[tempMove.i][tempMove.j] = '';
-        lastMovesArray.value?.pop()
-      }
-      if (lastAIMove.value != undefined) {
-        board.value[lastAIMove.value.i][lastAIMove.value.j] = '';
+        if(currentPlayer === human){
+          let tempMove = lastMovesArray.value[lastMovesArray.value.length-1]
+          board.value[tempMove.i][tempMove.j] = '';
+          lastMovesArray.value?.pop()
+          tempMove = lastMovesArray.value[lastMovesArray.value.length-1]
+          board.value[tempMove.i][tempMove.j] = '';
+          lastMovesArray.value?.pop()
+        } else if (currentPlayer === ai){
+          let tempMove = lastMovesArray.value[lastMovesArray.value.length-1]
+          board.value[tempMove.i][tempMove.j] = '';
+          lastMovesArray.value?.pop()
+        }        
       }
       context.emit('possibleMoves', possibleMoves.value);
       context.emit('board', board);
@@ -503,8 +506,6 @@ export default defineComponent({
 
    
     const reloadGame = () => {
-      console.log('modiToggle: ', modiToggle.value)  
-      console.log('signToggle: ', signToggle.value)  
       winMessage.value = '';
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
@@ -533,9 +534,7 @@ export default defineComponent({
 
     watch(
       () => modiToggle.value,
-      () => {      
-        console.log('modiToggle: ', modiToggle.value)  
-        console.log('signToggle: ', signToggle.value)  
+      () => {       
         if (modiToggle.value === false) {
           modiToggleName.value = 'Mensch';          
           reloadGame()          
