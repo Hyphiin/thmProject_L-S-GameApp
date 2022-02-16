@@ -695,7 +695,7 @@
               src="../assets/crossWhite.png"
               alt=""
               class="img-fluid zoomIn"
-              v-else-if="board[2][8] === 'X'"
+              v-else-if="board[8][4] === 'X'"
             />
           </div>
           <div class="cell" @click="makeMove(0, 9)">
@@ -860,7 +860,7 @@ export default defineComponent({
             // exact copy of the gameboard
             board[i][j] = ai;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board, 3, false, -Infinity, Infinity);
+            let score: number = minimax(board, 2, false, -Infinity, Infinity);
 
             board[i][j] = '';
             if (score >= bestScore) {   
@@ -977,8 +977,8 @@ export default defineComponent({
       }
     };
 
-    function equals4(a: string, b: string, c: string, d: string) {
-      return a == b && b == c && c == d && a != '';
+    function equals5(a: string, b: string, c: string, d: string, e: string) {
+      return a == b && b == c && c == d && d == e && a != '';
     }
 
     const checkWinner = () => {
@@ -986,27 +986,51 @@ export default defineComponent({
       let winner = null;
 
       // horizontal
-      for (let i = 0; i < 4; i++) {
-        if (equals4(board[i][0], board[i][1], board[i][2],  board[i][3])) {
+      for (let i = 0; i < 10; i++) {
+        if (equals5(board[i][0], board[i][1], board[i][2],  board[i][3], board[i][4])) {
           winner = board[i][0];
+          console.log(winner, 'horizontal')
         }
       }
 
       // Vertical
-      for (let i = 0; i < 4; i++) {
-        if (equals4(board[0][i], board[1][i], board[2][i], board[3][i])) {
-          winner = board[0][i];
+      for (let j = 0; j < 5; j++) {
+        for (let i = 0; i < 6; i ++) {
+          if (equals5(board[i][j], board[i+1][j], board[i+2][j], board[i+3][j], board[i+4][j])) {
+              winner = board[i][j];
+              console.log(winner, 'vertical')
+            }
         }
       }
-
+    
       // Diagonal
-      if (equals4(board[0][0], board[1][1], board[2][2], board[3][3])) {
-        winner = board[0][0];
+      //left
+      for (let j = 0; j < 5; j++) {
+        if (equals5(board[j][0], board[j+1][1], board[j+2][2], board[j+3][3], board[j+4][4])) {
+          winner = board[j][0];
+          console.log(winner, 'links oben')
+        }
       }
-      if (equals4(board[3][0], board[2][1], board[1][2], board[0][3])) {
-        winner = board[3][0];
+      for (let j = 9; j > 4; j--) {
+        if (equals5(board[j][0], board[j-1][1], board[j-2][2], board[j-3][3], board[j-4][4])) {
+          winner = board[j][9];
+          console.log(winner, 'links unten')
+        }
       }
-
+      //right
+      for (let j = 0; j < 5; j++) {
+        if (equals5(board[4][j], board[3][j+1], board[2][j+2], board[1][j+3], board[0][j+4])) {
+          winner = board[4][j];
+          console.log(winner, 'rechts oben')
+        }
+      }
+      for (let j = 9; j > 5; j--) {
+        if (equals5(board[j][4], board[j-1][3], board[j-2][2], board[j-3][1], board[j-4][0])) {
+          winner = board[j][4];
+          console.log(winner, 'rechts unten')
+        }
+      }
+      
       let openSpots = 0;
       for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 5; j++) {
