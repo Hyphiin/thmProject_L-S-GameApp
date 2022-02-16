@@ -860,7 +860,7 @@ export default defineComponent({
             // exact copy of the gameboard
             board[i][j] = ai;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board, 2, false, -Infinity, Infinity);
+            let score: number = minimax(board, 3, false, -Infinity, Infinity);
 
             board[i][j] = '';
             if (score >= bestScore) {   
@@ -1011,7 +1011,7 @@ export default defineComponent({
           console.log(winner, 'links oben')
         }
       }
-      for (let j = 9; j > 4; j--) {
+      for (let j = 9; j > 3; j--) {
         if (equals5(board[j][0], board[j-1][1], board[j-2][2], board[j-3][3], board[j-4][4])) {
           winner = board[j][9];
           console.log(winner, 'links unten')
