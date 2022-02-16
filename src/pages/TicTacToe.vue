@@ -30,13 +30,13 @@
               <div class="board" id="board">
                 <div class="cell">
                   <img
-                    src="../assets/circle-regular.svg"
+                    src="../assets/circleWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-if="currentBoard[0][0] === 'O'"
                   />
                   <img
-                    src="../assets/Feather-core-triangle.svg"
+                    src="../assets/crossWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-else-if="currentBoard[0][0] === 'X'"
@@ -44,13 +44,13 @@
                 </div>
                 <div class="cell">
                   <img
-                    src="../assets/circle-regular.svg"
+                    src="../assets/circleWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-if="currentBoard[0][1] === 'O'"
                   />
                   <img
-                    src="../assets/Feather-core-triangle.svg"
+                    src="../assets/crossWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-else-if="currentBoard[0][1] === 'X'"
@@ -58,13 +58,13 @@
                 </div>
                 <div class="cell">
                   <img
-                    src="../assets/circle-regular.svg"
+                    src="../assets/circleWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-if="currentBoard[0][2] === 'O'"
                   />
                   <img
-                    src="../assets/Feather-core-triangle.svg"
+                    src="../assets/crossWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-else-if="currentBoard[0][2] === 'X'"
@@ -72,13 +72,13 @@
                 </div>
                 <div class="cell">
                   <img
-                    src="../assets/circle-regular.svg"
+                    src="../assets/circleWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-if="currentBoard[1][0] === 'O'"
                   />
                   <img
-                    src="../assets/Feather-core-triangle.svg"
+                    src="../assets/crossWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-else-if="currentBoard[1][0] === 'X'"
@@ -86,13 +86,13 @@
                 </div>
                 <div class="cell">
                   <img
-                    src="../assets/circle-regular.svg"
+                    src="../assets/circleWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-if="currentBoard[1][1] === 'O'"
                   />
                   <img
-                    src="../assets/Feather-core-triangle.svg"
+                    src="../assets/crossWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-else-if="currentBoard[1][1] === 'X'"
@@ -100,13 +100,13 @@
                 </div>
                 <div class="cell">
                   <img
-                    src="../assets/circle-regular.svg"
+                    src="../assets/circleWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-if="currentBoard[1][2] === 'O'"
                   />
                   <img
-                    src="../assets/Feather-core-triangle.svg"
+                    src="../assets/crossWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-else-if="currentBoard[1][2] === 'X'"
@@ -114,13 +114,13 @@
                 </div>
                 <div class="cell">
                   <img
-                    src="../assets/circle-regular.svg"
+                    src="../assets/circleWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-if="currentBoard[2][0] === 'O'"
                   />
                   <img
-                    src="../assets/Feather-core-triangle.svg"
+                    src="../assets/crossWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-else-if="currentBoard[2][0] === 'X'"
@@ -128,13 +128,13 @@
                 </div>
                 <div class="cell">
                   <img
-                    src="../assets/circle-regular.svg"
+                    src="../assets/circleWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-if="currentBoard[2][1] === 'O'"
                   />
                   <img
-                    src="../assets/Feather-core-triangle.svg"
+                    src="../assets/crossWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-else-if="currentBoard[2][1] === 'X'"
@@ -142,13 +142,13 @@
                 </div>
                 <div class="cell">
                   <img
-                    src="../assets/circle-regular.svg"
+                    src="../assets/circleWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-if="currentBoard[2][2] === 'O'"
                   />
                   <img
-                    src="../assets/Feather-core-triangle.svg"
+                    src="../assets/crossWhite.png"
                     alt=""
                     class="img-fluid zoomIn"
                     v-else-if="currentBoard[2][2] === 'X'"
@@ -420,6 +420,7 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  flex-wrap: wrap;
 }
 
 .chosenMove__container {

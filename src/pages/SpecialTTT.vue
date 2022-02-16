@@ -9,7 +9,7 @@
         :board-game="currentBoard"
       />
     </q-page-container>
-    <!-- <q-page-container class="tree col text-center">
+    <q-page-container class="tree col text-center">
       <div class="possibleMoves__container">
         <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5>
         <div class="possibleMoves" v-if="boardStates.length > 1">
@@ -159,7 +159,7 @@
           </div>
         </div>
       </div>
-    </q-page-container> -->
+    </q-page-container>
   </q-layout>
 </template>
 

@@ -169,6 +169,7 @@ main {
   //height: 10vh;
   //width: 10vh;
   margin-left: 5px;
+  margin-bottom: 10px;
   border: solid 1px #201c24;
   border-radius: 12px;
   padding: 4px;

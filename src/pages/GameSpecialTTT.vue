@@ -1158,12 +1158,6 @@ main {
         height: 150px;
       }
 
-      .resetBtn {
-        margin-top: 15px;
-      }
-      .undoBtn {
-        margin-top: 15px;
-      }
     }
   }
 
@@ -1184,8 +1178,12 @@ main {
   }
 
   .col {
+    display:flex;
+    justify-content: space-evenly;
+    align-items: center;
+
     margin: 5px;
-    min-width: 40px;
+    min-width: 70px;
     .toggle {
       color: #201c24;
     }

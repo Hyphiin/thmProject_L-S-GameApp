@@ -53,6 +53,17 @@
               </q-tooltip>
             </q-btn>
             </div>
+            <div class="col">
+              <q-btn-toggle
+                v-model="searchDepth"
+                toggle-color="primary"
+                :options="[
+                  {label: '1', value: 1},
+                  {label: '2', value: 2},
+                  {label: '3', value: 3}
+                  ]"
+               />
+            </div>
           </div>
         </div>
         <div class="text-message text-center">
@@ -241,6 +252,8 @@ export default defineComponent({
     let human = 'O';
     let currentPlayer = human;
 
+    let searchDepth = ref<number>(1);
+
     const lastMovesArray = ref<Array<aMove>>([])
 
     const makeMove = (itemNumberCol: number, itemNumberRow: number) => {   
@@ -299,7 +312,7 @@ export default defineComponent({
             //console.log(gameState)
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board.value, 3, false, -Infinity, Infinity);
+            let score: number = minimax(board.value, searchDepth.value, false, -Infinity, Infinity);
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const boardStatus: boardState = {
@@ -345,7 +358,7 @@ export default defineComponent({
       
       //console.log(possibleMoves.value)
       context.emit('possibleMoves', possibleMoves.value);
-      context.emit('board.value', board.value);
+      context.emit('board', board.value);
 
       let result = checkWinner();
 
@@ -580,6 +593,7 @@ export default defineComponent({
       modiToggleName,
       signToggle,
       signToggleName,
+      searchDepth,
       reloadGame,
       makeMove,
       undoMove
@@ -612,13 +626,6 @@ main {
       .box {
         height: 150px;
       }
-
-      .resetBtn {
-        margin-top: 15px;
-      }
-      .undoBtn {
-        margin-top: 15px;
-      }
     }
   }
 
@@ -639,8 +646,12 @@ main {
   }
 
   .col {
+    display:flex;
+    justify-content: space-evenly;
+    align-items: center;
+    
     margin: 5px;
-    min-width: 100px;
+    min-width: 70px;
     .toggle {
       color: #201c24;
     }
