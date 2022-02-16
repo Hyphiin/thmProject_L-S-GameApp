@@ -40,6 +40,17 @@
               </q-tooltip>
             </q-btn>
             </div>
+            <div class="q-pa-md">
+              <q-btn-toggle
+                v-model="searchDepth"
+                toggle-color="primary"
+                :options="[
+                  {label: '1', value: 1},
+                  {label: '2', value: 2},
+                  {label: '3', value: 3}
+                  ]"
+               />
+            </div>
             <!-- <div class="col">
               <q-btn
                 class="undoBtn"
@@ -813,6 +824,7 @@ export default defineComponent({
     let human = 'O';
     let currentPlayer = human;
 
+    let searchDepth = ref<number>(1);
 
     const makeMove = (itemNumberCol: number, itemNumberRow: number) => {   
       if (
@@ -860,7 +872,7 @@ export default defineComponent({
             // exact copy of the gameboard
             board[i][j] = ai;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board, 3, false, -Infinity, Infinity);
+            let score: number = minimax(board, searchDepth.value, false, -Infinity, Infinity);
 
             board[i][j] = '';
             if (score >= bestScore) {   
@@ -989,7 +1001,6 @@ export default defineComponent({
       for (let i = 0; i < 10; i++) {
         if (equals5(board[i][0], board[i][1], board[i][2],  board[i][3], board[i][4])) {
           winner = board[i][0];
-          console.log(winner, 'horizontal')
         }
       }
 
@@ -998,7 +1009,6 @@ export default defineComponent({
         for (let i = 0; i < 6; i ++) {
           if (equals5(board[i][j], board[i+1][j], board[i+2][j], board[i+3][j], board[i+4][j])) {
               winner = board[i][j];
-              console.log(winner, 'vertical')
             }
         }
       }
@@ -1008,26 +1018,22 @@ export default defineComponent({
       for (let j = 0; j < 5; j++) {
         if (equals5(board[j][0], board[j+1][1], board[j+2][2], board[j+3][3], board[j+4][4])) {
           winner = board[j][0];
-          console.log(winner, 'links oben')
         }
       }
       for (let j = 9; j > 3; j--) {
         if (equals5(board[j][0], board[j-1][1], board[j-2][2], board[j-3][3], board[j-4][4])) {
           winner = board[j][9];
-          console.log(winner, 'links unten')
         }
       }
       //right
       for (let j = 0; j < 5; j++) {
-        if (equals5(board[4][j], board[3][j+1], board[2][j+2], board[1][j+3], board[0][j+4])) {
+        if (equals5(board[j][4], board[j+1][3], board[j+2][2], board[j+3][1], board[j+4][0])) {
           winner = board[4][j];
-          console.log(winner, 'rechts oben')
         }
       }
       for (let j = 9; j > 5; j--) {
         if (equals5(board[j][4], board[j-1][3], board[j-2][2], board[j-3][1], board[j-4][0])) {
           winner = board[j][4];
-          console.log(winner, 'rechts unten')
         }
       }
       
@@ -1119,6 +1125,7 @@ export default defineComponent({
       modiToggleName,
       signToggle,
       signToggleName,
+      searchDepth,
       reloadGame,
       makeMove
     };
