@@ -1,70 +1,9 @@
 <template>
-  <main class="d-flex flex-column justify-content-center align-items-center">
+  <main
+    class="d-flex flex-column justify-content-center align-items-center"
+  >
     <div class="container">
-      <div class="justify-content-center mt-3 container__container">
-        <div class="container__top">
-          <div class="row justify-content-center mt-3">
-            <div class="col">
-              <q-toggle
-                class="toggle"
-                :label="`${modiToggleName}`"
-                color="blue"
-                size="xl"
-                checked-icon="computer"
-                unchecked-icon="person"
-                v-model="modiToggle"
-              />
-            </div>
-            <div class="col">
-              <q-toggle
-                class="toggle"
-                :label="`${signToggleName}`"
-                :disable="modiToggle"
-                color="blue"
-                size="xl"
-                checked-icon="radio_button_unchecked"
-                unchecked-icon="close"
-                v-model="signToggle"
-              />
-            </div>
-            <div class="col">
-              <q-btn
-                class="resetBtn"
-                round 
-                color="primary" 
-                icon="restart_alt"
-                @click="reloadGame()"
-              >
-               <q-tooltip>
-                Neues Spiel
-              </q-tooltip>
-            </q-btn>
-            </div>
-            <div class="q-pa-md">
-              <q-btn-toggle
-                v-model="searchDepth"
-                toggle-color="primary"
-                :options="[
-                  {label: '1', value: 1},
-                  {label: '2', value: 2},
-                  {label: '3', value: 3}
-                  ]"
-               />
-            </div>
-          </div>
-        </div>
-        <div class="text-message text-center">
-          <div v-if="!winMessage">
-            <h4 class="headline" v-if="isCross">X ist dran!</h4>
-            <h4 class="headline" v-if="!isCross">O ist dran!</h4>
-          </div>
-          <div v-else>
-            <h4 class="text-warning">
-              {{ winMessage.toUpperCase() }}
-            </h4>
-          </div>
-        </div>
-
+      <div class="justify-content-center mt-3">
         <div class="board" id="board">
           <div class="cell" @click="makeMove(0, 0)">
             <img
@@ -766,391 +705,34 @@
               v-else-if="board[9][4] === 'X'"
             />
           </div>
-        </div>        
+        </div>  
       </div>
     </div>
+    <div class="scorefield">Score: {{ score }}</div>
   </main>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
-import { aiMove } from './aiMove';
-
-interface aMove {
-  i: number;
-  j: number;
-}
-
-interface boardState {
-  state: Array<Array<string>>;
-  round: number;
-  score: number;
-}
+import { defineComponent, toRef } from 'vue';
 
 export default defineComponent({
-  name: 'GameSpecialTTT',
+  name: 'viewBoard',
   components: {},
-  setup(props, context) {
-    let winMessage = ref<string>('');
-    let isCross = ref<boolean>(true);
-
-    let board : Array<Array<string>> = [
-      ['', '', '', '', ''],
-      ['', '', '', '', ''],
-      ['', '', '', '', ''],
-      ['', '', '', '', ''],
-      ['', '', '', '', ''],
-      ['', '', '', '', ''],
-      ['', '', '', '', ''],
-      ['', '', '', '', ''],
-      ['', '', '', '', ''],
-      ['', '', '', '', '']
-    ];
-
-    console.log('hallo');
-    context.emit('hallo', 1);
-
-    const possibleMoves = ref<aiMove[]>([]);
-
-    const round = ref<number>(0);
-
-    let modiToggle = ref<boolean>(false);
-    let modiToggleName = ref<string>('Mensch');
-    let signToggle = ref<boolean>(false);
-    let signToggleName = ref<string>('X');
-
-    let ai = 'X';
-    let human = 'O';
-    let currentPlayer = human;
-
-    let searchDepth = ref<number>(1);
-
-    const makeMove = (itemNumberCol: number, itemNumberRow: number) => {   
-      if (
-        typeof itemNumberCol === 'number' &&
-        typeof itemNumberRow === 'number'
-      ) {
-        if (board[itemNumberRow][itemNumberCol] === '') {
-          board[itemNumberRow][itemNumberCol] = isCross.value ? 'X' : 'O';
-          isCross.value = !isCross.value;
-        } else {
-          alert('Already Filled!');
-        }
-
-        let result = checkWinner();
-
-        if (result === 'X' || result === 'O') {
-          console.log('Sieger ist: ', result);
-          winMessage.value = `${result} hat gewonnen!`;
-        } else if (result === 'tie') {
-          console.log('Unentschieden!');
-          winMessage.value = 'Unentschieden!';
-        }
-
-        if (currentPlayer === human) {
-          currentPlayer = ai;
-        } else {
-          currentPlayer = human;
-        }
-      }
-
-      if (modiToggle.value === true) {
-        makeComputerMove();
-      }
-    };
-
-    const makeComputerMove = () => {
-      // AI to make its turn
-      let bestScore = -1000;
-      let move: aMove = { i: 0, j: 0};
-
-      possibleMoves.value = [];
-
-      for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 5; j++) {
-          // Is the spot available?
-          if (board[i][j] == '') {
-            // exact copy of the gameboard
-            board[i][j] = ai;
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const gameState = JSON.parse(JSON.stringify(board));
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board, searchDepth.value, false, -Infinity, Infinity);
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const boardStatus: boardState = {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              state: gameState,
-              round: round.value,
-              score: score,
-            };
-            context.emit('boardState', boardStatus);
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let scoreCopy: number = JSON.parse(JSON.stringify(score));
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            possibleMoves.value.push({ x: i, y: j, score: scoreCopy });
-
-            board[i][j] = '';
-            if (score >= bestScore) {   
-              // console.log('bestScore:', score)           
-              if (score == bestScore){                
-                move = {j, i};
-              } else if (score > bestScore){
-                bestScore = score;
-                move = {j, i};
-              }
-            }
-          }
-        }
-      }
-
-      round.value++;
-
-      board[move.i][move.j] = ai;
-      isCross.value = !isCross.value;
-
-      context.emit('possibleMoves', possibleMoves.value);
-      context.emit('board', board);
-      
-      let result = checkWinner();
-
-      if (result === 'X' || result === 'O') {
-        console.log('Sieger ist: ', result);
-        winMessage.value = `${result} hat gewonnen!`;
-      } else if (result === 'tie') {
-        console.log('Unentschieden!');
-        winMessage.value = 'Unentschieden!';
-      }
-
-      if (currentPlayer === human) {
-        currentPlayer = ai;
-      } else {
-        currentPlayer = human;
-      }
-    };
-
-    const minimax = (
-      board: Array<Array<string>>,
-      depth: number,
-      isMaximizing: boolean,
-      alpha: number,
-      beta: number
-    ) => {
-      let result = checkWinner();
-      if (result !== null) {
-        switch (result) {
-          case 'X': {
-            return 10;
-          }
-          case 'O': {
-            return -10;
-          }
-          case 'tie': {
-            return 0;
-          }
-        }
-      }
-
-      if(depth === 0) {
-        return 0;
-      }
-
-      if (isMaximizing) {
-        let bestScore = -1000;
-        for (let i = 0; i < 10; i++) {
-          for (let j = 0; j < 5; j++) {
-            // Is the spot available?
-            if (board[i][j] == '' && typeof depth === 'number') {
-              board[i][j] = ai;
-
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(board, depth - 1, false, alpha, beta);
-              
-              board[i][j] = '';
-              
-              bestScore = Math.max(score, bestScore);
-              // check for alpha
-              alpha = Math.max(alpha, bestScore);
-              // Check for alpha beta pruning
-              if (beta <= alpha) {
-               
-                break;
-              }
-            }
-          }
-        }
-        return bestScore;
-      } else {
-        let bestScore = 1000;
-        for (let i = 0; i < 10; i++) {
-          for (let j = 0; j < 5; j++) {
-            // Is the spot available?
-            if (board[i][j] == '' && typeof depth === 'number') {
-              board[i][j] = human;
-
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(board, depth - 1, true, alpha, beta);
-              
-              board[i][j] = '';
-              
-              bestScore = Math.min(score, bestScore);
-              // check for beta
-              beta = Math.min(beta, bestScore);
-              // Check for alpha beta pruning
-              if (beta <= alpha) {
-                
-                break;
-              }
-            }
-          }
-        }
-        return bestScore;
-      }
-    };
-
-    function equals5(a: string, b: string, c: string, d: string, e: string) {
-      return a == b && b == c && c == d && d == e && a != '';
+  props: {
+    currentBoard: {
+      type: Array,
+      required: true,
+    },
+    score: {
+      type: Number,
+      required: true,
     }
-
-    const checkWinner = () => {
-      //  checking  winner of the game
-      let winner = null;
-
-      // horizontal
-      for (let i = 0; i < 10; i++) {
-        if (equals5(board[i][0], board[i][1], board[i][2],  board[i][3], board[i][4])) {
-          winner = board[i][0];
-        }
-      }
-
-      // Vertical
-      for (let j = 0; j < 5; j++) {
-        for (let i = 0; i < 6; i ++) {
-          if (equals5(board[i][j], board[i+1][j], board[i+2][j], board[i+3][j], board[i+4][j])) {
-              winner = board[i][j];
-            }
-        }
-      }
-    
-      // Diagonal
-      //left
-      for (let j = 0; j < 5; j++) {
-        if (equals5(board[j][0], board[j+1][1], board[j+2][2], board[j+3][3], board[j+4][4])) {
-          winner = board[j][0];
-        }
-      }
-      for (let j = 9; j > 3; j--) {
-        if (equals5(board[j][0], board[j-1][1], board[j-2][2], board[j-3][3], board[j-4][4])) {
-          winner = board[j][9];
-        }
-      }
-      //right
-      for (let j = 0; j < 5; j++) {
-        if (equals5(board[j][4], board[j+1][3], board[j+2][2], board[j+3][1], board[j+4][0])) {
-          winner = board[4][j];
-        }
-      }
-      for (let j = 9; j > 5; j--) {
-        if (equals5(board[j][4], board[j-1][3], board[j-2][2], board[j-3][1], board[j-4][0])) {
-          winner = board[j][4];
-        }
-      }
-      
-      let openSpots = 0;
-      for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 5; j++) {
-          if (board[i][j] == '') {
-            openSpots++;
-          }
-        }
-      }
-
-      if (winner === null && openSpots === 0) {
-        return 'tie';
-      } else {
-        return winner;
-      }
-    };
-
-   
-    const reloadGame = () => {  
-      winMessage.value = '';
-      for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 5; j++) {
-          board[i][j] = '';
-        }
-      }
-
-      if(signToggle.value === false){
-        isCross.value = true;
-      } else {
-        isCross.value = false;       
-      }      
-
-      if(modiToggle.value === false){
-          modiToggleName.value = 'Mensch';         
-      } else {
-        modiToggleName.value = 'KI'; 
-        signToggle.value = true;
-        
-        makeComputerMove()      
-        isCross.value = false;   
-      }
-      
-    };
-
-
-    watch(
-      () => modiToggle.value,
-      () => {      
-        if (modiToggle.value === false) {
-          modiToggleName.value = 'Mensch';          
-          reloadGame()          
-        } else {
-          modiToggleName.value = 'KI';          
-          signToggle.value === true
-          isCross.value = false
-          signToggleName.value = 'O';
-          ai = 'X';
-          human = 'O';  
-          reloadGame()       
-        }
-      }
-    );
-
-    watch(
-      () => signToggle.value,
-      () => {
-        if (signToggle.value === true) {
-          signToggleName.value = 'O';
-          isCross.value = false
-          ai = 'X';
-          human = 'O';
-        } else {
-          signToggleName.value = 'X';
-          isCross.value = true
-          ai = 'O';
-          human = 'X';
-        }
-        reloadGame()
-      }
-    );
+  },
+  setup(props) {
+    let board = toRef(props, 'currentBoard');
 
     return {
       board,
-      winMessage,
-      isCross,
-      modiToggle,
-      modiToggleName,
-      signToggle,
-      signToggleName,
-      searchDepth,
-      reloadGame,
-      makeMove
     };
   },
 });
@@ -1158,7 +740,13 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 main {
-  margin: 10px 5px;
+  //height: 10vh;
+  //width: 10vh;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  border: solid 1px #201c24;
+  border-radius: 12px;
+  padding: 4px;
 
   .container__top {
     color: white;
@@ -1166,27 +754,40 @@ main {
 
   .container {
     display: flex;
-    margin-top: 10px;
-    margin-left: 10px;
-    justify-content: flex-start;
+    justify-content: center;
 
-    .container__container {
-      border-radius: 12px;
-      padding: 50px;
-      .text-message {
-        margin-bottom: 50px;
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-gap: 0px;
+      width: 10px;
+
+      .grid-div {
+        border: 3px solid white;
       }
 
-      .box {
-        height: 150px;
+      :nth-child(3n) {
+        border-right: none;
       }
+      .grid-div:nth-child(-n + 3) {
+        border-top: none;
+      }
+      .grid-div:nth-child(3n - 2) {
+        border-left: none;
+      }
+      .grid-div:nth-child(n + 7) {
+        border-bottom: none;
+      }
+    }
 
+    .box {
+      height: 15px;
     }
   }
 
   img {
-    width: 20px;
-    height: 20px;
+    width: 8px;
+    height: 8px;
   }
 
   @keyframes zoomIn {
@@ -1198,22 +799,6 @@ main {
     50% {
       opacity: 1;
     }
-  }
-
-  .col {
-    display:flex;
-    justify-content: space-evenly;
-    align-items: center;
-
-    margin: 5px;
-    min-width: 70px;
-    .toggle {
-      color: #201c24;
-    }
-  }
-
-  .headline {
-    color: #2074d4;
   }
 
   .zoomIn {
@@ -1228,12 +813,11 @@ main {
     justify-items: center;
     align-items: center;
     grid-template-columns: repeat(5, auto);
-    border-radius: 8px;
   }
 
   .cell {
-    width: 40px;
-    height: 40px;
+    width: 25px;
+    height: 25px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1292,8 +876,8 @@ main {
   .board.x .cell:not(.x):not(.circle):hover::after {
     content: '';
     position: absolute;
-    width: calc(calc(var(40px) * 0.9) * 0.15);
-    height: calc(var(40px) * 0.9);
+    width: calc(calc(var(10px) * 0.9) * 0.15);
+    height: calc(var(10px) * 0.9);
   }
 
   .cell.x::before,
@@ -1317,14 +901,14 @@ main {
 
   .cell.circle::before,
   .board.circle .cell:not(.x):not(.circle):hover::before {
-    width: calc(var(40px) * 0.9);
-    height: calc(var(40px) * 0.9);
+    width: calc(var(10px) * 0.9);
+    height: calc(var(10px) * 0.9);
   }
 
   .cell.circle::after,
   .board.circle .cell:not(.x):not(.circle):hover::after {
-    width: calc(calc(var(40px) * 0.9) * 0.7);
-    height: calc(calc(var(40px) * 0.9) * 0.7);
+    width: calc(calc(var(10px) * 0.9) * 0.7);
+    height: calc(calc(var(10px) * 0.9) * 0.7);
     background-color: white;
   }
 }

@@ -5,6 +5,7 @@
         @possible-moves="receivePossibleMoves($event)"
         @board="receiveBoard($event)"
         @boardState="receiveBoardState($event)"
+        @hallo="testFunction($event)"
         boardState
         :board-game="currentBoard"
       />
@@ -14,148 +15,11 @@
         <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5>
         <div class="possibleMoves" v-if="boardStates.length > 1">
           <div v-for="(entry, index) in boardStates" :key="index">
-            <view-board
+            <view-board-large
               :current-board="entry.state"
               :id="index"
               :score="entry.score"
             />
-          </div>
-        </div>
-      </div>
-      <div class="chosenMove__container">
-        <h5>Ausgewählter Zug:</h5>
-        <div class="placeholder">
-          <div class="container">
-            <div class="justify-content-center mt-3">
-              <div class="board" id="board">
-                <div class="cell">
-                  <img
-                    src="../assets/circle-regular.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[0][0] === 'O'"
-                  />
-                  <img
-                    src="../assets/Feather-core-triangle.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[0][0] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circle-regular.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[0][1] === 'O'"
-                  />
-                  <img
-                    src="../assets/Feather-core-triangle.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[0][1] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circle-regular.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[0][2] === 'O'"
-                  />
-                  <img
-                    src="../assets/Feather-core-triangle.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[0][2] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circle-regular.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[1][0] === 'O'"
-                  />
-                  <img
-                    src="../assets/Feather-core-triangle.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[1][0] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circle-regular.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[1][1] === 'O'"
-                  />
-                  <img
-                    src="../assets/Feather-core-triangle.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[1][1] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circle-regular.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[1][2] === 'O'"
-                  />
-                  <img
-                    src="../assets/Feather-core-triangle.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[1][2] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circle-regular.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[2][0] === 'O'"
-                  />
-                  <img
-                    src="../assets/Feather-core-triangle.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[2][0] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circle-regular.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[2][1] === 'O'"
-                  />
-                  <img
-                    src="../assets/Feather-core-triangle.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[2][1] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circle-regular.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[2][2] === 'O'"
-                  />
-                  <img
-                    src="../assets/Feather-core-triangle.svg"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[2][2] === 'X'"
-                  />
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -166,7 +30,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import GameSpecialTTT from './GameSpecialTTT.vue';
-// import viewBoard from './viewBoard.vue';
+import viewBoardLarge from './viewBoardLarge.vue';
 import { aiMove } from './aiMove';
 
 interface boardState {
@@ -177,7 +41,7 @@ interface boardState {
 
 export default defineComponent({
   name: 'SpecialTTT',
-  components: { GameSpecialTTT },
+  components: { GameSpecialTTT, viewBoardLarge },
   setup() {
     let board: Array<Array<string>> = [
       ['', '', ''],
@@ -192,15 +56,18 @@ export default defineComponent({
     const round = ref<number>(0);
 
     const receivePossibleMoves = (gameState: aiMove[]) => {
+      console.log('Test', gameState)
       possibleMoves.value = gameState;
     };
 
     const receiveBoard = (board: Array<Array<string>>) => {
+      console.log(board)
       currentBoard.value = board;
       console.log(currentBoard.value);
     };
 
     const receiveBoardState = (boardState: boardState) => {
+      console.log(boardState)
       if (round.value === boardState.round) {
         boardStates.value.push(boardState);
         // console.log(boardStates.value);
@@ -215,6 +82,10 @@ export default defineComponent({
       return boardStates;
     });
 
+    const testFunction = (string: string) => {
+      console.log(string)
+    }
+
     return {
       board,
       possibleMoves,
@@ -224,6 +95,7 @@ export default defineComponent({
       receiveBoard,
       receiveBoardState,
       states,
+      testFunction
     };
   },
 });

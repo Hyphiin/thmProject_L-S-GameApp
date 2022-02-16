@@ -303,9 +303,8 @@ export default defineComponent({
         for (let j = 0; j < 3; j++) {
           // Is the spot available?
           if (board.value[i][j] == '') {
-            board.value[i][j] = ai;
-
             // exact copy of the gameboard
+            board.value[i][j] = ai;
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const gameState = JSON.parse(JSON.stringify(board.value));
