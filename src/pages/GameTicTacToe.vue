@@ -299,7 +299,7 @@ export default defineComponent({
             //console.log(gameState)
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board.value, 0, false, -Infinity, Infinity);
+            let score: number = minimax(board.value, 3, false, -Infinity, Infinity);
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const boardStatus: boardState = {
@@ -386,6 +386,10 @@ export default defineComponent({
         }
       }
 
+      if(depth === 0) {
+        return 0;
+      }
+
       if (isMaximizing) {
         let bestScore = -Infinity;
         for (let i = 0; i < 3; i++) {
@@ -395,7 +399,7 @@ export default defineComponent({
               board[i][j] = ai;
 
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(board, depth + 1, false, alpha, beta);
+              let score = minimax(board, depth - 1, false, alpha, beta);
               //console.log('Maximizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
               board[i][j] = '';
               // console.log(score)
@@ -420,7 +424,7 @@ export default defineComponent({
               board[i][j] = human;
 
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(board, depth + 1, true, alpha, beta);
+              let score = minimax(board, depth - 1, true, alpha, beta);
               //console.log('Minimizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
               board[i][j] = '';
               // console.log(score)

@@ -12,7 +12,7 @@
       </q-toolbar>
 
       <q-tabs align="left">
-        <q-route-tab to="/Classic" label="Classic" />
+        <q-route-tab to="/" label="Classic" />
         <q-route-tab to="/Special" label="Special" />          
       </q-tabs>
     </q-header>

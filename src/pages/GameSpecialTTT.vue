@@ -40,7 +40,7 @@
               </q-tooltip>
             </q-btn>
             </div>
-            <div class="col">
+            <!-- <div class="col">
               <q-btn
                 class="undoBtn"
                  round 
@@ -52,7 +52,7 @@
                 Zug zurücksetzen
               </q-tooltip>
             </q-btn>
-            </div>
+            </div> -->
           </div>
         </div>
         <div class="text-message text-center">
@@ -776,27 +776,20 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
-import { aiMove } from './aiMove';
 
 interface aMove {
   i: number;
   j: number;
 }
 
-interface boardState {
-  state: Array<Array<string>>;
-  round: number;
-  score: number;
-}
-
 export default defineComponent({
   name: 'GameSpecialTTT',
   components: {},
-  setup(props, context) {
+  setup() {
     let winMessage = ref<string>('');
     let isCross = ref<boolean>(true);
 
-    let board = ref<Array<Array<string>>>([
+    let board : Array<Array<string>> = [
       ['', '', '', '', ''],
       ['', '', '', '', ''],
       ['', '', '', '', ''],
@@ -807,9 +800,7 @@ export default defineComponent({
       ['', '', '', '', ''],
       ['', '', '', '', ''],
       ['', '', '', '', '']
-    ]);
-
-    const possibleMoves = ref<aiMove[]>([]);
+    ];
 
     const round = ref<number>(0);
 
@@ -822,18 +813,15 @@ export default defineComponent({
     let human = 'O';
     let currentPlayer = human;
 
-    const lastAIMove = ref<aMove>();
-    const lastMovesArray = ref<Array<aMove>>([])
 
     const makeMove = (itemNumberCol: number, itemNumberRow: number) => {   
       if (
         typeof itemNumberCol === 'number' &&
         typeof itemNumberRow === 'number'
       ) {
-        if (board.value[itemNumberRow][itemNumberCol] === '') {
-          board.value[itemNumberRow][itemNumberCol] = isCross.value ? 'X' : 'O';
+        if (board[itemNumberRow][itemNumberCol] === '') {
+          board[itemNumberRow][itemNumberCol] = isCross.value ? 'X' : 'O';
           isCross.value = !isCross.value;
-          lastMovesArray.value.push( { i: itemNumberRow, j: itemNumberCol})
         } else {
           alert('Already Filled!');
         }
@@ -862,55 +850,27 @@ export default defineComponent({
 
     const makeComputerMove = () => {
       // AI to make its turn
-      let bestScore = -Infinity;
+      let bestScore = -1000;
       let move: aMove = { i: 0, j: 0};
-      let bestMovesArray = Array<aMove>()
-
-      possibleMoves.value = [];
 
       for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 5; j++) {
           // Is the spot available?
-          if (board.value[i][j] == '') {
-            board.value[i][j] = ai;
-
+          if (board[i][j] == '') {
             // exact copy of the gameboard
-
+            board[i][j] = ai;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const gameState = JSON.parse(JSON.stringify(board.value));
-            //console.log(gameState)
+            let score: number = minimax(board, 3, false, -Infinity, Infinity);
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board.value, 0, false, -Infinity, Infinity);
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const boardStatus: boardState = {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              state: gameState,
-              round: round.value,
-              score: score,
-            };
-            context.emit('boardState', boardStatus);
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let scoreCopy: number = JSON.parse(JSON.stringify(score));
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            possibleMoves.value.push({ x: i, y: j, score: scoreCopy });
-
-            board.value[i][j] = '';
+            board[i][j] = '';
             if (score >= bestScore) {   
               // console.log('bestScore:', score)           
               if (score == bestScore){                
                 move = {j, i};
-                bestMovesArray.push(move)
               } else if (score > bestScore){
                 bestScore = score;
                 move = {j, i};
-                bestMovesArray = []    
-                bestMovesArray.push(move)
               }
-              // console.log('bestScoreArray:', bestMovesArray) 
             }
           }
         }
@@ -918,17 +878,9 @@ export default defineComponent({
 
       round.value++;
 
-      let tempVar = Math.floor(Math.random() * bestMovesArray.length ) 
-      move = {j: bestMovesArray[tempVar].j, i: bestMovesArray[tempVar].i};
-
-      board.value[move.i][move.j] = ai;
+      board[move.i][move.j] = ai;
       isCross.value = !isCross.value;
-      lastMovesArray.value.push({ i: move.i, j: move.j})
       
-      //console.log(possibleMoves.value)
-      context.emit('possibleMoves', possibleMoves.value);
-      context.emit('board.value', board.value);
-
       let result = checkWinner();
 
       if (result === 'X' || result === 'O') {
@@ -944,8 +896,6 @@ export default defineComponent({
       } else {
         currentPlayer = human;
       }
-
-      console.log(board.value)
     };
 
     const minimax = (
@@ -970,8 +920,12 @@ export default defineComponent({
         }
       }
 
+      if(depth === 0) {
+        return 0;
+      }
+
       if (isMaximizing) {
-        let bestScore = -Infinity;
+        let bestScore = -1000;
         for (let i = 0; i < 10; i++) {
           for (let j = 0; j < 5; j++) {
             // Is the spot available?
@@ -979,16 +933,16 @@ export default defineComponent({
               board[i][j] = ai;
 
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(board, depth + 1, false, alpha, beta);
-              //console.log('Maximizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+              let score = minimax(board, depth - 1, false, alpha, beta);
+              
               board[i][j] = '';
-              // console.log(score)
+              
               bestScore = Math.max(score, bestScore);
               // check for alpha
               alpha = Math.max(alpha, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                //console.log('Maximizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+               
                 break;
               }
             }
@@ -996,7 +950,7 @@ export default defineComponent({
         }
         return bestScore;
       } else {
-        let bestScore = Infinity;
+        let bestScore = 1000;
         for (let i = 0; i < 10; i++) {
           for (let j = 0; j < 5; j++) {
             // Is the spot available?
@@ -1004,16 +958,16 @@ export default defineComponent({
               board[i][j] = human;
 
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(board, depth + 1, true, alpha, beta);
-              //console.log('Minimizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+              let score = minimax(board, depth - 1, true, alpha, beta);
+              
               board[i][j] = '';
-              // console.log(score)
+              
               bestScore = Math.min(score, bestScore);
               // check for beta
               beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                //console.log('Minimizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+                
                 break;
               }
             }
@@ -1023,53 +977,40 @@ export default defineComponent({
       }
     };
 
-    function equals3(a: string, b: string, c: string) {
-      return a == b && b == c && a != '';
+    function equals4(a: string, b: string, c: string, d: string) {
+      return a == b && b == c && c == d && a != '';
     }
-
-    const undoMove = () => {      
-      if (lastMovesArray.value != undefined) {
-        let tempMove = lastMovesArray.value[lastMovesArray.value.length-1]
-        board.value[tempMove.i][tempMove.j] = '';
-        lastMovesArray.value?.pop()
-      }
-      if (lastAIMove.value != undefined) {
-        board.value[lastAIMove.value.i][lastAIMove.value.j] = '';
-      }
-      context.emit('possibleMoves', possibleMoves.value);
-      context.emit('board', board);
-    };
 
     const checkWinner = () => {
       //  checking  winner of the game
       let winner = null;
 
       // horizontal
-      for (let i = 0; i < 3; i++) {
-        if (equals3(board.value[i][0], board.value[i][1], board.value[i][2])) {
-          winner = board.value[i][0];
+      for (let i = 0; i < 4; i++) {
+        if (equals4(board[i][0], board[i][1], board[i][2],  board[i][3])) {
+          winner = board[i][0];
         }
       }
 
       // Vertical
-      for (let i = 0; i < 3; i++) {
-        if (equals3(board.value[0][i], board.value[1][i], board.value[2][i])) {
-          winner = board.value[0][i];
+      for (let i = 0; i < 4; i++) {
+        if (equals4(board[0][i], board[1][i], board[2][i], board[3][i])) {
+          winner = board[0][i];
         }
       }
 
       // Diagonal
-      if (equals3(board.value[0][0], board.value[1][1], board.value[2][2])) {
-        winner = board.value[0][0];
+      if (equals4(board[0][0], board[1][1], board[2][2], board[3][3])) {
+        winner = board[0][0];
       }
-      if (equals3(board.value[2][0], board.value[1][1], board.value[0][2])) {
-        winner = board.value[2][0];
+      if (equals4(board[3][0], board[2][1], board[1][2], board[0][3])) {
+        winner = board[3][0];
       }
 
       let openSpots = 0;
-      for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-          if (board.value[i][j] == '') {
+      for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 5; j++) {
+          if (board[i][j] == '') {
             openSpots++;
           }
         }
@@ -1083,13 +1024,11 @@ export default defineComponent({
     };
 
    
-    const reloadGame = () => {
-      console.log('modiToggle: ', modiToggle.value)  
-      console.log('signToggle: ', signToggle.value)  
+    const reloadGame = () => {  
       winMessage.value = '';
       for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 5; j++) {
-          board.value[i][j] = '';
+          board[i][j] = '';
         }
       }
 
@@ -1115,8 +1054,6 @@ export default defineComponent({
     watch(
       () => modiToggle.value,
       () => {      
-        console.log('modiToggle: ', modiToggle.value)  
-        console.log('signToggle: ', signToggle.value)  
         if (modiToggle.value === false) {
           modiToggleName.value = 'Mensch';          
           reloadGame()          
@@ -1159,8 +1096,7 @@ export default defineComponent({
       signToggle,
       signToggleName,
       reloadGame,
-      makeMove,
-      undoMove
+      makeMove
     };
   },
 });
@@ -1201,8 +1137,8 @@ main {
   }
 
   img {
-    width: 80px;
-    height: 80px;
+    width: 20px;
+    height: 20px;
   }
 
   @keyframes zoomIn {
@@ -1218,7 +1154,7 @@ main {
 
   .col {
     margin: 5px;
-    min-width: 100px;
+    min-width: 40px;
     .toggle {
       color: #201c24;
     }
@@ -1244,8 +1180,8 @@ main {
   }
 
   .cell {
-    width: 100px;
-    height: 100px;
+    width: 40px;
+    height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1304,8 +1240,8 @@ main {
   .board.x .cell:not(.x):not(.circle):hover::after {
     content: '';
     position: absolute;
-    width: calc(calc(var(100px) * 0.9) * 0.15);
-    height: calc(var(100px) * 0.9);
+    width: calc(calc(var(40px) * 0.9) * 0.15);
+    height: calc(var(40px) * 0.9);
   }
 
   .cell.x::before,
@@ -1329,14 +1265,14 @@ main {
 
   .cell.circle::before,
   .board.circle .cell:not(.x):not(.circle):hover::before {
-    width: calc(var(100px) * 0.9);
-    height: calc(var(100px) * 0.9);
+    width: calc(var(40px) * 0.9);
+    height: calc(var(40px) * 0.9);
   }
 
   .cell.circle::after,
   .board.circle .cell:not(.x):not(.circle):hover::after {
-    width: calc(calc(var(100px) * 0.9) * 0.7);
-    height: calc(calc(var(100px) * 0.9) * 0.7);
+    width: calc(calc(var(40px) * 0.9) * 0.7);
+    height: calc(calc(var(40px) * 0.9) * 0.7);
     background-color: white;
   }
 }

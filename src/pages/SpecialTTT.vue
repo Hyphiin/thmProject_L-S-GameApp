@@ -9,7 +9,7 @@
         :board-game="currentBoard"
       />
     </q-page-container>
-    <q-page-container class="tree col text-center">
+    <!-- <q-page-container class="tree col text-center">
       <div class="possibleMoves__container">
         <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5>
         <div class="possibleMoves" v-if="boardStates.length > 1">
@@ -159,14 +159,14 @@
           </div>
         </div>
       </div>
-    </q-page-container>
+    </q-page-container> -->
   </q-layout>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import GameSpecialTTT from './GameSpecialTTT.vue';
-import viewBoard from './viewBoard.vue';
+// import viewBoard from './viewBoard.vue';
 import { aiMove } from './aiMove';
 
 interface boardState {
@@ -177,7 +177,7 @@ interface boardState {
 
 export default defineComponent({
   name: 'SpecialTTT',
-  components: { GameSpecialTTT, viewBoard },
+  components: { GameSpecialTTT },
   setup() {
     let board: Array<Array<string>> = [
       ['', '', ''],
