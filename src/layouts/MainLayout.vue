@@ -11,7 +11,7 @@
         </q-toolbar-title>
       </q-toolbar>
 
-      <q-tabs align="left">
+      <q-tabs class="bg-primary text-white" align="left">
         <q-route-tab to="/" label="Classic" />
         <q-route-tab to="/Special" label="Special" />          
       </q-tabs>

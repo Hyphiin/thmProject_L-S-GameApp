@@ -5,7 +5,6 @@
         @possible-moves="receivePossibleMoves($event)"
         @board="receiveBoard($event)"
         @boardState="receiveBoardState($event)"
-        @hallo="testFunction($event)"
         boardState
         :board-game="currentBoard"
       />
@@ -56,18 +55,14 @@ export default defineComponent({
     const round = ref<number>(0);
 
     const receivePossibleMoves = (gameState: aiMove[]) => {
-      console.log('Test', gameState)
       possibleMoves.value = gameState;
     };
 
     const receiveBoard = (board: Array<Array<string>>) => {
-      console.log(board)
-      currentBoard.value = board;
-      console.log(currentBoard.value);
+      currentBoard.value = board;     
     };
 
     const receiveBoardState = (boardState: boardState) => {
-      console.log(boardState)
       if (round.value === boardState.round) {
         boardStates.value.push(boardState);
         // console.log(boardStates.value);
@@ -82,10 +77,6 @@ export default defineComponent({
       return boardStates;
     });
 
-    const testFunction = (string: string) => {
-      console.log(string)
-    }
-
     return {
       board,
       possibleMoves,
@@ -94,8 +85,7 @@ export default defineComponent({
       receivePossibleMoves,
       receiveBoard,
       receiveBoardState,
-      states,
-      testFunction
+      states
     };
   },
 });
