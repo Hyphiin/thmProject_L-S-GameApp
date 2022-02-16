@@ -293,6 +293,7 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  flex-wrap: wrap;
 }
 
 .chosenMove__container {
