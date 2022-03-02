@@ -807,9 +807,6 @@ export default defineComponent({
       ['', '', '', '', '']
     ];
 
-    console.log('hallo');
-    context.emit('hallo', 1);
-
     const possibleMoves = ref<aiMove[]>([]);
 
     const round = ref<number>(0);
