@@ -67,7 +67,7 @@
           </div>
         </div>
 
-        <div class="board" id="board">
+        <div class="board" id="board" :class="winMessage ? 'disabled' : ''">
           <div class="cell" @click="makeMove(0, 0)">
             <img
               src="../assets/circleWhite.png"
@@ -1326,5 +1326,9 @@ main {
     height: calc(calc(var(40px) * 0.9) * 0.7);
     background-color: white;
   }
+}
+
+.disabled{
+  pointer-events:none;
 }
 </style>

@@ -11,7 +11,7 @@
     </q-page-container>
     <q-page-container class="tree col text-center">
       <div class="possibleMoves__container">
-        <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5>
+        <h5>Auswahl an Zügen:</h5>
         <div class="possibleMoves" v-if="boardStates.length > 1">
           <div v-for="(entry, index) in boardStates" :key="index">
             <view-board
@@ -412,7 +412,7 @@ export default defineComponent({
   box-shadow: 0px 0px 10px whitesmoke;
   margin-top: 10px;
   margin-bottom: 10px;
-  min-height: 30%;
+  min-height: 50%;
   min-width: 50%;
 }
 
