@@ -13,16 +13,19 @@
       <div class="possibleMoves__container">
         <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5>
         <div class="possibleMoves" v-if="boardStates.length > 1">
-          <div v-for="(entry, index) in boardStates" :key="index">
+          <ul>       
+          <li v-for="(entry, index) in boardStates" :key="index">
             <view-board
               :current-board="entry.state"
               :id="index"
               :score="entry.score"
+              :class="checkChoosenMove(entry.state)? 'trueStyle' : ''"
             />
-          </div>
+          </li>
+           </ul>
         </div>
       </div>
-      <div class="chosenMove__container">
+      <!-- <div class="chosenMove__container">
         <h5>Ausgewählter Zug:</h5>
         <div class="placeholder">
           <div class="container">
@@ -158,7 +161,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </q-page-container>
   </q-layout>
 </template>
@@ -202,7 +205,6 @@ export default defineComponent({
     const receiveBoardState = (boardState: boardState) => {
       if (round.value === boardState.round) {
         boardStates.value.push(boardState);
-        // console.log(boardStates.value);
       } else {
         boardStates.value = [];
         round.value++;
@@ -214,6 +216,19 @@ export default defineComponent({
       return boardStates;
     });
 
+    const checkChoosenMove = (entryState: Array<Array<string>>):boolean => {
+      var temp = false
+      for (var i = 0; i<4; i++){
+        if (entryState[0][i] === currentBoard.value[0][i] && entryState[1][i] === currentBoard.value[1][i] && entryState[2][i] === currentBoard.value[2][i]){
+          temp = true
+        } else {
+          temp = false
+          return temp
+        }
+      }
+      return temp
+    }
+
     return {
       board,
       possibleMoves,
@@ -223,6 +238,7 @@ export default defineComponent({
       receiveBoard,
       receiveBoardState,
       states,
+      checkChoosenMove
     };
   },
 });
@@ -412,8 +428,13 @@ export default defineComponent({
   box-shadow: 0px 0px 10px whitesmoke;
   margin-top: 10px;
   margin-bottom: 10px;
-  min-height: 30%;
+  min-height: 90%;
   min-width: 50%;
+  //scrollbar machen
+
+  .trueStyle{
+    background-color: goldenrod;
+  }
 }
 
 .possibleMoves {
