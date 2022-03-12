@@ -224,8 +224,8 @@
         </div>
         <div v-for="(entry, index) in treeArray" :key="index">
           <q-tree
-            :nodes="entry.children"
-            :default-expand-all="entry.children[0].icon === 'star'? true : false"
+            :nodes="entry.tree"
+            :default-expand-all="entry.tree[0].icon === 'star'? true : false"
             node-key="key"
           />
         </div>
@@ -255,12 +255,15 @@ interface boardState {
 interface tree {  
         label: string,
         key: number,
-        children: [{            
+        tree: [{            
           label: string,
           key: number,
           icon: string,
           children: [
-            { label: string,
+            {label: string,
+            key: number,
+            children:[
+              { label: string,
               key: number,
               children: [
                 { label: string,
@@ -293,7 +296,9 @@ interface tree {
                     { label: string, key: number }
                 ]}
               ]
+            }]
             }
+            
           ]
         }]         
     }
@@ -470,8 +475,8 @@ export default defineComponent({
         winMessage.value = 'Unentschieden!';
       }
 
+      //check which tree is the choosen one
       let tempKey = -1
-
       for(let i = 0; i < boardStates.value.length; i++){
         if(checkChoosenMove(boardStates.value[i].state)){
           tempKey = boardStates.value[i].key          
@@ -480,13 +485,9 @@ export default defineComponent({
 
       for(let i = 0; i < treeArray.value.length; i++){
         if(treeArray.value[i].key === tempKey){
-          console.log('YAAAAAAAAAAAAAAY2',treeArray.value[i].key)
-          treeArray.value[i].children[0].icon = 'star'
+          treeArray.value[i].tree[0].icon = 'star'
         }
-      }
-      
-      
-     
+      }       
 
       if (currentPlayer === human) {
         currentPlayer = ai;
@@ -521,49 +522,53 @@ export default defineComponent({
         }
       }      
       let keyCounter = 1;
-      let tree: tree = 
+      let tempTree: tree = 
         {  
           label: counter.toString(),
           key: counter,
-          children: [        
-            { label: 'Board: '+counter.toString(),
-              key: 15,
+          tree: [        
+            { label: 'Board: ' + counter.toString(),
+              key: 0,
               icon: 'share',
               children: [
-              { label: '' ,
-                key: 7,
+                {label: '', 
+                key: 15, 
                 children: [
-                  { label: '',
-                   key: 3,
-                    children: [
-                      { label: '' , key: 1},
-                      { label: '' , key: 2}
-                  ]},
                   { label: '' ,
-                   key: 6,
+                    key: 7,
                     children: [
-                      { label: '' , key: 4},
-                      { label: '' , key: 5}
-                  ]}
-                ]
-              },
-              { label: '',
-                key: 14,
-                children: [
+                      { label: '',
+                      key: 3,
+                        children: [
+                          { label: '' , key: 1},
+                          { label: '' , key: 2}
+                      ]},
+                      { label: '' ,
+                      key: 6,
+                        children: [
+                          { label: '' , key: 4},
+                          { label: '' , key: 5}
+                      ]}
+                    ]
+                  },
                   { label: '',
-                    key: 10,
-                  children: [
-                    { label: '' , key: 8},
-                    { label: '' , key: 9}
-                  ]},
-                  { label: '',
-                    key: 13,
+                    key: 14,
                     children: [
-                      { label: '' , key: 11},
-                      { label: '' , key: 12}
-                  ]}
-                ]
-              }
+                      { label: '',
+                        key: 10,
+                      children: [
+                        { label: '' , key: 8},
+                        { label: '' , key: 9}
+                      ]},
+                      { label: '',
+                        key: 13,
+                        children: [
+                          { label: '' , key: 11},
+                          { label: '' , key: 12}
+                      ]}
+                    ]
+                  }
+              ]}              
             ]
           }]
         }     
@@ -590,44 +595,10 @@ export default defineComponent({
               alpha = Math.max(alpha, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                //console.log('Maximizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+                //console.log('Maximizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);               
                 break;
-              }
-
-              tree.children.every(element => {
-                console.log(keyCounter)
-                console.log(element.key)
-                if (element.key === keyCounter){
-                  element.label = score.toString()
-                  return false; 
-                } else {
-                  element.children.forEach(secondElement => {
-                    console.log(secondElement.key )
-                    if (secondElement.key === keyCounter){
-                      secondElement.label = score.toString()
-                      return false; 
-                    } else {
-                      secondElement.children.forEach(thirdElement => {
-                        console.log(thirdElement.key )
-                        if (thirdElement.key === keyCounter) {
-                          thirdElement.label = score.toString()
-                          return false; 
-                        } else {
-                          thirdElement.children.forEach(fourthElement => {
-                            console.log(fourthElement.key )
-                            if (fourthElement.key === keyCounter){
-                              fourthElement.label = score.toString()
-                              return false; 
-                            } 
-                          })
-                        }
-                      })
-                    }    
-
-                  })
-                }
-                return true
-              });            
+              }              
+        
               keyCounter ++
               syncDelay(50)
             }
@@ -654,124 +625,117 @@ export default defineComponent({
               beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-               // console.log('Minimizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
-                tree.children.every(element => {
-                  // console.log('TEST:', test)
-                  // console.log('FIRST:', element.key)
-                  if (element.key === keyCounter){
-                    element.label = score.toString()
-                    // console.log('LABEL:',element.label)
-                    return false; 
-                  } else {
-                      element.children.forEach(secondElement => {
-                        // console.log('SECOND:', secondElement.key )
-                        if (secondElement.key === keyCounter){
-                          secondElement.label = score.toString()
-                          return false; 
-                        } else {
-                          secondElement.children.forEach(thirdElement => {
-                            // console.log('THIRD:', thirdElement.key )
-                            if (thirdElement.key === keyCounter) {
-                              thirdElement.label = score.toString()
-                              return false; 
-                            } else {
-                              thirdElement.children.forEach(fourthElement => {
-                                // console.log('FOURTH:', fourthElement.key )
-                                if (fourthElement.key === keyCounter){
-                                  // console.log('JA?')
-                                  fourthElement.label = score.toString()    
-                                  return false;                          
-                                }
-                              })
-                            }
-                          })
-                        }
-                      })
-                    }
-                    return true;
-                  });
+               console.log('Minimizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+                // tempTree.tree.forEach(element => {
+                //   if (element.key === keyCounter){
+                //     element.label = 'pruned'
+                //   }
+                //     element.children.forEach(secondElement => {
+                //       if (secondElement.key === keyCounter){
+                //         secondElement.label = 'pruned'
+                //       } 
+                //         secondElement.children.forEach(thirdElement => {
+                //           if (thirdElement.key === keyCounter) {
+                //             thirdElement.label = 'pruned'
+                //           } 
+                //             thirdElement.children.forEach(fourthElement => {
+                //               if (fourthElement.key === keyCounter){
+                //                 fourthElement.label = 'pruned'    
+                //               } 
+                //                 fourthElement.children.forEach(fifthElement => {
+                //                   if (fifthElement.key === keyCounter){
+                //                     fifthElement.label = 'pruned'  
+                //                   }
+                //                 })                              
+                //             })                          
+                //         })                      
+                //     })                  
+                // });
                 break;
               }       
                 
-              tree.children.every(element => {
-                // console.log('TEST:', test)
-                // console.log('FIRST:', element.key)
+              tempTree.tree.forEach(element => {
+                console.log('COUNTERKEY: ', keyCounter)
+                console.log('TREEKEY: ', element.key)
                 if (element.key === keyCounter){
-                  element.label = score.toString()
-                  // console.log('LABEL:',element.label)
-                  return false; 
+                  element.label = element.key.toString() + ': ' + score.toString()
+                   keyCounter ++ 
                 } else {
                   element.children.forEach(secondElement => {
-                    // console.log('SECOND:', secondElement.key )
+                    console.log('SECOND: ', secondElement.key)
                     if (secondElement.key === keyCounter){
-                      secondElement.label = score.toString()
-                      return false; 
+                      secondElement.label = secondElement.key.toString() + ': ' + score.toString()
+                       keyCounter ++ 
                     } else {
                       secondElement.children.forEach(thirdElement => {
-                        // console.log('THIRD:', thirdElement.key )
+                        console.log('THIRD: ', thirdElement.key)
                         if (thirdElement.key === keyCounter) {
-                          thirdElement.label = score.toString()
-                          return false; 
+                          thirdElement.label = thirdElement.key.toString() + ': ' + score.toString()
+                           keyCounter ++ 
                         } else {
                           thirdElement.children.forEach(fourthElement => {
-                            // console.log('FOURTH:', fourthElement.key )
+                            console.log('FOURTH: ', fourthElement.key)
                             if (fourthElement.key === keyCounter){
-                              // console.log('JA?')
-                              fourthElement.label = score.toString()    
-                              return false;                          
-                            }
-                          })
-                        }
-                      })
+                              fourthElement.label = fourthElement.key.toString() + ': ' + score.toString()  
+                               keyCounter ++     
+                            } else {
+                              fourthElement.children.forEach(fifthElement => {
+                                console.log('FIFTH: ', fifthElement.key)
+                                 if (fifthElement.key === keyCounter){
+                                  fifthElement.label =  fifthElement.key.toString() + ': ' + score.toString() 
+                                   keyCounter ++                                    
+                                 }
+                              }) 
+                            }                           
+                          })  
+                        }                      
+                      })  
+                    }                  
+                  })                  
+                }                              
+              });          
+
+              tempTree.tree.forEach(element => {
+                element.children.forEach(secondElement => {
+                  if (secondElement.label === ''){
+                    if(parseInt(secondElement.children[0].label) >= parseInt(secondElement.children[1].label)){
+                      secondElement.label = secondElement.children[1].label                                
+                    } else{
+                      secondElement.label = secondElement.children[0].label   
                     }
-                  })
-                }
-                return true;
+                  } 
+                  secondElement.children.forEach(thirdElement => {
+                    if (thirdElement.label === '') {
+                      if(parseInt(thirdElement.children[0].label) >= parseInt(thirdElement.children[1].label)){
+                        thirdElement.label = thirdElement.children[1].label                                
+                      }
+                      else{
+                        thirdElement.label = thirdElement.children[0].label   
+                      }
+                    } 
+                    thirdElement.children.forEach(fourthElement => {
+                      if (fourthElement.label === ''){
+                        if(parseInt(fourthElement.children[0].label) >= parseInt(fourthElement.children[1].label)){
+                          fourthElement.label = fourthElement.children[1].label                                
+                        }else{
+                          fourthElement.label = fourthElement.children[0].label   
+                        }                     
+                      }                             
+                    })                    
+                  })                    
+                })                
               });
-              keyCounter ++
-              syncDelay(50)
-              // tree.children.every(element => {
-              //   // console.log('TEST:', test)
-              //   // console.log('FIRST:', element.key)
-              //   if (element.label === ''){
-              //     element.label = 'pruned'
-              //     // console.log('LABEL:',element.label)
-              //     return false; 
-              //   } else {
-              //     element.children.forEach(secondElement => {
-              //       // console.log('SECOND:', secondElement.key )
-              //       if (secondElement.label === ''){
-              //         secondElement.label  = 'pruned'
-              //         return false; 
-              //       } else {
-              //         secondElement.children.forEach(thirdElement => {
-              //           // console.log('THIRD:', thirdElement.key )
-              //           if (thirdElement.label === '') {
-              //             thirdElement.label = 'pruned'
-              //             return false; 
-              //           } else {
-              //             thirdElement.children.forEach(fourthElement => {
-              //               // console.log('FOURTH:', fourthElement.key )
-              //               if (fourthElement.label === ''){
-              //                 // console.log('JA?')
-              //                 fourthElement.label = 'pruned'   
-              //                 return false;                          
-              //               }
-              //             })
-              //           }
-              //         })
-              //       }
-              //     })
-              //   }
-              //   return true;
-              // });
+
+              }
             }
           }
-        }
+
+        
+        syncDelay(50)
         console.log('MINMAX ENDE') 
-        tree.label = bestScore.toString()    
+        tempTree.tree[0].label = bestScore.toString()    
          
-        treeArray.value.push(tree)  
+        treeArray.value.push(tempTree)  
          
         syncDelay(100)
         return bestScore;        
