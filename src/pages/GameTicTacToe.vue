@@ -1,219 +1,244 @@
 <template>
-  <main class="d-flex flex-column justify-content-center align-items-center">
-    <div class="container">
-      <div class="justify-content-center mt-3 container__container">
-        <div class="container__top">
-          <div class="row justify-content-center mt-3">
-            <div class="col">
-              <q-toggle
-                class="toggle"
-                :label="`${modiToggleName}`"
-                color="blue"
-                size="xl"
-                checked-icon="computer"
-                unchecked-icon="person"
-                v-model="modiToggle"
-              />
-            </div>
-            <div class="col">
-              <q-toggle
-                class="toggle"
-                :label="`${signToggleName}`"
-                :disable="modiToggle"
-                color="blue"
-                size="xl"
-                checked-icon="radio_button_unchecked"
-                unchecked-icon="close"
-                v-model="signToggle"
-              />
-            </div>
-            <div class="col">
-              <q-btn
-                class="resetBtn"
-                round 
-                color="primary" 
-                icon="restart_alt"
-                @click="reloadGame()"
-              >
-               <q-tooltip>
-                Neues Spiel
-              </q-tooltip>
-            </q-btn>
-            </div>
-            <div class="col">
-              <q-btn
-                class="undoBtn"
-                 round 
-                 color="secondary" 
-                 icon="undo" 
-                @click="undoMove()"
-              >
-              <q-tooltip>
-                Zug zurücksetzen
-              </q-tooltip>
-            </q-btn>
-            </div>
-            <div class="col">
-              <q-btn-toggle
-                v-model="searchDepth"
-                toggle-color="primary"
-                :options="[
-                  {label: '1', value: 1},
-                  {label: '2', value: 2},
-                  {label: '3', value: 3}
-                  ]"
-               />
+  <main class="main-box d-flex flex-column justify-content-center">
+    <q-page-container class="game col">
+      <div class="container">
+        <div class="justify-content-center mt-3 container__container">
+          <div class="container__top">
+            <div class="row justify-content-center mt-3">
+              <div class="col">
+                <q-toggle
+                  class="toggle"
+                  :label="`${modiToggleName}`"
+                  color="blue"
+                  size="xl"
+                  checked-icon="computer"
+                  unchecked-icon="person"
+                  v-model="modiToggle"
+                />
+              </div>
+              <div class="col">
+                <q-toggle
+                  class="toggle"
+                  :label="`${signToggleName}`"
+                  :disable="modiToggle"
+                  color="blue"
+                  size="xl"
+                  checked-icon="radio_button_unchecked"
+                  unchecked-icon="close"
+                  v-model="signToggle"
+                />
+              </div>
+              <div class="col">
+                <q-btn
+                  class="resetBtn"
+                  round 
+                  color="primary" 
+                  icon="restart_alt"
+                  @click="reloadGame()"
+                >
+                <q-tooltip>
+                  Neues Spiel
+                </q-tooltip>
+              </q-btn>
+              </div>
+              <div class="col">
+                <q-btn
+                  class="undoBtn"
+                  round 
+                  color="secondary" 
+                  icon="undo" 
+                  @click="undoMove()"
+                >
+                <q-tooltip>
+                  Zug zurücksetzen
+                </q-tooltip>
+              </q-btn>
+              </div>
+              <div class="col">
+                <q-btn-toggle
+                  v-model="searchDepth"
+                  toggle-color="primary"
+                  :options="[
+                    {label: '1', value: 1},
+                    {label: '2', value: 2},
+                    {label: '3', value: 3}
+                    ]"
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <div class="text-message text-center">
-          <div v-if="!winMessage">
-            <h4 class="headline" v-if="isCross">X ist dran!</h4>
-            <h4 class="headline" v-if="!isCross">O ist dran!</h4>
+          <div class="text-message text-center">
+            <div v-if="!winMessage">
+              <h4 class="headline" v-if="isCross">X ist dran!</h4>
+              <h4 class="headline" v-if="!isCross">O ist dran!</h4>
+            </div>
+            <div v-else>
+              <h4 class="text-warning">
+                {{ winMessage.toUpperCase() }}
+              </h4>
+            </div>
           </div>
-          <div v-else>
-            <h4 class="text-warning">
-              {{ winMessage.toUpperCase() }}
-            </h4>
-          </div>
-        </div>
 
-        <div class="board" id="board">
-          <div class="cell" @click="makeMove(0, 0)">
-            <img
-              src="../assets/circleWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-if="board[0][0] === 'O'"
-            />
-            <img
-              src="../assets/crossWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-else-if="board[0][0] === 'X'"
-            />
-          </div>
-          <div class="cell" @click="makeMove(1, 0)">
-            <img
-              src="../assets/circleWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-if="board[0][1] === 'O'"
-            />
-            <img
-              src="../assets/crossWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-else-if="board[0][1] === 'X'"
-            />
-          </div>
-          <div class="cell" @click="makeMove(2, 0)">
-            <img
-              src="../assets/circleWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-if="board[0][2] === 'O'"
-            />
-            <img
-              src="../assets/crossWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-else-if="board[0][2] === 'X'"
-            />
-          </div>
-          <div class="cell" @click="makeMove(0, 1)">
-            <img
-              src="../assets/circleWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-if="board[1][0] === 'O'"
-            />
-            <img
-              src="../assets/crossWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-else-if="board[1][0] === 'X'"
-            />
-          </div>
-          <div class="cell" @click="makeMove(1, 1)">
-            <img
-              src="../assets/circleWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-if="board[1][1] === 'O'"
-            />
-            <img
-              src="../assets/crossWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-else-if="board[1][1] === 'X'"
-            />
-          </div>
-          <div class="cell" @click="makeMove(2, 1)">
-            <img
-              src="../assets/circleWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-if="board[1][2] === 'O'"
-            />
-            <img
-              src="../assets/crossWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-else-if="board[1][2] === 'X'"
-            />
-          </div>
-          <div class="cell" @click="makeMove(0, 2)">
-            <img
-              src="../assets/circleWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-if="board[2][0] === 'O'"
-            />
-            <img
-              src="../assets/crossWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-else-if="board[2][0] === 'X'"
-            />
-          </div>
-          <div class="cell" @click="makeMove(1, 2)">
-            <img
-              src="../assets/circleWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-if="board[2][1] === 'O'"
-            />
-            <img
-              src="../assets/crossWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-else-if="board[2][1] === 'X'"
-            />
-          </div>
-          <div class="cell" @click="makeMove(2, 2)">
-            <img
-              src="../assets/circleWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-if="board[2][2] === 'O'"
-            />
-            <img
-              src="../assets/crossWhite.png"
-              alt=""
-              class="img-fluid zoomIn"
-              v-else-if="board[2][2] === 'X'"
-            />
-          </div>
-        </div>        
+          <div class="board" id="board">
+            <div class="cell" @click="makeMove(0, 0)">
+              <img
+                src="../assets/circleWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-if="board[0][0] === 'O'"
+              />
+              <img
+                src="../assets/crossWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-else-if="board[0][0] === 'X'"
+              />
+            </div>
+            <div class="cell" @click="makeMove(1, 0)">
+              <img
+                src="../assets/circleWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-if="board[0][1] === 'O'"
+              />
+              <img
+                src="../assets/crossWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-else-if="board[0][1] === 'X'"
+              />
+            </div>
+            <div class="cell" @click="makeMove(2, 0)">
+              <img
+                src="../assets/circleWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-if="board[0][2] === 'O'"
+              />
+              <img
+                src="../assets/crossWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-else-if="board[0][2] === 'X'"
+              />
+            </div>
+            <div class="cell" @click="makeMove(0, 1)">
+              <img
+                src="../assets/circleWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-if="board[1][0] === 'O'"
+              />
+              <img
+                src="../assets/crossWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-else-if="board[1][0] === 'X'"
+              />
+            </div>
+            <div class="cell" @click="makeMove(1, 1)">
+              <img
+                src="../assets/circleWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-if="board[1][1] === 'O'"
+              />
+              <img
+                src="../assets/crossWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-else-if="board[1][1] === 'X'"
+              />
+            </div>
+            <div class="cell" @click="makeMove(2, 1)">
+              <img
+                src="../assets/circleWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-if="board[1][2] === 'O'"
+              />
+              <img
+                src="../assets/crossWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-else-if="board[1][2] === 'X'"
+              />
+            </div>
+            <div class="cell" @click="makeMove(0, 2)">
+              <img
+                src="../assets/circleWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-if="board[2][0] === 'O'"
+              />
+              <img
+                src="../assets/crossWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-else-if="board[2][0] === 'X'"
+              />
+            </div>
+            <div class="cell" @click="makeMove(1, 2)">
+              <img
+                src="../assets/circleWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-if="board[2][1] === 'O'"
+              />
+              <img
+                src="../assets/crossWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-else-if="board[2][1] === 'X'"
+              />
+            </div>
+            <div class="cell" @click="makeMove(2, 2)">
+              <img
+                src="../assets/circleWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-if="board[2][2] === 'O'"
+              />
+              <img
+                src="../assets/crossWhite.png"
+                alt=""
+                class="img-fluid zoomIn"
+                v-else-if="board[2][2] === 'X'"
+              />
+            </div>
+          </div>        
+        </div>  
       </div>
-    </div>
+    </q-page-container>
+    <q-page-container class="tree col text-center">
+      <div class="possibleMoves__container">
+        <div class="possibleMoves" v-if="boardStates.length > 1">
+          <div v-for="(entry, index) in boardStates" :key="index">
+            <view-board
+              :current-board="entry.state"
+              :id="index"
+              :score="entry.score"
+              :class="checkChoosenMove(entry.state)? 'trueStyle' : ''"
+            />
+            </div>
+        </div>
+        <div v-for="(entry, index) in treeArray" :key="index">
+          <q-tree
+            :nodes="entry.children"
+            :default-expand-all="entry.children[0].icon === 'star'? true : false"
+            node-key="key"
+          />
+        </div>
+      </div>
+    </q-page-container>
   </main>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
 import { aiMove } from './aiMove';
+import viewBoard from './viewBoard.vue';
+import _ from 'lodash';
 
 interface aMove {
   i: number;
@@ -224,11 +249,58 @@ interface boardState {
   state: Array<Array<string>>;
   round: number;
   score: number;
+  key: number;
 }
+
+interface tree {  
+        label: string,
+        key: number,
+        children: [{            
+          label: string,
+          key: number,
+          icon: string,
+          children: [
+            { label: string,
+              key: number,
+              children: [
+                { label: string,
+                  key: number,
+                  children: [
+                    { label: string, key: number},
+                    { label: string, key: number }
+                ]},
+                { label: string,
+                  key: number,
+                  children: [
+                    { label: string, key: number},
+                    { label: string, key: number }
+                ]}
+              ]
+            },
+            { label: string,
+              key: number,
+              children: [
+                { label: string,
+                  key: number,
+                  children: [
+                    { label: string, key: number },
+                    { label: string, key: number }
+                ]},
+                { label: string,
+                  key: number,
+                  children: [
+                    { label: string, key: number },
+                    { label: string, key: number }
+                ]}
+              ]
+            }
+          ]
+        }]         
+    }
 
 export default defineComponent({
   name: 'GameTicTacToe',
-  components: {},
+  components: {viewBoard},
   setup(props, context) {
     let winMessage = ref<string>('');
     let isCross = ref<boolean>(true);
@@ -254,7 +326,10 @@ export default defineComponent({
 
     let searchDepth = ref<number>(1);
 
-    const lastMovesArray = ref<Array<aMove>>([])
+    const lastMovesArray = ref<Array<aMove>>([])   
+
+    let treeArray = ref<tree[]>([]);
+
 
     const makeMove = (itemNumberCol: number, itemNumberRow: number) => {   
       if (
@@ -284,20 +359,36 @@ export default defineComponent({
         } else {
           currentPlayer = human;
         }
-      }
 
-      if (modiToggle.value === true) {
-        makeComputerMove();
+        if (currentPlayer === ai) {
+          console.log(currentPlayer)
+          makeComputerMove();
+        }        
       }
+      
     };
 
-    const makeComputerMove = () => {
+    const boardStates = ref<boardState[]>([]);
+
+  
+    watch(
+      () => _.cloneDeep(boardStates.value), 
+      () => {
+        console.log('hello')
+      }
+    );
+
+     const makeComputerMove = () => {      
       // AI to make its turn
       let bestScore = -Infinity;
       let move: aMove = { i: 0, j: 0};
       let bestMovesArray = Array<aMove>()
+      let counter = 0
 
       possibleMoves.value = [];
+
+      treeArray.value = [];
+      boardStates.value = [];
 
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
@@ -311,14 +402,16 @@ export default defineComponent({
             //console.log(gameState)
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board.value, searchDepth.value, false, -Infinity, Infinity);
-
+            console.log('MINMAX aufgerufen:!')
+            let score: number = minimax(board.value, searchDepth.value, false, -Infinity, Infinity, counter);
+            syncDelay(200)
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const boardStatus: boardState = {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               state: gameState,
               round: round.value,
               score: score,
+              key: counter
             };
             context.emit('boardState', boardStatus);
 
@@ -341,8 +434,16 @@ export default defineComponent({
                 bestMovesArray.push(move)
               }
               // console.log('bestScoreArray:', bestMovesArray) 
-            }
+            }  
+            if (round.value === boardStatus.round) {
+              boardStates.value.push(boardStatus);
+            } else {
+              boardStates.value = [];
+              round.value++;
+              boardStates.value.push(boardStatus);
+            }                     
           }
+          counter++
         }
       }
 
@@ -369,19 +470,41 @@ export default defineComponent({
         winMessage.value = 'Unentschieden!';
       }
 
+      let tempKey = -1
+
+      for(let i = 0; i < boardStates.value.length; i++){
+        if(checkChoosenMove(boardStates.value[i].state)){
+          tempKey = boardStates.value[i].key          
+        }
+      }
+
+      for(let i = 0; i < treeArray.value.length; i++){
+        if(treeArray.value[i].key === tempKey){
+          console.log('YAAAAAAAAAAAAAAY2',treeArray.value[i].key)
+          treeArray.value[i].children[0].icon = 'star'
+        }
+      }
+      
+      
+     
+
       if (currentPlayer === human) {
         currentPlayer = ai;
       } else {
         currentPlayer = human;
-      }
-    };
+      }     
+
+      console.log('MOIN: ',treeArray.value)
+    };    
+
 
     const minimax = (
       board: Array<Array<string>>,
       depth: number,
       isMaximizing: boolean,
       alpha: number,
-      beta: number
+      beta: number,
+      counter: number
     ) => {
       let result = checkWinner();
       if (result !== null) {
@@ -396,7 +519,54 @@ export default defineComponent({
             return 0;
           }
         }
-      }
+      }      
+      let keyCounter = 1;
+      let tree: tree = 
+        {  
+          label: counter.toString(),
+          key: counter,
+          children: [        
+            { label: 'Board: '+counter.toString(),
+              key: 15,
+              icon: 'share',
+              children: [
+              { label: '' ,
+                key: 7,
+                children: [
+                  { label: '',
+                   key: 3,
+                    children: [
+                      { label: '' , key: 1},
+                      { label: '' , key: 2}
+                  ]},
+                  { label: '' ,
+                   key: 6,
+                    children: [
+                      { label: '' , key: 4},
+                      { label: '' , key: 5}
+                  ]}
+                ]
+              },
+              { label: '',
+                key: 14,
+                children: [
+                  { label: '',
+                    key: 10,
+                  children: [
+                    { label: '' , key: 8},
+                    { label: '' , key: 9}
+                  ]},
+                  { label: '',
+                    key: 13,
+                    children: [
+                      { label: '' , key: 11},
+                      { label: '' , key: 12}
+                  ]}
+                ]
+              }
+            ]
+          }]
+        }     
 
       if(depth === 0) {
         return 0;
@@ -411,10 +581,10 @@ export default defineComponent({
               board[i][j] = ai;
 
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(board, depth - 1, false, alpha, beta);
+              let score = minimax(board, depth - 1, false, alpha, beta, counter);
               //console.log('Maximizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
               board[i][j] = '';
-              // console.log(score)
+              //console.log(score)
               bestScore = Math.max(score, bestScore);
               // check for alpha
               alpha = Math.max(alpha, bestScore);
@@ -423,9 +593,48 @@ export default defineComponent({
                 //console.log('Maximizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
                 break;
               }
+
+              tree.children.every(element => {
+                console.log(keyCounter)
+                console.log(element.key)
+                if (element.key === keyCounter){
+                  element.label = score.toString()
+                  return false; 
+                } else {
+                  element.children.forEach(secondElement => {
+                    console.log(secondElement.key )
+                    if (secondElement.key === keyCounter){
+                      secondElement.label = score.toString()
+                      return false; 
+                    } else {
+                      secondElement.children.forEach(thirdElement => {
+                        console.log(thirdElement.key )
+                        if (thirdElement.key === keyCounter) {
+                          thirdElement.label = score.toString()
+                          return false; 
+                        } else {
+                          thirdElement.children.forEach(fourthElement => {
+                            console.log(fourthElement.key )
+                            if (fourthElement.key === keyCounter){
+                              fourthElement.label = score.toString()
+                              return false; 
+                            } 
+                          })
+                        }
+                      })
+                    }    
+
+                  })
+                }
+                return true
+              });            
+              keyCounter ++
+              syncDelay(50)
             }
           }
         }
+        console.log('MAXMIN ENDE')        
+        syncDelay(100)
         return bestScore;
       } else {
         let bestScore = Infinity;
@@ -436,24 +645,146 @@ export default defineComponent({
               board[i][j] = human;
 
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(board, depth - 1, true, alpha, beta);
-              //console.log('Minimizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+              let score = minimax(board, depth - 1, true, alpha, beta, counter);
+             // console.log('Minimizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
               board[i][j] = '';
-              // console.log(score)
+              //console.log(score)
               bestScore = Math.min(score, bestScore);
               // check for beta
               beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                //console.log('Minimizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+               // console.log('Minimizing Prune:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+                tree.children.every(element => {
+                  // console.log('TEST:', test)
+                  // console.log('FIRST:', element.key)
+                  if (element.key === keyCounter){
+                    element.label = score.toString()
+                    // console.log('LABEL:',element.label)
+                    return false; 
+                  } else {
+                      element.children.forEach(secondElement => {
+                        // console.log('SECOND:', secondElement.key )
+                        if (secondElement.key === keyCounter){
+                          secondElement.label = score.toString()
+                          return false; 
+                        } else {
+                          secondElement.children.forEach(thirdElement => {
+                            // console.log('THIRD:', thirdElement.key )
+                            if (thirdElement.key === keyCounter) {
+                              thirdElement.label = score.toString()
+                              return false; 
+                            } else {
+                              thirdElement.children.forEach(fourthElement => {
+                                // console.log('FOURTH:', fourthElement.key )
+                                if (fourthElement.key === keyCounter){
+                                  // console.log('JA?')
+                                  fourthElement.label = score.toString()    
+                                  return false;                          
+                                }
+                              })
+                            }
+                          })
+                        }
+                      })
+                    }
+                    return true;
+                  });
                 break;
-              }
+              }       
+                
+              tree.children.every(element => {
+                // console.log('TEST:', test)
+                // console.log('FIRST:', element.key)
+                if (element.key === keyCounter){
+                  element.label = score.toString()
+                  // console.log('LABEL:',element.label)
+                  return false; 
+                } else {
+                  element.children.forEach(secondElement => {
+                    // console.log('SECOND:', secondElement.key )
+                    if (secondElement.key === keyCounter){
+                      secondElement.label = score.toString()
+                      return false; 
+                    } else {
+                      secondElement.children.forEach(thirdElement => {
+                        // console.log('THIRD:', thirdElement.key )
+                        if (thirdElement.key === keyCounter) {
+                          thirdElement.label = score.toString()
+                          return false; 
+                        } else {
+                          thirdElement.children.forEach(fourthElement => {
+                            // console.log('FOURTH:', fourthElement.key )
+                            if (fourthElement.key === keyCounter){
+                              // console.log('JA?')
+                              fourthElement.label = score.toString()    
+                              return false;                          
+                            }
+                          })
+                        }
+                      })
+                    }
+                  })
+                }
+                return true;
+              });
+              keyCounter ++
+              syncDelay(50)
+              // tree.children.every(element => {
+              //   // console.log('TEST:', test)
+              //   // console.log('FIRST:', element.key)
+              //   if (element.label === ''){
+              //     element.label = 'pruned'
+              //     // console.log('LABEL:',element.label)
+              //     return false; 
+              //   } else {
+              //     element.children.forEach(secondElement => {
+              //       // console.log('SECOND:', secondElement.key )
+              //       if (secondElement.label === ''){
+              //         secondElement.label  = 'pruned'
+              //         return false; 
+              //       } else {
+              //         secondElement.children.forEach(thirdElement => {
+              //           // console.log('THIRD:', thirdElement.key )
+              //           if (thirdElement.label === '') {
+              //             thirdElement.label = 'pruned'
+              //             return false; 
+              //           } else {
+              //             thirdElement.children.forEach(fourthElement => {
+              //               // console.log('FOURTH:', fourthElement.key )
+              //               if (fourthElement.label === ''){
+              //                 // console.log('JA?')
+              //                 fourthElement.label = 'pruned'   
+              //                 return false;                          
+              //               }
+              //             })
+              //           }
+              //         })
+              //       }
+              //     })
+              //   }
+              //   return true;
+              // });
             }
           }
         }
-        return bestScore;
-      }
+        console.log('MINMAX ENDE') 
+        tree.label = bestScore.toString()    
+         
+        treeArray.value.push(tree)  
+         
+        syncDelay(100)
+        return bestScore;        
+      }      
     };
+
+    function syncDelay(milliseconds: number){
+      var start = new Date().getTime();
+      var end=0;
+      while( (end-start) < milliseconds){
+          end = new Date().getTime();
+      }
+    }
 
     function equals3(a: string, b: string, c: string) {
       return a == b && b == c && a != '';
@@ -536,11 +867,12 @@ export default defineComponent({
       }      
 
       if(modiToggle.value === false){
-          modiToggleName.value = 'Mensch';         
+          modiToggleName.value = 'Mensch';
+          currentPlayer = human         
       } else {
         modiToggleName.value = 'KI'; 
         signToggle.value = true;
-        
+        currentPlayer = ai    
         makeComputerMove()      
         isCross.value = false;   
       }
@@ -580,9 +912,21 @@ export default defineComponent({
           ai = 'O';
           human = 'X';
         }
-        reloadGame()
       }
     );
+
+    const checkChoosenMove = (entryState: Array<Array<string>>):boolean => {
+      var temp = false
+      for (var i = 0; i<4; i++){
+        if (entryState[0][i] === board.value[0][i] && entryState[1][i] === board.value[1][i] && entryState[2][i] === board.value[2][i]){
+          temp = true
+        } else {
+          temp = false
+          return temp
+        }
+      }
+      return temp
+    }
 
     return {
       board,
@@ -593,17 +937,24 @@ export default defineComponent({
       signToggle,
       signToggleName,
       searchDepth,
+      possibleMoves,
+      boardStates,
+      treeArray,
       reloadGame,
       makeMove,
-      undoMove
+      undoMove,
+      checkChoosenMove      
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-main {
+.main-box  {
   margin: 10px 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
 
   .container__top {
     color: white;
@@ -771,5 +1122,30 @@ main {
     height: calc(calc(var(100px) * 0.9) * 0.7);
     background-color: white;
   }
+
+  .possibleMoves__container {
+  display: flex;
+  flex-direction: column;
+  background-color: whitesmoke;
+  border-radius: 12px;
+  padding: 50px;
+  box-shadow: 0px 0px 10px whitesmoke;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  min-height: 90%;
+  min-width: 50%;
+  //scrollbar machen
+
+  .trueStyle{
+    background-color: goldenrod;
+  }
+}
+
+.possibleMoves {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
 }
 </style>

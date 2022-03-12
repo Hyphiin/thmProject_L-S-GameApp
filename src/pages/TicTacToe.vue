@@ -9,23 +9,21 @@
         :board-game="currentBoard"
       />
     </q-page-container>
-    <q-page-container class="tree col text-center">
+    <!-- <q-page-container class="tree col text-center">
       <div class="possibleMoves__container">
-        <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5>
-        <div class="possibleMoves" v-if="boardStates.length > 1">
-          <ul>       
-          <li v-for="(entry, index) in boardStates" :key="index">
+        <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5> -->
+        <!-- <div class="possibleMoves" v-if="boardStates.length > 1">
+          <div v-for="(entry, index) in boardStates" :key="index">
             <view-board
               :current-board="entry.state"
               :id="index"
               :score="entry.score"
               :class="checkChoosenMove(entry.state)? 'trueStyle' : ''"
             />
-          </li>
-           </ul>
-        </div>
-      </div>
-      <!-- <div class="chosenMove__container">
+           </div>
+        </div> -->
+      <!-- </div>
+       <div class="chosenMove__container">
         <h5>Ausgewählter Zug:</h5>
         <div class="placeholder">
           <div class="container">
@@ -161,15 +159,15 @@
             </div>
           </div>
         </div>
-      </div> -->
-    </q-page-container>
+      </div> 
+    </q-page-container> -->
   </q-layout>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import GameTicTacToe from './GameTicTacToe.vue';
-import viewBoard from './viewBoard.vue';
+//import viewBoard from './viewBoard.vue';
 import { aiMove } from './aiMove';
 
 interface boardState {
@@ -180,7 +178,7 @@ interface boardState {
 
 export default defineComponent({
   name: 'TicTacToe',
-  components: { GameTicTacToe, viewBoard },
+  components: { GameTicTacToe },
   setup() {
     let board: Array<Array<string>> = [
       ['', '', ''],
