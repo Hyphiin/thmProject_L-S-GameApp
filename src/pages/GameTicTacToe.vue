@@ -208,8 +208,8 @@
     </q-page-container>
     <q-page-container class="tree col text-center">
       <div class="possibleMoves__container">
-        <div class="possibleMoves" v-if="boardStates.length > 1">
-          <div v-for="(entry, index) in boardStates" :key="index">
+        <div class="possibleMoves" v-if="boardStatesComp.value.length > 1">
+          <div v-for="(entry, index) in boardStatesComp.value" :key="index">
             <view-board
               :current-board="entry.state"
               :id="index"
@@ -231,10 +231,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch, computed } from 'vue';
 import { aiMove } from './aiMove';
 import viewBoard from './viewBoard.vue';
 import _ from 'lodash';
+//import { nextTick } from 'process';
 
 interface aMove {
   i: number;
@@ -380,6 +381,10 @@ export default defineComponent({
 
     const boardStates = ref<boardState[]>([]);
 
+    const boardStatesComp = computed(() => {
+      return boardStates;
+    });
+
     watch(
       () => _.cloneDeep(boardStates.value),
       () => {
@@ -398,6 +403,7 @@ export default defineComponent({
       possibleMoves.value = [];
 
       treeArray.value = [];
+
       boardStates.value = [];
 
       let tempBoolean = false;
@@ -419,10 +425,11 @@ export default defineComponent({
               board.value,
               searchDepth.value,
               tempBoolean,
-              bestScore,
+              -Infinity,
               Infinity,
               counter
             );
+            syncDelay(500);
             tempBoolean = !tempBoolean;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const boardStatus: boardState = {
@@ -432,9 +439,9 @@ export default defineComponent({
               score: score,
               key: counter,
             };
-            context.emit('boardState', boardStatus);
+
             console.log(boardStates.value);
-            syncDelay(500);
+            context.emit('boardState', boardStatus);
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             let scoreCopy: number = JSON.parse(JSON.stringify(score));
@@ -626,25 +633,37 @@ export default defineComponent({
                 counter
               );
               tempBoolean = !tempBoolean;
-              //console.log('Maximizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+              console.log(
+                'Maximizing:::',
+                'Spalte: ',
+                i,
+                'Reihe: ',
+                j,
+                'Tiefe: ',
+                depth,
+                'score: ',
+                score
+              );
               board[i][j] = '';
-              //console.log(score)
+              console.log(score);
               bestScore = Math.max(score, bestScore);
               // check for alpha
               alpha = Math.max(alpha, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                console.log(
-                  'Maximizing Prune:::',
-                  'Spalte: ',
-                  i,
-                  'Reihe: ',
-                  j,
-                  'Tiefe: ',
-                  depth,
-                  'score: ',
-                  score
-                );
+                // console.log(
+                //   'Maximizing Prune:::',
+                //   'Spalte: ',
+                //   i,
+                //   'Reihe: ',
+                //   j,
+                //   'Tiefe: ',
+                //   depth,
+                //   'score: ',
+                //   score
+                // );
+                tempTree.tree[0].label =
+                  'beta: ' + beta.toString() + ' <= alpha: ' + alpha.toString();
                 break;
               }
 
@@ -752,25 +771,37 @@ export default defineComponent({
                 counter
               );
               tempBoolean = !tempBoolean;
-              // console.log('Minimizing:::', 'Spalte: ', i, 'Reihe: ',j, 'Tiefe: ',  depth, 'score: ', score);
+              console.log(
+                'Minimizing:::',
+                'Spalte: ',
+                i,
+                'Reihe: ',
+                j,
+                'Tiefe: ',
+                depth,
+                'score: ',
+                score
+              );
               board[i][j] = '';
-              //console.log(score)
+              console.log(score);
               bestScore = Math.min(score, bestScore);
               // check for beta
               beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                console.log(
-                  'Minimizing Prune:::',
-                  'Spalte: ',
-                  i,
-                  'Reihe: ',
-                  j,
-                  'Tiefe: ',
-                  depth,
-                  'score: ',
-                  score
-                );
+                // console.log(
+                //   'Minimizing Prune:::',
+                //   'Spalte: ',
+                //   i,
+                //   'Reihe: ',
+                //   j,
+                //   'Tiefe: ',
+                //   depth,
+                //   'score: ',
+                //   score
+                // );
+                tempTree.tree[0].children[0].label =
+                  'beta: ' + beta.toString() + ' <= alpha: ' + alpha.toString();
                 break;
               }
 
@@ -927,6 +958,8 @@ export default defineComponent({
         }
       }
 
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>', winner);
+
       if (winner === null && openSpots === 0) {
         return 'tie';
       } else {
@@ -1024,6 +1057,7 @@ export default defineComponent({
       possibleMoves,
       boardStates,
       treeArray,
+      boardStatesComp,
       reloadGame,
       makeMove,
       undoMove,
