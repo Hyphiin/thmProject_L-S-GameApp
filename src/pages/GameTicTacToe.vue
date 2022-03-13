@@ -43,7 +43,7 @@
                 <q-btn
                   class="undoBtn"
                   round
-                  color="secondary"
+                  color="primary"
                   icon="undo"
                   @click="undoMove()"
                 >
@@ -54,6 +54,8 @@
                 <q-btn-toggle
                   v-model="searchDepth"
                   toggle-color="primary"
+                  glossy
+                  text-color="primary"
                   :options="[
                     { label: '1', value: 1 },
                     { label: '2', value: 2 },
