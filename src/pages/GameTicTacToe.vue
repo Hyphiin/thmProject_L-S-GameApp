@@ -263,6 +263,7 @@ interface tree {
         {
           label: string;
           key: number;
+          img: string;
           children?: treeChild[];
         }
       ];
@@ -373,6 +374,25 @@ export default defineComponent({
 
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
+          let tempTree: tree = {
+            label: counter.toString(),
+            key: counter,
+            tree: [
+              {
+                label: 'Board: ' + counter.toString(),
+                key: 0,
+                icon: 'share',
+                children: [
+                  {
+                    label: '',
+                    key: -1,
+                    img: '../assets/mitte_mitte.png',
+                    children: [],
+                  },
+                ],
+              },
+            ],
+          };
           // Is the spot available?
           if (board.value[i][j] == '') {
             // exact copy of the gameboard
@@ -390,7 +410,8 @@ export default defineComponent({
               tempBoolean,
               -Infinity,
               Infinity,
-              counter
+              counter,
+              tempTree
             );
 
             tempBoolean = !tempBoolean;
@@ -435,6 +456,7 @@ export default defineComponent({
             }
           }
           counter++;
+          treeArray.value.push(tempTree);
         }
       }
 
@@ -490,7 +512,8 @@ export default defineComponent({
       isMaximizing: boolean,
       alpha: number,
       beta: number,
-      counter: number
+      counter: number,
+      tempTree: tree
     ) => {
       let result = checkWinner();
       if (result !== null) {
@@ -508,18 +531,6 @@ export default defineComponent({
       }
       //winner tree fehlt
       let keyCounter = 1;
-      let tempTree: tree = {
-        label: counter.toString(),
-        key: counter,
-        tree: [
-          {
-            label: 'Board: ' + counter.toString(),
-            key: 0,
-            icon: 'share',
-            children: [{ label: '', key: -1, children: [] }],
-          },
-        ],
-      };
 
       if (depth === 0) {
         return 0;
@@ -542,40 +553,23 @@ export default defineComponent({
                 tempBoolean,
                 alpha,
                 beta,
-                counter
+                counter,
+                tempTree
               );
               tempBoolean = !tempBoolean;
-              console.log(
-                'Maximizing:::',
-                'Spalte: ',
-                i,
-                'Reihe: ',
-                j,
-                'Tiefe: ',
-                depth,
-                'score: ',
-                score
-              );
+
               board[i][j] = '';
-              console.log(score);
+
               bestScore = Math.max(score, bestScore);
               // check for alpha
               alpha = Math.max(alpha, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                // console.log(
-                //   'Maximizing Prune:::',
-                //   'Spalte: ',
-                //   i,
-                //   'Reihe: ',
-                //   j,
-                //   'Tiefe: ',
-                //   depth,
-                //   'score: ',
-                //   score
-                // );
                 tempTree.tree[0].children[0].label =
-                  'beta: ' + beta.toString() + ' <= alpha: ' + alpha.toString();
+                  'pruned -> beta: ' +
+                  beta.toString() +
+                  ' <= alpha: ' +
+                  alpha.toString();
                 break;
               }
 
@@ -585,31 +579,13 @@ export default defineComponent({
                   element.children.push({
                     label: score.toString(),
                     key: keyCounter,
-                    children: [{ label: '', key: -1 }],
+                    img: '../assets/mitte_links.png',
                   });
                 } else {
                   element.children.push({
                     label: score.toString(),
                     key: keyCounter,
-                    children: [{ label: '', key: -1 }],
-                  });
-                  element.children.forEach((secondElement) => {
-                    if (secondElement.children != undefined) {
-                      if (secondElement.children[0].key === -1) {
-                        secondElement.children.pop();
-                        secondElement.children.push({
-                          label: score.toString(),
-                          key: keyCounter,
-                          children: [{ label: '', key: keyCounter }],
-                        });
-                      } else {
-                        secondElement.children.push({
-                          label: score.toString(),
-                          key: keyCounter,
-                          children: [{ label: '', key: keyCounter }],
-                        });
-                      }
-                    }
+                    img: '../assets/mitte_links.png',
                   });
                 }
               });
@@ -621,7 +597,6 @@ export default defineComponent({
 
         tempTree.tree[0].label = bestScore.toString();
 
-        treeArray.value.push(tempTree);
         return bestScore;
       } else {
         let tempBoolean = true;
@@ -639,40 +614,33 @@ export default defineComponent({
                 tempBoolean,
                 alpha,
                 beta,
-                counter
+                counter,
+                tempTree
               );
               tempBoolean = !tempBoolean;
-              console.log(
-                'Minimizing:::',
-                'Spalte: ',
-                i,
-                'Reihe: ',
-                j,
-                'Tiefe: ',
-                depth,
-                'score: ',
-                score
-              );
+              // console.log(
+              //   'Minimizing:::',
+              //   'Spalte: ',
+              //   i,
+              //   'Reihe: ',
+              //   j,
+              //   'Tiefe: ',
+              //   depth,
+              //   'score: ',
+              //   score
+              // );
               board[i][j] = '';
-              console.log(score);
+
               bestScore = Math.min(score, bestScore);
               // check for beta
               beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                // console.log(
-                //   'Minimizing Prune:::',
-                //   'Spalte: ',
-                //   i,
-                //   'Reihe: ',
-                //   j,
-                //   'Tiefe: ',
-                //   depth,
-                //   'score: ',
-                //   score
-                // );
                 tempTree.tree[0].children[0].label =
-                  'beta: ' + beta.toString() + ' <= alpha: ' + alpha.toString();
+                  'pruned -> beta: ' +
+                  beta.toString() +
+                  ' <= alpha: ' +
+                  alpha.toString();
                 break;
               }
 
@@ -682,31 +650,13 @@ export default defineComponent({
                   element.children.push({
                     label: score.toString(),
                     key: keyCounter,
-                    children: [{ label: '', key: -1 }],
+                    img: '../assets/mitte_links.png',
                   });
                 } else {
                   element.children.push({
                     label: score.toString(),
                     key: keyCounter,
-                    children: [{ label: '', key: -1 }],
-                  });
-                  element.children.forEach((secondElement) => {
-                    if (secondElement.children != undefined) {
-                      if (secondElement.children[0].key === -1) {
-                        secondElement.children.pop();
-                        secondElement.children.push({
-                          label: score.toString(),
-                          key: keyCounter,
-                          children: [{ label: '', key: keyCounter }],
-                        });
-                      } else {
-                        secondElement.children.push({
-                          label: score.toString(),
-                          key: keyCounter,
-                          children: [{ label: '', key: keyCounter }],
-                        });
-                      }
-                    }
+                    img: '../assets/mitte_links.png',
                   });
                 }
               });
@@ -718,8 +668,6 @@ export default defineComponent({
 
         tempTree.tree[0].label = bestScore.toString();
 
-        treeArray.value.push(tempTree);
-
         return bestScore;
       }
     };
@@ -729,6 +677,50 @@ export default defineComponent({
     //   var end = 0;
     //   while (end - start < milliseconds) {
     //     end = new Date().getTime();
+    //   }
+    // }
+
+    // function findIcon(row: number, column: number) {
+    //   switch (row) {
+    //     case 0: {
+    //       switch (column) {
+    //         case 0: {
+    //           return 'oben_links.png';
+    //         }
+    //         case 1: {
+    //           return 'oben_mitte.png';
+    //         }
+    //         case 2: {
+    //           return 'oben_rechts.png';
+    //         }
+    //       }
+    //     }
+    //     case 1: {
+    //       switch (column) {
+    //         case 0: {
+    //           return 'mitte_links.png';
+    //         }
+    //         case 1: {
+    //           return 'mitte_mitte.png';
+    //         }
+    //         case 2: {
+    //           return 'mitte_rechts.png';
+    //         }
+    //       }
+    //     }
+    //     case 2: {
+    //       switch (column) {
+    //         case 0: {
+    //           return 'unten_links.png';
+    //         }
+    //         case 1: {
+    //           return 'unten_mitte.png';
+    //         }
+    //         case 2: {
+    //           return 'unten_rechts.png';
+    //         }
+    //       }
+    //     }
     //   }
     // }
 
