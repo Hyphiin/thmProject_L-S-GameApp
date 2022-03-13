@@ -261,56 +261,17 @@ interface tree {
         {
           label: string;
           key: number;
-          children: [
-            {
-              label: string;
-              key: number;
-              children: [
-                {
-                  label: string;
-                  key: number;
-                  children: [
-                    { label: string; key: number },
-                    { label: string; key: number }
-                  ];
-                },
-                {
-                  label: string;
-                  key: number;
-                  children: [
-                    { label: string; key: number },
-                    { label: string; key: number }
-                  ];
-                }
-              ];
-            },
-            {
-              label: string;
-              key: number;
-              children: [
-                {
-                  label: string;
-                  key: number;
-                  children: [
-                    { label: string; key: number },
-                    { label: string; key: number }
-                  ];
-                },
-                {
-                  label: string;
-                  key: number;
-                  children: [
-                    { label: string; key: number },
-                    { label: string; key: number }
-                  ];
-                }
-              ];
-            }
-          ];
+          children?: treeChild[];
         }
       ];
     }
   ];
+}
+
+interface treeChild {
+  label: string;
+  key: number;
+  children?: treeChild[];
 }
 
 export default defineComponent({
@@ -429,7 +390,7 @@ export default defineComponent({
               Infinity,
               counter
             );
-            syncDelay(500);
+
             tempBoolean = !tempBoolean;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const boardStatus: boardState = {
@@ -553,58 +514,7 @@ export default defineComponent({
             label: 'Board: ' + counter.toString(),
             key: 0,
             icon: 'share',
-            children: [
-              {
-                label: '',
-                key: 15,
-                children: [
-                  {
-                    label: '',
-                    key: 7,
-                    children: [
-                      {
-                        label: '',
-                        key: 3,
-                        children: [
-                          { label: '', key: 1 },
-                          { label: '', key: 2 },
-                        ],
-                      },
-                      {
-                        label: '',
-                        key: 6,
-                        children: [
-                          { label: '', key: 4 },
-                          { label: '', key: 5 },
-                        ],
-                      },
-                    ],
-                  },
-                  {
-                    label: '',
-                    key: 14,
-                    children: [
-                      {
-                        label: '',
-                        key: 10,
-                        children: [
-                          { label: '', key: 8 },
-                          { label: '', key: 9 },
-                        ],
-                      },
-                      {
-                        label: '',
-                        key: 13,
-                        children: [
-                          { label: '', key: 11 },
-                          { label: '', key: 12 },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
+            children: [{ label: '', key: -1, children: [] }],
           },
         ],
       };
@@ -662,85 +572,44 @@ export default defineComponent({
                 //   'score: ',
                 //   score
                 // );
-                tempTree.tree[0].label =
+                tempTree.tree[0].children[0].label =
                   'beta: ' + beta.toString() + ' <= alpha: ' + alpha.toString();
                 break;
               }
 
               tempTree.tree.forEach((element) => {
-                // console.log('COUNTERKEY: ', keyCounter)
-                // console.log('TREEKEY: ', element.key)
-                if (element.key === keyCounter) {
-                  element.label = score.toString();
-                  keyCounter++;
+                if (element.children[0].key === -1) {
+                  element.children.pop();
+                  element.children.push({
+                    label: score.toString(),
+                    key: keyCounter,
+                    children: [{ label: '', key: -1 }],
+                  });
                 } else {
+                  element.children.push({
+                    label: score.toString(),
+                    key: keyCounter,
+                    children: [{ label: '', key: -1 }],
+                  });
                   element.children.forEach((secondElement) => {
-                    // console.log('SECOND: ', secondElement.key)
-                    if (secondElement.key === keyCounter) {
-                      secondElement.label = score.toString();
-                      keyCounter++;
-                    } else {
-                      secondElement.children.forEach((thirdElement) => {
-                        // console.log('THIRD: ', thirdElement.key)
-                        if (thirdElement.key === keyCounter) {
-                          thirdElement.label = score.toString();
-                          keyCounter++;
-                        } else {
-                          thirdElement.children.forEach((fourthElement) => {
-                            // console.log('FOURTH: ', fourthElement.key)
-                            if (fourthElement.key === keyCounter) {
-                              fourthElement.label = score.toString();
-                              keyCounter++;
-                            } else {
-                              fourthElement.children.forEach((fifthElement) => {
-                                // console.log('FIFTH: ', fifthElement.key)
-                                if (fifthElement.key === keyCounter) {
-                                  fifthElement.label = score.toString();
-                                  keyCounter++;
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
+                    if (secondElement.children != undefined) {
+                      if (secondElement.children[0].key === -1) {
+                        secondElement.children.pop();
+                        secondElement.children.push({
+                          label: score.toString(),
+                          key: keyCounter,
+                          children: [{ label: '', key: keyCounter }],
+                        });
+                      } else {
+                        secondElement.children.push({
+                          label: score.toString(),
+                          key: keyCounter,
+                          children: [{ label: '', key: keyCounter }],
+                        });
+                      }
                     }
                   });
                 }
-              });
-
-              tempTree.tree.forEach((element) => {
-                element.children.forEach((secondElement) => {
-                  if (
-                    parseInt(secondElement.children[0].label) >=
-                    parseInt(secondElement.children[1].label)
-                  ) {
-                    secondElement.label = secondElement.children[0].label;
-                  } else {
-                    secondElement.label = secondElement.children[1].label;
-                  }
-
-                  secondElement.children.forEach((thirdElement) => {
-                    if (
-                      parseInt(thirdElement.children[0].label) >=
-                      parseInt(thirdElement.children[1].label)
-                    ) {
-                      thirdElement.label = thirdElement.children[0].label;
-                    } else {
-                      thirdElement.label = thirdElement.children[1].label;
-                    }
-
-                    thirdElement.children.forEach((fourthElement) => {
-                      if (
-                        parseInt(fourthElement.children[0].label) >=
-                        parseInt(fourthElement.children[1].label)
-                      ) {
-                        fourthElement.label = fourthElement.children[0].label;
-                      } else {
-                        fourthElement.label = fourthElement.children[1].label;
-                      }
-                    });
-                  });
-                });
               });
 
               keyCounter++;
@@ -806,80 +675,41 @@ export default defineComponent({
               }
 
               tempTree.tree.forEach((element) => {
-                // console.log('COUNTERKEY: ', keyCounter)
-                // console.log('TREEKEY: ', element.key)
-                if (element.key === keyCounter) {
-                  element.label = score.toString();
-                  keyCounter++;
+                if (element.children[0].key === -1) {
+                  element.children.pop();
+                  element.children.push({
+                    label: score.toString(),
+                    key: keyCounter,
+                    children: [{ label: '', key: -1 }],
+                  });
                 } else {
+                  element.children.push({
+                    label: score.toString(),
+                    key: keyCounter,
+                    children: [{ label: '', key: -1 }],
+                  });
                   element.children.forEach((secondElement) => {
-                    // console.log('SECOND: ', secondElement.key)
-                    if (secondElement.key === keyCounter) {
-                      secondElement.label = score.toString();
-                      keyCounter++;
-                    } else {
-                      secondElement.children.forEach((thirdElement) => {
-                        // console.log('THIRD: ', thirdElement.key)
-                        if (thirdElement.key === keyCounter) {
-                          thirdElement.label = score.toString();
-                          keyCounter++;
-                        } else {
-                          thirdElement.children.forEach((fourthElement) => {
-                            // console.log('FOURTH: ', fourthElement.key)
-                            if (fourthElement.key === keyCounter) {
-                              fourthElement.label = score.toString();
-                              keyCounter++;
-                            } else {
-                              fourthElement.children.forEach((fifthElement) => {
-                                // console.log('FIFTH: ', fifthElement.key)
-                                if (fifthElement.key === keyCounter) {
-                                  fifthElement.label = score.toString();
-                                  keyCounter++;
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
+                    if (secondElement.children != undefined) {
+                      if (secondElement.children[0].key === -1) {
+                        secondElement.children.pop();
+                        secondElement.children.push({
+                          label: score.toString(),
+                          key: keyCounter,
+                          children: [{ label: '', key: keyCounter }],
+                        });
+                      } else {
+                        secondElement.children.push({
+                          label: score.toString(),
+                          key: keyCounter,
+                          children: [{ label: '', key: keyCounter }],
+                        });
+                      }
                     }
                   });
                 }
               });
 
-              tempTree.tree.forEach((element) => {
-                element.children.forEach((secondElement) => {
-                  if (
-                    parseInt(secondElement.children[0].label) >=
-                    parseInt(secondElement.children[1].label)
-                  ) {
-                    secondElement.label = secondElement.children[1].label;
-                  } else {
-                    secondElement.label = secondElement.children[0].label;
-                  }
-
-                  secondElement.children.forEach((thirdElement) => {
-                    if (
-                      parseInt(thirdElement.children[0].label) >=
-                      parseInt(thirdElement.children[1].label)
-                    ) {
-                      thirdElement.label = thirdElement.children[1].label;
-                    } else {
-                      thirdElement.label = thirdElement.children[0].label;
-                    }
-
-                    thirdElement.children.forEach((fourthElement) => {
-                      if (
-                        parseInt(fourthElement.children[0].label) >=
-                        parseInt(fourthElement.children[1].label)
-                      ) {
-                        fourthElement.label = fourthElement.children[1].label;
-                      } else {
-                        fourthElement.label = fourthElement.children[0].label;
-                      }
-                    });
-                  });
-                });
-              });
+              keyCounter++;
             }
           }
         }
@@ -892,13 +722,13 @@ export default defineComponent({
       }
     };
 
-    function syncDelay(milliseconds: number) {
-      var start = new Date().getTime();
-      var end = 0;
-      while (end - start < milliseconds) {
-        end = new Date().getTime();
-      }
-    }
+    // function syncDelay(milliseconds: number) {
+    //   var start = new Date().getTime();
+    //   var end = 0;
+    //   while (end - start < milliseconds) {
+    //     end = new Date().getTime();
+    //   }
+    // }
 
     function equals3(a: string, b: string, c: string) {
       return a == b && b == c && a != '';
@@ -957,8 +787,6 @@ export default defineComponent({
           }
         }
       }
-
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>', winner);
 
       if (winner === null && openSpots === 0) {
         return 'tie';
