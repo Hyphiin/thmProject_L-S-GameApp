@@ -225,6 +225,135 @@
             node-key="key"
           />
         </div>
+
+        <div class="board" id="board" :class="winMessage ? 'disabled' : ''">
+          <div class="cell" @click="makeMove(0, 0)">
+            <img
+              src="../assets/circleWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-if="board[0][0] === 'O'"
+            />
+            <img
+              src="../assets/crossWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-else-if="board[0][0] === 'X'"
+            />
+          </div>
+          <div class="cell" @click="makeMove(1, 0)">
+            <img
+              src="../assets/circleWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-if="board[0][1] === 'O'"
+            />
+            <img
+              src="../assets/crossWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-else-if="board[0][1] === 'X'"
+            />
+          </div>
+          <div class="cell" @click="makeMove(2, 0)">
+            <img
+              src="../assets/circleWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-if="board[0][2] === 'O'"
+            />
+            <img
+              src="../assets/crossWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-else-if="board[0][2] === 'X'"
+            />
+          </div>
+          <div class="cell" @click="makeMove(0, 1)">
+            <img
+              src="../assets/circleWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-if="board[1][0] === 'O'"
+            />
+            <img
+              src="../assets/crossWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-else-if="board[1][0] === 'X'"
+            />
+          </div>
+          <div class="cell" @click="makeMove(1, 1)">
+            <img
+              src="../assets/circleWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-if="board[1][1] === 'O'"
+            />
+            <img
+              src="../assets/crossWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-else-if="board[1][1] === 'X'"
+            />
+          </div>
+          <div class="cell" @click="makeMove(2, 1)">
+            <img
+              src="../assets/circleWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-if="board[1][2] === 'O'"
+            />
+            <img
+              src="../assets/crossWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-else-if="board[1][2] === 'X'"
+            />
+          </div>
+          <div class="cell" @click="makeMove(0, 2)">
+            <img
+              src="../assets/circleWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-if="board[2][0] === 'O'"
+            />
+            <img
+              src="../assets/crossWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-else-if="board[2][0] === 'X'"
+            />
+          </div>
+          <div class="cell" @click="makeMove(1, 2)">
+            <img
+              src="../assets/circleWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-if="board[2][1] === 'O'"
+            />
+            <img
+              src="../assets/crossWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-else-if="board[2][1] === 'X'"
+            />
+          </div>
+          <div class="cell" @click="makeMove(2, 2)">
+            <img
+              src="../assets/circleWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-if="board[2][2] === 'O'"
+            />
+            <img
+              src="../assets/crossWhite.png"
+              alt=""
+              class="img-fluid zoomIn"
+              v-else-if="board[2][2] === 'X'"
+            />
+          </div>
+        </div>        
       </div>
     </q-page-container>
   </main>
@@ -1093,5 +1222,9 @@ export default defineComponent({
     justify-content: space-around;
     flex-wrap: wrap;
   }
+}
+
+disabled{
+  pointer-events:none;
 }
 </style>

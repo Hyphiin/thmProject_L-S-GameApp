@@ -44,6 +44,8 @@
               <q-btn-toggle
                 v-model="searchDepth"
                 toggle-color="primary"
+                glossy
+                text-color="primary"
                 :options="[
                   {label: '1', value: 1},
                   {label: '2', value: 2},
@@ -65,7 +67,7 @@
           </div>
         </div>
 
-        <div class="board" id="board">
+        <div class="board" id="board" :class="winMessage ? 'disabled' : ''">
           <div class="cell" @click="makeMove(0, 0)">
             <img
               src="../assets/circleWhite.png"
@@ -807,9 +809,6 @@ export default defineComponent({
       ['', '', '', '', '']
     ];
 
-    console.log('hallo');
-    context.emit('hallo', 1);
-
     const possibleMoves = ref<aiMove[]>([]);
 
     const round = ref<number>(0);
@@ -1327,5 +1326,9 @@ main {
     height: calc(calc(var(40px) * 0.9) * 0.7);
     background-color: white;
   }
+}
+
+.disabled{
+  pointer-events:none;
 }
 </style>
