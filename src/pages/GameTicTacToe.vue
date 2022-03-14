@@ -224,8 +224,8 @@
           <div v-for="(entry, index) in treeArrayFinal" :key="index">
             <q-tree
               :nodes="entry.tree"
-              :default-expand-all="entry.tree[0].icon === 'star' ? true : false"
               node-key="key"
+              :default-expand-all="entry.tree[0].icon === 'star' ? true : false"
             />
           </div>
         </div>
@@ -255,7 +255,7 @@ interface boardState {
 
 interface tree {
   label: string;
-  key: number;
+  key: string;
   tree: [
     {
       label: string;
@@ -265,7 +265,7 @@ interface tree {
         {
           label: string;
           key: number;
-          img: string;
+          avatar: string;
           children?: treeChild[];
         }
       ];
@@ -351,13 +351,13 @@ export default defineComponent({
     const boardStatesComp = computed(() => {
       return boardStates;
     });
+    let counter = 0;
 
     const makeComputerMove = () => {
       // AI to make its turn
       let bestScore = -Infinity;
       let move: aMove = { i: 0, j: 0 };
       let bestMovesArray = Array<aMove>();
-      let counter = 0;
 
       possibleMoves.value = [];
 
@@ -368,7 +368,7 @@ export default defineComponent({
 
       let tempTree: tree = {
         label: '',
-        key: counter,
+        key: counter.toString(),
         tree: [
           {
             label: counter.toString(),
@@ -378,7 +378,7 @@ export default defineComponent({
               {
                 label: 'test',
                 key: 0,
-                img: '',
+                avatar: 'assets/bear.webp',
               },
             ],
           },
@@ -412,7 +412,7 @@ export default defineComponent({
               // tempTree.tree[0].children?.pop();
               // console.log('tempNumber: ', tempNumber);
               for (let i = 1; i < treeArray.value.length; i++) {
-                if (treeArray.value[i].key === tempNumber) {
+                if (treeArray.value[i].key === tempNumber.toString()) {
                   //console.log('treeArray: ', treeArray.value[i].key);
                   // tempTree.tree[0].children?.push({
                   //   label: treeArray.value[i].tree[0].label,
@@ -473,65 +473,89 @@ export default defineComponent({
         }
       }
 
-      let keyBefore = 0;
-
       if (searchDepth.value === 2 || searchDepth.value === 3) {
-        console.log(tempNumber);
-        let counterVar = 0;
         console.log(treeArray.value);
-        for (let j = 1; j <= tempNumber; j++) {
+        let tempTreeArray: tree[] = [];
+        let currentElement = treeArray.value[0].tree[0].key;
+
+        treeArray.value.forEach((entry, index) => {
           tempTree.tree[0].children?.pop();
 
-          for (let i = 1; i < treeArray.value.length; i++) {
-            if (treeArray.value[i].key === keyBefore) {
-              console.log('LABEL', treeArray.value[j].tree[0].label);
-              console.log('KEY', treeArray.value[j]);
-              tempTree.tree[0].children?.push({
-                label: treeArray.value[i].tree[0].label,
-                key: tempNumber + 0.1 * i,
-                img: '',
+          if (currentElement === entry.tree[0].key) {
+            tempTreeArray.push(entry);
+
+            if (index === treeArray.value.length - 1) {
+              currentElement = entry.tree[0].key;
+              console.log(tempTreeArray);
+              tempTreeArray.forEach((element, index) => {
+                tempTree.tree[0].children?.push({
+                  label: element.tree[0].label,
+                  key: element.tree[0].key + 0.1 * index + 1,
+                  avatar: 'assets/bear.webp',
+                });
               });
-            }
-          }
-          if (tempTree.tree[0].children) {
-            if (tempTree.tree[0].children?.length > 0) {
-              tempTree.key = counterVar;
+
               treeArrayFinal.value.push(tempTree);
-            } else {
-              keyBefore = treeArray.value[j].key;
-            }
-          }
-          tempTree = {
-            label: '',
-            key: counter,
-            tree: [
-              {
-                label: counter.toString(),
-                key: counter,
-                icon: 'share',
-                children: [
+              tempTree = {
+                label: '',
+                key: counter.toString(),
+                tree: [
                   {
-                    label: 'test',
-                    key: 0,
-                    img: '',
+                    label: counter.toString(),
+                    key: counter,
+                    icon: 'share',
+                    children: [
+                      {
+                        label: 'test',
+                        key: 0,
+                        avatar: 'assets/bear.webp',
+                      },
+                    ],
                   },
                 ],
-              },
-            ],
-          };
-          keyBefore = treeArray.value[j].key;
-          counterVar++;
-        }
-      }
+              };
+              tempTreeArray = [];
+            }
+          } else {
+            currentElement = entry.tree[0].key;
+            console.log(tempTreeArray);
+            tempTreeArray.forEach((element, index) => {
+              tempTree.tree[0].children?.push({
+                label: element.tree[0].label,
+                key: element.tree[0].key + 0.1 * index + 1,
+                avatar: 'assets/bear.webp',
+              });
+            });
 
-      // for (let i = 0; i < treeArrayFinal.value.length; i++) {
-      //   treeArrayFinal.value[i].key = 0;
-      // }
+            treeArrayFinal.value.push(tempTree);
+            tempTree = {
+              label: '',
+              key: counter.toString(),
+              tree: [
+                {
+                  label: counter.toString(),
+                  key: counter,
+                  icon: 'share',
+                  children: [
+                    {
+                      label: 'test',
+                      key: 0,
+                      avatar: 'assets/bear.webp',
+                    },
+                  ],
+                },
+              ],
+            };
+            tempTreeArray = [];
+          }
+        });
+      }
 
       round.value++;
 
-      let tempVar = Math.floor(Math.random() * bestMovesArray.length);
-      move = { j: bestMovesArray[tempVar].j, i: bestMovesArray[tempVar].i };
+      // let tempVar = Math.floor(Math.random() * bestMovesArray.length);
+
+      move = { j: bestMovesArray[0].j, i: bestMovesArray[0].i };
 
       board.value[move.i][move.j] = ai;
       isCross.value = !isCross.value;
@@ -564,7 +588,7 @@ export default defineComponent({
           boardStates.value[i].score.toString();
         treeArrayFinal.value[i].tree[0].key = boardStates.value[i].key;
 
-        if (treeArrayFinal.value[i].key === tempKey) {
+        if (treeArrayFinal.value[i].key === tempKey.toString()) {
           treeArrayFinal.value[i].tree[0].icon = 'star';
         }
       }
@@ -586,33 +610,39 @@ export default defineComponent({
       beta: number,
       counter: number
     ) => {
+      let tempTree: tree = {
+        label: '',
+        key: counter.toString(),
+        tree: [
+          {
+            label: '',
+            key: counter,
+            icon: 'share',
+          },
+        ],
+      };
+
       let result = checkWinner();
       if (result !== null) {
         switch (result) {
           case 'X': {
+            tempTree.tree[0].label = 'win: 10';
+            tempTree.label = 'win: 10';
+            treeArray.value.push(tempTree);
             return 10;
           }
           case 'O': {
             return -10;
           }
           case 'tie': {
+            tempTree.tree[0].label = 'tie: 0';
+            tempTree.label = 'tie: 0';
+            treeArray.value.push(tempTree);
             return 0;
           }
         }
       }
-      //winner tree fehlt
-
-      let tempTree: tree = {
-        label: '',
-        key: counter,
-        tree: [
-          {
-            label: '',
-            key: counter + 0.1,
-            icon: 'share',
-          },
-        ],
-      };
+      //winner tree fehlt,
 
       if (depth === 0) {
         return 0;
@@ -644,16 +674,14 @@ export default defineComponent({
               alpha = Math.max(alpha, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
+                tempTree.label = 'pruned -> bestScore: ' + alpha.toString();
                 tempTree.tree[0].label =
-                  'pruned -> beta: ' +
-                  beta.toString() +
-                  ' <= alpha: ' +
-                  alpha.toString();
+                  'pruned -> bestScore: ' + alpha.toString();
                 break;
               }
+              tempTree.label = bestScore.toString();
+              tempTree.tree[0].label = bestScore.toString();
             }
-            tempTree.label = bestScore.toString();
-            tempTree.tree[0].label = bestScore.toString();
           }
         }
 
@@ -679,16 +707,14 @@ export default defineComponent({
               beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
+                tempTree.label = 'pruned -> bestScore: ' + alpha.toString();
                 tempTree.tree[0].label =
-                  'pruned -> beta: ' +
-                  beta.toString() +
-                  ' <= alpha: ' +
-                  alpha.toString();
+                  'pruned -> bestScore: ' + alpha.toString();
                 break;
               }
+              tempTree.label = bestScore.toString();
+              tempTree.tree[0].label = bestScore.toString();
             }
-            tempTree.label = bestScore.toString();
-            tempTree.tree[0].label = bestScore.toString();
           }
         }
         treeArray.value.push(tempTree);
@@ -1106,6 +1132,7 @@ export default defineComponent({
     margin-bottom: 10px;
     min-height: inherit;
     min-width: 50%;
+    justify-content: space-between;
     //scrollbar machen
 
     .trueStyle {
