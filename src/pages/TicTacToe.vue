@@ -9,158 +9,6 @@
         :board-game="currentBoard"
       />
     </q-page-container>
-    <!-- <q-page-container class="tree col text-center">
-      <div class="possibleMoves__container">
-        <h5 v-if="possibleMoves.length > 1">Auswahl an Zügen:</h5> -->
-        <!-- <div class="possibleMoves" v-if="boardStates.length > 1">
-          <div v-for="(entry, index) in boardStates" :key="index">
-            <view-board
-              :current-board="entry.state"
-              :id="index"
-              :score="entry.score"
-              :class="checkChoosenMove(entry.state)? 'trueStyle' : ''"
-            />
-           </div>
-        </div> -->
-      <!-- </div>
-       <div class="chosenMove__container">
-        <h5>Ausgewählter Zug:</h5>
-        <div class="placeholder">
-          <div class="container">
-            <div class="justify-content-center mt-3">
-              <div class="board" id="board">
-                <div class="cell">
-                  <img
-                    src="../assets/circleWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[0][0] === 'O'"
-                  />
-                  <img
-                    src="../assets/crossWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[0][0] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circleWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[0][1] === 'O'"
-                  />
-                  <img
-                    src="../assets/crossWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[0][1] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circleWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[0][2] === 'O'"
-                  />
-                  <img
-                    src="../assets/crossWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[0][2] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circleWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[1][0] === 'O'"
-                  />
-                  <img
-                    src="../assets/crossWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[1][0] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circleWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[1][1] === 'O'"
-                  />
-                  <img
-                    src="../assets/crossWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[1][1] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circleWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[1][2] === 'O'"
-                  />
-                  <img
-                    src="../assets/crossWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[1][2] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circleWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[2][0] === 'O'"
-                  />
-                  <img
-                    src="../assets/crossWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[2][0] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circleWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[2][1] === 'O'"
-                  />
-                  <img
-                    src="../assets/crossWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[2][1] === 'X'"
-                  />
-                </div>
-                <div class="cell">
-                  <img
-                    src="../assets/circleWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-if="currentBoard[2][2] === 'O'"
-                  />
-                  <img
-                    src="../assets/crossWhite.png"
-                    alt=""
-                    class="img-fluid zoomIn"
-                    v-else-if="currentBoard[2][2] === 'X'"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> 
-    </q-page-container> -->
   </q-layout>
 </template>
 
@@ -214,19 +62,6 @@ export default defineComponent({
       return boardStates;
     });
 
-    const checkChoosenMove = (entryState: Array<Array<string>>):boolean => {
-      var temp = false
-      for (var i = 0; i<4; i++){
-        if (entryState[0][i] === currentBoard.value[0][i] && entryState[1][i] === currentBoard.value[1][i] && entryState[2][i] === currentBoard.value[2][i]){
-          temp = true
-        } else {
-          temp = false
-          return temp
-        }
-      }
-      return temp
-    }
-
     return {
       board,
       possibleMoves,
@@ -236,7 +71,6 @@ export default defineComponent({
       receiveBoard,
       receiveBoardState,
       states,
-      checkChoosenMove
     };
   },
 });
@@ -430,7 +264,7 @@ export default defineComponent({
   min-width: 50%;
   //scrollbar machen
 
-  .trueStyle{
+  .trueStyle {
     background-color: goldenrod;
   }
 }

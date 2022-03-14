@@ -211,17 +211,25 @@
     <q-page-container class="tree col text-center">
       <div class="possibleMoves__container">
         <div class="possibleMoves" v-if="boardStatesComp.value.length > 1">
-          <div v-for="(entry, index) in boardStatesComp.value" :key="index">
+          <div
+            :class="'board' + index"
+            v-for="(entry, index) in boardStatesComp.value"
+            :key="index"
+          >
             <view-board
               :current-board="entry.state"
               :id="index"
               :score="entry.score"
-              :class="checkChoosenMove(entry.state) ? 'trueStyle' : ''"
+              :class="checkChoosenMove(entry.state) ? 'trueStyle ' : ''"
             />
           </div>
         </div>
         <div class="possibleMovesTree">
-          <div v-for="(entry, index) in treeArrayFinal" :key="index">
+          <div
+            :class="'tree' + index"
+            v-for="(entry, index) in treeArrayFinal"
+            :key="index"
+          >
             <q-tree
               :nodes="entry.tree"
               node-key="key"
@@ -238,7 +246,6 @@
 import { defineComponent, ref, watch, computed } from 'vue';
 import { aiMove } from './aiMove';
 import viewBoard from './viewBoard.vue';
-import _, { isUndefined } from 'lodash';
 //import { nextTick } from 'process';
 
 interface aMove {
@@ -261,11 +268,13 @@ interface tree {
       label: string;
       key: number;
       icon: string;
+      disabled: boolean;
       children?: [
         {
           label: string;
           key: number;
-          avatar: string;
+          icon: string;
+          disabled?: boolean;
           children?: treeChild[];
         }
       ];
@@ -374,18 +383,17 @@ export default defineComponent({
             label: counter.toString(),
             key: counter,
             icon: 'share',
+            disabled: false,
             children: [
               {
                 label: 'test',
                 key: 0,
-                avatar: 'assets/bear.webp',
+                icon: 'share',
               },
             ],
           },
         ],
       };
-
-      let tempNumber = 0;
 
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
@@ -408,24 +416,7 @@ export default defineComponent({
               counter
             );
 
-            if (searchDepth.value === 2 || searchDepth.value === 3) {
-              // tempTree.tree[0].children?.pop();
-              // console.log('tempNumber: ', tempNumber);
-              for (let i = 1; i < treeArray.value.length; i++) {
-                if (treeArray.value[i].key === tempNumber.toString()) {
-                  //console.log('treeArray: ', treeArray.value[i].key);
-                  // tempTree.tree[0].children?.push({
-                  //   label: treeArray.value[i].tree[0].label,
-                  //   key: treeArray.value[i].tree[0].key,
-                  //   img: '',
-                  // });
-                } else {
-                  //console.log('nope');
-                }
-              }
-              tempNumber++;
-              // treeArrayFinal.value.push(tempTree);
-            } else {
+            if (searchDepth.value != 2 && searchDepth.value != 3) {
               treeArrayFinal.value = treeArray.value;
             }
 
@@ -488,11 +479,25 @@ export default defineComponent({
               currentElement = entry.tree[0].key;
               console.log(tempTreeArray);
               tempTreeArray.forEach((element, index) => {
-                tempTree.tree[0].children?.push({
-                  label: element.tree[0].label,
-                  key: element.tree[0].key + 0.1 * index + 1,
-                  avatar: 'assets/bear.webp',
-                });
+                if (element.tree[0].label === 'win: 10') {
+                  tempTree.tree[0].children?.push({
+                    label: element.tree[0].label,
+                    key: element.tree[0].key + 0.1 * index + 1,
+                    icon: 'star',
+                  });
+                } else if (element.tree[0].label.includes('pruned')) {
+                  tempTree.tree[0].children?.push({
+                    label: element.tree[0].label,
+                    key: element.tree[0].key + 0.1 * index + 1,
+                    icon: 'clear',
+                  });
+                } else {
+                  tempTree.tree[0].children?.push({
+                    label: element.tree[0].label,
+                    key: element.tree[0].key + 0.1 * index + 1,
+                    icon: 'share',
+                  });
+                }
               });
 
               treeArrayFinal.value.push(tempTree);
@@ -504,11 +509,12 @@ export default defineComponent({
                     label: counter.toString(),
                     key: counter,
                     icon: 'share',
+                    disabled: false,
                     children: [
                       {
                         label: 'test',
                         key: 0,
-                        avatar: 'assets/bear.webp',
+                        icon: 'share',
                       },
                     ],
                   },
@@ -519,12 +525,27 @@ export default defineComponent({
           } else {
             currentElement = entry.tree[0].key;
             console.log(tempTreeArray);
+
             tempTreeArray.forEach((element, index) => {
-              tempTree.tree[0].children?.push({
-                label: element.tree[0].label,
-                key: element.tree[0].key + 0.1 * index + 1,
-                avatar: 'assets/bear.webp',
-              });
+              if (element.tree[0].label === 'win: 10') {
+                tempTree.tree[0].children?.push({
+                  label: element.tree[0].label,
+                  key: element.tree[0].key + 0.1 * index + 1,
+                  icon: 'star',
+                });
+              } else if (element.tree[0].label.includes('pruned')) {
+                tempTree.tree[0].children?.push({
+                  label: element.tree[0].label,
+                  key: element.tree[0].key + 0.1 * index + 1,
+                  icon: 'clear',
+                });
+              } else {
+                tempTree.tree[0].children?.push({
+                  label: element.tree[0].label,
+                  key: element.tree[0].key + 0.1 * index + 1,
+                  icon: 'share',
+                });
+              }
             });
 
             treeArrayFinal.value.push(tempTree);
@@ -536,11 +557,12 @@ export default defineComponent({
                   label: counter.toString(),
                   key: counter,
                   icon: 'share',
+                  disabled: false,
                   children: [
                     {
                       label: 'test',
                       key: 0,
-                      avatar: 'assets/bear.webp',
+                      icon: 'share',
                     },
                   ],
                 },
@@ -618,6 +640,7 @@ export default defineComponent({
             label: '',
             key: counter,
             icon: 'share',
+            disabled: false,
           },
         ],
       };
@@ -626,9 +649,11 @@ export default defineComponent({
       if (result !== null) {
         switch (result) {
           case 'X': {
-            tempTree.tree[0].label = 'win: 10';
-            tempTree.label = 'win: 10';
-            treeArray.value.push(tempTree);
+            if (searchDepth.value === 2 || searchDepth.value === 3) {
+              tempTree.tree[0].label = 'win: 10';
+              tempTree.label = 'win: 10';
+              treeArray.value.push(tempTree);
+            }
             return 10;
           }
           case 'O': {
@@ -638,6 +663,7 @@ export default defineComponent({
             tempTree.tree[0].label = 'tie: 0';
             tempTree.label = 'tie: 0';
             treeArray.value.push(tempTree);
+
             return 0;
           }
         }
@@ -677,6 +703,7 @@ export default defineComponent({
                 tempTree.label = 'pruned -> bestScore: ' + alpha.toString();
                 tempTree.tree[0].label =
                   'pruned -> bestScore: ' + alpha.toString();
+                tempTree.tree[0].disabled = true;
                 break;
               }
               tempTree.label = bestScore.toString();
@@ -710,6 +737,7 @@ export default defineComponent({
                 tempTree.label = 'pruned -> bestScore: ' + alpha.toString();
                 tempTree.tree[0].label =
                   'pruned -> bestScore: ' + alpha.toString();
+                tempTree.tree[0].disabled = true;
                 break;
               }
               tempTree.label = bestScore.toString();
@@ -722,14 +750,6 @@ export default defineComponent({
         return bestScore;
       }
     };
-
-    // function syncDelay(milliseconds: number) {
-    //   var start = new Date().getTime();
-    //   var end = 0;
-    //   while (end - start < milliseconds) {
-    //     end = new Date().getTime();
-    //   }
-    // }
 
     // function findIcon(row: number, column: number) {
     //   switch (row) {
@@ -1144,6 +1164,43 @@ export default defineComponent({
       flex-direction: column;
       justify-content: space-evenly;
       flex-wrap: wrap;
+
+      .board0 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 0s 1 normal forwards;
+      }
+      .board1 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 0.3s 1 normal forwards;
+      }
+      .board2 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 0.6s 1 normal forwards;
+      }
+      .board3 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 0.9s 1 normal forwards;
+      }
+      .board4 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 1.2s 1 normal forwards;
+      }
+      .board5 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 1.5s 1 normal forwards;
+      }
+      .board6 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 1.8s 1 normal forwards;
+      }
+      .board7 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 2.1s 1 normal forwards;
+      }
+      .board8 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 2.4s 1 normal forwards;
+      }
     }
 
     .possibleMovesTree {
@@ -1151,6 +1208,64 @@ export default defineComponent({
       flex-direction: column;
       justify-content: space-around;
       flex-wrap: wrap;
+
+      .tree0 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 0s 1 normal forwards;
+      }
+      .tree1 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 0.3s 1 normal forwards;
+      }
+      .tree2 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 0.6s 1 normal forwards;
+      }
+      .tree3 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 0.9s 1 normal forwards;
+      }
+      .tree4 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 1.2s 1 normal forwards;
+      }
+      .tree5 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 1.5s 1 normal forwards;
+      }
+      .tree6 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 1.8s 1 normal forwards;
+      }
+      .tree7 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 2.1s 1 normal forwards;
+      }
+      .tree8 {
+        visibility: hidden;
+        animation: myAnim 0.3s ease-in 2.4s 1 normal forwards;
+      }
+    }
+  }
+
+  @keyframes myAnim {
+    0% {
+      transform: scale(1);
+      opacity: 0;
+      visibility: visible;
+    }
+
+    50% {
+      transform: scale(1.1);
+      opacity: 0.5;
+      visibility: visible;
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+      display: block;
+      visibility: visible;
     }
   }
 }
