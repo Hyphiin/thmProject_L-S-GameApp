@@ -18,6 +18,7 @@
               :current-board="entry.state"
               :id="index"
               :score="entry.score"
+              :class="checkChoosenMove(entry.state) ? 'trueStyle' : ''"
             />
           </div>
         </div>
@@ -59,7 +60,7 @@ export default defineComponent({
     };
 
     const receiveBoard = (board: Array<Array<string>>) => {
-      currentBoard.value = board;     
+      currentBoard.value = board;
     };
 
     const receiveBoardState = (boardState: boardState) => {
@@ -77,6 +78,23 @@ export default defineComponent({
       return boardStates;
     });
 
+    const checkChoosenMove = (entryState: Array<Array<string>>): boolean => {
+      var temp = false;
+      for (var i = 0; i < 4; i++) {
+        if (
+          entryState[0][i] === board[0][i] &&
+          entryState[1][i] === board[1][i] &&
+          entryState[2][i] === board[2][i]
+        ) {
+          temp = true;
+        } else {
+          temp = false;
+          return temp;
+        }
+      }
+      return temp;
+    };
+
     return {
       board,
       possibleMoves,
@@ -85,7 +103,8 @@ export default defineComponent({
       receivePossibleMoves,
       receiveBoard,
       receiveBoardState,
-      states
+      states,
+      checkChoosenMove,
     };
   },
 });
@@ -269,30 +288,21 @@ export default defineComponent({
 .possibleMoves__container {
   display: flex;
   flex-direction: column;
-  background-color: whitesmoke;
   border-radius: 12px;
   padding: 50px;
-  box-shadow: 0px 0px 10px whitesmoke;
   margin-top: 10px;
   margin-bottom: 10px;
   min-height: 100vh;
   min-width: 50%;
-}
 
-.possibleMoves {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  flex-wrap: wrap;
-}
-
-.chosenMove__container {
-  display: flex;
-  flex-direction: column;
-  background-color: whitesmoke;
-  border-radius: 12px;
-  padding: 50px;
-  box-shadow: 0px 0px 10px whitesmoke;
-  min-height: 50%;
+  .possibleMoves {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    .trueStyle {
+      background-color: goldenrod;
+    }
+  }
 }
 </style>

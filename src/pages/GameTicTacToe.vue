@@ -220,12 +220,14 @@
             />
           </div>
         </div>
-        <div v-for="(entry, index) in treeArray" :key="index">
-          <q-tree
-            :nodes="entry.tree"
-            :default-expand-all="entry.tree[0].icon === 'star' ? true : false"
-            node-key="key"
-          />
+        <div class="possibleMovesTree">
+          <div v-for="(entry, index) in treeArrayFinal" :key="index">
+            <q-tree
+              :nodes="entry.tree"
+              :default-expand-all="entry.tree[0].icon === 'star' ? true : false"
+              node-key="key"
+            />
+          </div>
         </div>
       </div>
     </q-page-container>
@@ -236,7 +238,7 @@
 import { defineComponent, ref, watch, computed } from 'vue';
 import { aiMove } from './aiMove';
 import viewBoard from './viewBoard.vue';
-import _ from 'lodash';
+import _, { isUndefined } from 'lodash';
 //import { nextTick } from 'process';
 
 interface aMove {
@@ -259,7 +261,7 @@ interface tree {
       label: string;
       key: number;
       icon: string;
-      children: [
+      children?: [
         {
           label: string;
           key: number;
@@ -308,6 +310,7 @@ export default defineComponent({
     const lastMovesArray = ref<Array<aMove>>([]);
 
     let treeArray = ref<tree[]>([]);
+    let treeArrayFinal = ref<tree[]>([]);
 
     const makeMove = (itemNumberCol: number, itemNumberRow: number) => {
       if (
@@ -349,14 +352,6 @@ export default defineComponent({
       return boardStates;
     });
 
-    watch(
-      () => _.cloneDeep(boardStates.value),
-      () => {
-        console.log('hello');
-      },
-      { deep: true }
-    );
-
     const makeComputerMove = () => {
       // AI to make its turn
       let bestScore = -Infinity;
@@ -367,32 +362,33 @@ export default defineComponent({
       possibleMoves.value = [];
 
       treeArray.value = [];
+      treeArrayFinal.value = [];
 
       boardStates.value = [];
 
-      let tempBoolean = false;
+      let tempTree: tree = {
+        label: '',
+        key: counter,
+        tree: [
+          {
+            label: counter.toString(),
+            key: counter,
+            icon: 'share',
+            children: [
+              {
+                label: 'test',
+                key: 0,
+                img: '',
+              },
+            ],
+          },
+        ],
+      };
+
+      let tempNumber = 0;
 
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
-          let tempTree: tree = {
-            label: counter.toString(),
-            key: counter,
-            tree: [
-              {
-                label: 'Board: ' + counter.toString(),
-                key: 0,
-                icon: 'share',
-                children: [
-                  {
-                    label: '',
-                    key: -1,
-                    img: '../assets/mitte_mitte.png',
-                    children: [],
-                  },
-                ],
-              },
-            ],
-          };
           // Is the spot available?
           if (board.value[i][j] == '') {
             // exact copy of the gameboard
@@ -403,18 +399,36 @@ export default defineComponent({
             //console.log(gameState)
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            console.log('MINMAX aufgerufen:!');
             let score: number = minimax(
               board.value,
               searchDepth.value,
-              tempBoolean,
+              true,
               -Infinity,
               Infinity,
-              counter,
-              tempTree
+              counter
             );
 
-            tempBoolean = !tempBoolean;
+            if (searchDepth.value === 2 || searchDepth.value === 3) {
+              // tempTree.tree[0].children?.pop();
+              // console.log('tempNumber: ', tempNumber);
+              for (let i = 1; i < treeArray.value.length; i++) {
+                if (treeArray.value[i].key === tempNumber) {
+                  //console.log('treeArray: ', treeArray.value[i].key);
+                  // tempTree.tree[0].children?.push({
+                  //   label: treeArray.value[i].tree[0].label,
+                  //   key: treeArray.value[i].tree[0].key,
+                  //   img: '',
+                  // });
+                } else {
+                  //console.log('nope');
+                }
+              }
+              tempNumber++;
+              // treeArrayFinal.value.push(tempTree);
+            } else {
+              treeArrayFinal.value = treeArray.value;
+            }
+
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const boardStatus: boardState = {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -424,7 +438,7 @@ export default defineComponent({
               key: counter,
             };
 
-            console.log(boardStates.value);
+            //console.log(boardStates.value);
             context.emit('boardState', boardStatus);
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -456,9 +470,63 @@ export default defineComponent({
             }
           }
           counter++;
-          treeArray.value.push(tempTree);
         }
       }
+
+      let keyBefore = 0;
+
+      if (searchDepth.value === 2 || searchDepth.value === 3) {
+        console.log(tempNumber);
+        let counterVar = 0;
+        console.log(treeArray.value);
+        for (let j = 1; j <= tempNumber; j++) {
+          tempTree.tree[0].children?.pop();
+
+          for (let i = 1; i < treeArray.value.length; i++) {
+            if (treeArray.value[i].key === keyBefore) {
+              console.log('LABEL', treeArray.value[j].tree[0].label);
+              console.log('KEY', treeArray.value[j]);
+              tempTree.tree[0].children?.push({
+                label: treeArray.value[i].tree[0].label,
+                key: tempNumber + 0.1 * i,
+                img: '',
+              });
+            }
+          }
+          if (tempTree.tree[0].children) {
+            if (tempTree.tree[0].children?.length > 0) {
+              tempTree.key = counterVar;
+              treeArrayFinal.value.push(tempTree);
+            } else {
+              keyBefore = treeArray.value[j].key;
+            }
+          }
+          tempTree = {
+            label: '',
+            key: counter,
+            tree: [
+              {
+                label: counter.toString(),
+                key: counter,
+                icon: 'share',
+                children: [
+                  {
+                    label: 'test',
+                    key: 0,
+                    img: '',
+                  },
+                ],
+              },
+            ],
+          };
+          keyBefore = treeArray.value[j].key;
+          counterVar++;
+        }
+      }
+
+      // for (let i = 0; i < treeArrayFinal.value.length; i++) {
+      //   treeArrayFinal.value[i].key = 0;
+      // }
 
       round.value++;
 
@@ -491,9 +559,13 @@ export default defineComponent({
         }
       }
 
-      for (let i = 0; i < treeArray.value.length; i++) {
-        if (treeArray.value[i].key === tempKey) {
-          treeArray.value[i].tree[0].icon = 'star';
+      for (let i = 0; i < treeArrayFinal.value.length; i++) {
+        treeArrayFinal.value[i].tree[0].label =
+          boardStates.value[i].score.toString();
+        treeArrayFinal.value[i].tree[0].key = boardStates.value[i].key;
+
+        if (treeArrayFinal.value[i].key === tempKey) {
+          treeArrayFinal.value[i].tree[0].icon = 'star';
         }
       }
 
@@ -503,7 +575,7 @@ export default defineComponent({
         currentPlayer = human;
       }
 
-      console.log('MOIN: ', treeArray.value);
+      console.log('TreeArrayFinal: ', treeArrayFinal.value);
     };
 
     const minimax = (
@@ -512,8 +584,7 @@ export default defineComponent({
       isMaximizing: boolean,
       alpha: number,
       beta: number,
-      counter: number,
-      tempTree: tree
+      counter: number
     ) => {
       let result = checkWinner();
       if (result !== null) {
@@ -530,15 +601,25 @@ export default defineComponent({
         }
       }
       //winner tree fehlt
-      let keyCounter = 1;
+
+      let tempTree: tree = {
+        label: '',
+        key: counter,
+        tree: [
+          {
+            label: '',
+            key: counter + 0.1,
+            icon: 'share',
+          },
+        ],
+      };
 
       if (depth === 0) {
         return 0;
       }
 
-      console.log('Maximizing: ', isMaximizing);
       if (isMaximizing === true) {
-        let tempBoolean = false;
+        // console.log('Max is picking: ');
         let bestScore = -Infinity;
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
@@ -550,13 +631,11 @@ export default defineComponent({
               let score = minimax(
                 board,
                 depth - 1,
-                tempBoolean,
+                false,
                 alpha,
                 beta,
-                counter,
-                tempTree
+                counter
               );
-              tempBoolean = !tempBoolean;
 
               board[i][j] = '';
 
@@ -565,41 +644,24 @@ export default defineComponent({
               alpha = Math.max(alpha, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                tempTree.tree[0].children[0].label =
+                tempTree.tree[0].label =
                   'pruned -> beta: ' +
                   beta.toString() +
                   ' <= alpha: ' +
                   alpha.toString();
                 break;
               }
-
-              tempTree.tree.forEach((element) => {
-                if (element.children[0].key === -1) {
-                  element.children.pop();
-                  element.children.push({
-                    label: score.toString(),
-                    key: keyCounter,
-                    img: '../assets/mitte_links.png',
-                  });
-                } else {
-                  element.children.push({
-                    label: score.toString(),
-                    key: keyCounter,
-                    img: '../assets/mitte_links.png',
-                  });
-                }
-              });
-
-              keyCounter++;
             }
+            tempTree.label = bestScore.toString();
+            tempTree.tree[0].label = bestScore.toString();
           }
         }
 
-        tempTree.tree[0].label = bestScore.toString();
+        treeArray.value.push(tempTree);
 
         return bestScore;
       } else {
-        let tempBoolean = true;
+        // console.log('Min is picking: ');
         let bestScore = Infinity;
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
@@ -608,27 +670,8 @@ export default defineComponent({
               board[i][j] = human;
 
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              let score = minimax(
-                board,
-                depth - 1,
-                tempBoolean,
-                alpha,
-                beta,
-                counter,
-                tempTree
-              );
-              tempBoolean = !tempBoolean;
-              // console.log(
-              //   'Minimizing:::',
-              //   'Spalte: ',
-              //   i,
-              //   'Reihe: ',
-              //   j,
-              //   'Tiefe: ',
-              //   depth,
-              //   'score: ',
-              //   score
-              // );
+              let score = minimax(board, depth - 1, true, alpha, beta, counter);
+
               board[i][j] = '';
 
               bestScore = Math.min(score, bestScore);
@@ -636,37 +679,19 @@ export default defineComponent({
               beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                tempTree.tree[0].children[0].label =
+                tempTree.tree[0].label =
                   'pruned -> beta: ' +
                   beta.toString() +
                   ' <= alpha: ' +
                   alpha.toString();
                 break;
               }
-
-              tempTree.tree.forEach((element) => {
-                if (element.children[0].key === -1) {
-                  element.children.pop();
-                  element.children.push({
-                    label: score.toString(),
-                    key: keyCounter,
-                    img: '../assets/mitte_links.png',
-                  });
-                } else {
-                  element.children.push({
-                    label: score.toString(),
-                    key: keyCounter,
-                    img: '../assets/mitte_links.png',
-                  });
-                }
-              });
-
-              keyCounter++;
             }
+            tempTree.label = bestScore.toString();
+            tempTree.tree[0].label = bestScore.toString();
           }
         }
-
-        tempTree.tree[0].label = bestScore.toString();
+        treeArray.value.push(tempTree);
 
         return bestScore;
       }
@@ -879,6 +904,7 @@ export default defineComponent({
       possibleMoves,
       boardStates,
       treeArray,
+      treeArrayFinal,
       boardStatesComp,
       reloadGame,
       makeMove,
@@ -895,6 +921,8 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  min-height: 90vh;
+  max-height: 90vh;
 
   .container__top {
     color: white;
@@ -905,6 +933,8 @@ export default defineComponent({
     margin-top: 10px;
     margin-left: 10px;
     justify-content: flex-start;
+    background-color: whitesmoke;
+    box-shadow: 1px 1px 20px rgb(211, 211, 211);
 
     .container__container {
       border-radius: 12px;
@@ -1063,29 +1093,38 @@ export default defineComponent({
     background-color: white;
   }
 
+  .tree {
+    min-height: inherit;
+  }
+
   .possibleMoves__container {
     display: flex;
-    flex-direction: column;
-    background-color: whitesmoke;
+    flex-direction: row;
     border-radius: 12px;
     padding: 50px;
-    box-shadow: 0px 0px 10px whitesmoke;
     margin-top: 10px;
     margin-bottom: 10px;
-    min-height: 90%;
+    min-height: inherit;
     min-width: 50%;
     //scrollbar machen
 
     .trueStyle {
       background-color: goldenrod;
     }
-  }
 
-  .possibleMoves {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    flex-wrap: wrap;
+    .possibleMoves {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+    }
+
+    .possibleMovesTree {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
   }
 }
 

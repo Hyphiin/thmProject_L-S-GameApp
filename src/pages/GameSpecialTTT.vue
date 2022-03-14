@@ -30,15 +30,13 @@
             <div class="col">
               <q-btn
                 class="resetBtn"
-                round 
-                color="primary" 
+                round
+                color="primary"
                 icon="restart_alt"
                 @click="reloadGame()"
               >
-               <q-tooltip>
-                Neues Spiel
-              </q-tooltip>
-            </q-btn>
+                <q-tooltip> Neues Spiel </q-tooltip>
+              </q-btn>
             </div>
             <div class="q-pa-md">
               <q-btn-toggle
@@ -47,11 +45,11 @@
                 glossy
                 text-color="primary"
                 :options="[
-                  {label: '1', value: 1},
-                  {label: '2', value: 2},
-                  {label: '3', value: 3}
-                  ]"
-               />
+                  { label: '1', value: 1 },
+                  { label: '2', value: 2 },
+                  { label: '3', value: 3 },
+                ]"
+              />
             </div>
           </div>
         </div>
@@ -768,7 +766,7 @@
               v-else-if="board[9][4] === 'X'"
             />
           </div>
-        </div>        
+        </div>
       </div>
     </div>
   </main>
@@ -796,7 +794,7 @@ export default defineComponent({
     let winMessage = ref<string>('');
     let isCross = ref<boolean>(true);
 
-    let board : Array<Array<string>> = [
+    let board: Array<Array<string>> = [
       ['', '', '', '', ''],
       ['', '', '', '', ''],
       ['', '', '', '', ''],
@@ -806,7 +804,7 @@ export default defineComponent({
       ['', '', '', '', ''],
       ['', '', '', '', ''],
       ['', '', '', '', ''],
-      ['', '', '', '', '']
+      ['', '', '', '', ''],
     ];
 
     const possibleMoves = ref<aiMove[]>([]);
@@ -824,7 +822,7 @@ export default defineComponent({
 
     let searchDepth = ref<number>(1);
 
-    const makeMove = (itemNumberCol: number, itemNumberRow: number) => {   
+    const makeMove = (itemNumberCol: number, itemNumberRow: number) => {
       if (
         typeof itemNumberCol === 'number' &&
         typeof itemNumberRow === 'number'
@@ -861,7 +859,7 @@ export default defineComponent({
     const makeComputerMove = () => {
       // AI to make its turn
       let bestScore = -1000;
-      let move: aMove = { i: 0, j: 0};
+      let move: aMove = { i: 0, j: 0 };
 
       possibleMoves.value = [];
 
@@ -876,7 +874,13 @@ export default defineComponent({
             const gameState = JSON.parse(JSON.stringify(board));
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            let score: number = minimax(board, searchDepth.value, false, -Infinity, Infinity);
+            let score: number = minimax(
+              board,
+              searchDepth.value,
+              false,
+              -Infinity,
+              Infinity
+            );
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const boardStatus: boardState = {
@@ -894,13 +898,13 @@ export default defineComponent({
             possibleMoves.value.push({ x: i, y: j, score: scoreCopy });
 
             board[i][j] = '';
-            if (score >= bestScore) {   
-              // console.log('bestScore:', score)           
-              if (score == bestScore){                
-                move = {j, i};
-              } else if (score > bestScore){
+            if (score >= bestScore) {
+              // console.log('bestScore:', score)
+              if (score == bestScore) {
+                move = { j, i };
+              } else if (score > bestScore) {
                 bestScore = score;
-                move = {j, i};
+                move = { j, i };
               }
             }
           }
@@ -914,7 +918,7 @@ export default defineComponent({
 
       context.emit('possibleMoves', possibleMoves.value);
       context.emit('board', board);
-      
+
       let result = checkWinner();
 
       if (result === 'X' || result === 'O') {
@@ -954,7 +958,7 @@ export default defineComponent({
         }
       }
 
-      if(depth === 0) {
+      if (depth === 0) {
         return 0;
       }
 
@@ -968,15 +972,14 @@ export default defineComponent({
 
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               let score = minimax(board, depth - 1, false, alpha, beta);
-              
+
               board[i][j] = '';
-              
+
               bestScore = Math.max(score, bestScore);
               // check for alpha
               alpha = Math.max(alpha, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-               
                 break;
               }
             }
@@ -993,15 +996,14 @@ export default defineComponent({
 
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               let score = minimax(board, depth - 1, true, alpha, beta);
-              
+
               board[i][j] = '';
-              
+
               bestScore = Math.min(score, bestScore);
               // check for beta
               beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                
                 break;
               }
             }
@@ -1021,44 +1023,92 @@ export default defineComponent({
 
       // horizontal
       for (let i = 0; i < 10; i++) {
-        if (equals5(board[i][0], board[i][1], board[i][2],  board[i][3], board[i][4])) {
+        if (
+          equals5(
+            board[i][0],
+            board[i][1],
+            board[i][2],
+            board[i][3],
+            board[i][4]
+          )
+        ) {
           winner = board[i][0];
         }
       }
 
       // Vertical
       for (let j = 0; j < 5; j++) {
-        for (let i = 0; i < 6; i ++) {
-          if (equals5(board[i][j], board[i+1][j], board[i+2][j], board[i+3][j], board[i+4][j])) {
-              winner = board[i][j];
-            }
+        for (let i = 0; i < 6; i++) {
+          if (
+            equals5(
+              board[i][j],
+              board[i + 1][j],
+              board[i + 2][j],
+              board[i + 3][j],
+              board[i + 4][j]
+            )
+          ) {
+            winner = board[i][j];
+          }
         }
       }
-    
+
       // Diagonal
       //left
       for (let j = 0; j < 5; j++) {
-        if (equals5(board[j][0], board[j+1][1], board[j+2][2], board[j+3][3], board[j+4][4])) {
+        if (
+          equals5(
+            board[j][0],
+            board[j + 1][1],
+            board[j + 2][2],
+            board[j + 3][3],
+            board[j + 4][4]
+          )
+        ) {
           winner = board[j][0];
         }
       }
       for (let j = 9; j > 3; j--) {
-        if (equals5(board[j][0], board[j-1][1], board[j-2][2], board[j-3][3], board[j-4][4])) {
+        if (
+          equals5(
+            board[j][0],
+            board[j - 1][1],
+            board[j - 2][2],
+            board[j - 3][3],
+            board[j - 4][4]
+          )
+        ) {
           winner = board[j][9];
         }
       }
       //right
       for (let j = 0; j < 5; j++) {
-        if (equals5(board[j][4], board[j+1][3], board[j+2][2], board[j+3][1], board[j+4][0])) {
+        if (
+          equals5(
+            board[j][4],
+            board[j + 1][3],
+            board[j + 2][2],
+            board[j + 3][1],
+            board[j + 4][0]
+          )
+        ) {
           winner = board[4][j];
         }
       }
       for (let j = 9; j > 5; j--) {
-        if (equals5(board[j][4], board[j-1][3], board[j-2][2], board[j-3][1], board[j-4][0])) {
+        if (
+          equals5(
+            board[j][4],
+            board[j - 1][3],
+            board[j - 2][2],
+            board[j - 3][1],
+            board[j - 4][0]
+          )
+        ) {
           winner = board[j][4];
         }
       }
-      
+
       let openSpots = 0;
       for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 5; j++) {
@@ -1075,8 +1125,7 @@ export default defineComponent({
       }
     };
 
-   
-    const reloadGame = () => {  
+    const reloadGame = () => {
       winMessage.value = '';
       for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 5; j++) {
@@ -1084,39 +1133,37 @@ export default defineComponent({
         }
       }
 
-      if(signToggle.value === false){
+      if (signToggle.value === false) {
         isCross.value = true;
       } else {
-        isCross.value = false;       
-      }      
-
-      if(modiToggle.value === false){
-          modiToggleName.value = 'Mensch';         
-      } else {
-        modiToggleName.value = 'KI'; 
-        signToggle.value = true;
-        
-        makeComputerMove()      
-        isCross.value = false;   
+        isCross.value = false;
       }
-      
-    };
 
+      if (modiToggle.value === false) {
+        modiToggleName.value = 'Mensch';
+      } else {
+        modiToggleName.value = 'KI';
+        signToggle.value = true;
+
+        makeComputerMove();
+        isCross.value = false;
+      }
+    };
 
     watch(
       () => modiToggle.value,
-      () => {      
+      () => {
         if (modiToggle.value === false) {
-          modiToggleName.value = 'Mensch';          
-          reloadGame()          
+          modiToggleName.value = 'Mensch';
+          reloadGame();
         } else {
-          modiToggleName.value = 'KI';          
-          signToggle.value === true
-          isCross.value = false
+          modiToggleName.value = 'KI';
+          signToggle.value === true;
+          isCross.value = false;
           signToggleName.value = 'O';
           ai = 'X';
-          human = 'O';  
-          reloadGame()       
+          human = 'O';
+          reloadGame();
         }
       }
     );
@@ -1126,16 +1173,16 @@ export default defineComponent({
       () => {
         if (signToggle.value === true) {
           signToggleName.value = 'O';
-          isCross.value = false
+          isCross.value = false;
           ai = 'X';
           human = 'O';
         } else {
           signToggleName.value = 'X';
-          isCross.value = true
+          isCross.value = true;
           ai = 'O';
           human = 'X';
         }
-        reloadGame()
+        reloadGame();
       }
     );
 
@@ -1149,7 +1196,7 @@ export default defineComponent({
       signToggleName,
       searchDepth,
       reloadGame,
-      makeMove
+      makeMove,
     };
   },
 });
@@ -1167,7 +1214,9 @@ main {
     display: flex;
     margin-top: 10px;
     margin-left: 10px;
-    justify-content: flex-start;
+    justify-content: center;
+    background-color: whitesmoke;
+    box-shadow: 1px 1px 20px rgb(211, 211, 211);
 
     .container__container {
       border-radius: 12px;
@@ -1179,7 +1228,6 @@ main {
       .box {
         height: 150px;
       }
-
     }
   }
 
@@ -1200,7 +1248,7 @@ main {
   }
 
   .col {
-    display:flex;
+    display: flex;
     justify-content: space-evenly;
     align-items: center;
 
@@ -1328,7 +1376,7 @@ main {
   }
 }
 
-.disabled{
-  pointer-events:none;
+.disabled {
+  pointer-events: none;
 }
 </style>
