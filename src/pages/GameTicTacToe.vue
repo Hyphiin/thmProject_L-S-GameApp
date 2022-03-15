@@ -59,7 +59,6 @@
                   :options="[
                     { label: '1', value: 1 },
                     { label: '2', value: 2 },
-                    { label: '3', value: 3 },
                   ]"
                 />
               </div>
@@ -460,7 +459,7 @@ export default defineComponent({
         }
       }
 
-      if (searchDepth.value === 2) {
+      if (searchDepth.value === 2 || searchDepth.value === 3) {
         console.log(treeArray.value);
         let tempTreeArray: tree[] = [];
         let currentElement = treeArray.value[0].tree[0].key;
@@ -577,157 +576,6 @@ export default defineComponent({
               ],
             };
             tempTreeArray = [];
-          }
-        });
-      }
-
-      if (searchDepth.value === 3) {
-        console.log(treeArray.value);
-        let tempNumber = 8;
-        let tempTreeArray: tree[] = [];
-        let tempTempTreeArray: tree[] = [];
-        let currentElement = treeArray.value[0].tree[0].key;
-
-        treeArray.value.forEach((entry, index) => {
-          if (currentElement != entry.tree[0].key) {
-            //tempNumber++;
-            if (index === treeArray.value.length - 1) {
-              //tempNumber++;
-            }
-          } else {
-          }
-        });
-        let n = 0;
-        treeArray.value.forEach((entry, index) => {
-          tempTree.tree[0].children?.pop();
-
-          if (currentElement === entry.tree[0].key) {
-            if (n < tempNumber) {
-              tempTreeArray.push(entry);
-              n++;
-            } else {
-              tempTempTreeArray.push(entry);
-            }
-
-            // if (index === treeArray.value.length - 1) {
-            //   currentElement = entry.tree[0].key;
-            //   console.log(tempTreeArray);
-            //   tempTreeArray.forEach((element, index) => {
-            //     if (element.tree[0].label === '10') {
-            //       tempTree.tree[0].children?.push({
-            //         label: element.tree[0].label,
-            //         key: element.tree[0].key + 0.1 * index + 1,
-            //         icon: 'star',
-            //       });
-            //     } else if (element.tree[0].label.includes('-10')) {
-            //       tempTree.tree[0].children?.push({
-            //         label: element.tree[0].label,
-            //         key: element.tree[0].key + 0.1 * index + 1,
-            //         icon: 'clear',
-            //       });
-            //     } else if (element.tree[0].label.includes('pruned')) {
-            //       tempTree.tree[0].children?.push({
-            //         label: element.tree[0].label,
-            //         key: element.tree[0].key + 0.1 * index + 1,
-            //         icon: 'block',
-            //       });
-            //     } else {
-            //       tempTree.tree[0].children?.push({
-            //         label: element.tree[0].label,
-            //         key: element.tree[0].key + 0.1 * index + 1,
-            //         icon: 'share',
-            //       });
-            //     }
-            //   });
-
-            //   treeArrayFinal.value.push(tempTree);
-            //   tempTree = {
-            //     label: '',
-            //     key: counter.toString(),
-            //     tree: [
-            //       {
-            //         label: counter.toString(),
-            //         key: counter,
-            //         icon: 'share',
-            //         disabled: false,
-            //         children: [
-            //           {
-            //             label: 'test',
-            //             key: 0,
-            //             icon: 'share',
-            //           },
-            //         ],
-            //       },
-            //     ],
-            //   };
-            //   tempTreeArray = [];
-            // }
-          } else {
-            console.log(tempTempTreeArray);
-            tempTempTreeArray.forEach((element, index) => {
-              if (tempTreeArray[0].tree[0].children)
-                tempTreeArray[0].tree[0].children?.push({
-                  label: element.tree[0].label,
-                  key: element.tree[0].key + 0.11 * index + 1,
-                  icon: 'star',
-                });
-            });
-
-            console.log(tempTreeArray);
-            console.log(tempTempTreeArray);
-
-            currentElement = entry.tree[0].key;
-
-            tempTreeArray.forEach((element, index) => {
-              if (element.tree[0].label === '10') {
-                tempTree.tree[0].children?.push({
-                  label: element.tree[0].label,
-                  key: element.tree[0].key + 0.1 * index + 1,
-                  icon: 'star',
-                });
-              } else if (element.tree[0].label.includes('pruned')) {
-                tempTree.tree[0].children?.push({
-                  label: element.tree[0].label,
-                  key: element.tree[0].key + 0.1 * index + 1,
-                  icon: 'block',
-                });
-              } else if (element.tree[0].label.includes('-10')) {
-                tempTree.tree[0].children?.push({
-                  label: element.tree[0].label,
-                  key: element.tree[0].key + 0.1 * index + 1,
-                  icon: 'clear',
-                });
-              } else {
-                tempTree.tree[0].children?.push({
-                  label: element.tree[0].label,
-                  key: element.tree[0].key + 0.1 * index + 1,
-                  icon: 'share',
-                });
-              }
-            });
-
-            treeArrayFinal.value.push(tempTree);
-            tempTree = {
-              label: '',
-              key: counter.toString(),
-              tree: [
-                {
-                  label: counter.toString(),
-                  key: counter,
-                  icon: 'share',
-                  disabled: false,
-                  children: [
-                    {
-                      label: 'test',
-                      key: 0,
-                      icon: 'share',
-                    },
-                  ],
-                },
-              ],
-            };
-            tempTreeArray = [];
-            tempTempTreeArray = [];
           }
         });
       }
