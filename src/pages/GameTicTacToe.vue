@@ -230,11 +230,7 @@
             v-for="(entry, index) in treeArrayFinal"
             :key="index"
           >
-            <q-tree
-              :nodes="entry.tree"
-              node-key="key"
-              :default-expand-all="entry.tree[0].icon === 'star' ? true : false"
-            />
+            <q-tree :nodes="entry.tree" node-key="key" />
           </div>
         </div>
       </div>
@@ -410,7 +406,7 @@ export default defineComponent({
             let score: number = minimax(
               board.value,
               searchDepth.value,
-              true,
+              false,
               -Infinity,
               Infinity,
               counter
@@ -479,7 +475,7 @@ export default defineComponent({
               currentElement = entry.tree[0].key;
               console.log(tempTreeArray);
               tempTreeArray.forEach((element, index) => {
-                if (element.tree[0].label === 'win: 10') {
+                if (element.tree[0].label === '10') {
                   tempTree.tree[0].children?.push({
                     label: element.tree[0].label,
                     key: element.tree[0].key + 0.1 * index + 1,
@@ -527,7 +523,7 @@ export default defineComponent({
             console.log(tempTreeArray);
 
             tempTreeArray.forEach((element, index) => {
-              if (element.tree[0].label === 'win: 10') {
+              if (element.tree[0].label === '10') {
                 tempTree.tree[0].children?.push({
                   label: element.tree[0].label,
                   key: element.tree[0].key + 0.1 * index + 1,
@@ -610,10 +606,17 @@ export default defineComponent({
           boardStates.value[i].score.toString();
         treeArrayFinal.value[i].tree[0].key = boardStates.value[i].key;
 
-        if (treeArrayFinal.value[i].key === tempKey.toString()) {
-          treeArrayFinal.value[i].tree[0].icon = 'star';
-        }
+        // if (treeArrayFinal.value[i].key === tempKey.toString()) {
+        //   treeArrayFinal.value[i].tree[0].icon = 'star';
+        // }
       }
+
+      treeArrayFinal.value.forEach((tree) => {
+        if (tree.tree[0].label === '10') {
+          tree.tree[0].icon = 'star';
+          console.log('moin');
+        }
+      });
 
       if (currentPlayer === human) {
         currentPlayer = ai;
@@ -649,20 +652,20 @@ export default defineComponent({
       if (result !== null) {
         switch (result) {
           case 'X': {
-            if (searchDepth.value === 2 || searchDepth.value === 3) {
-              tempTree.tree[0].label = 'win: 10';
-              tempTree.label = 'win: 10';
-              treeArray.value.push(tempTree);
-            }
+            // if (searchDepth.value === 2 || searchDepth.value === 3) {
+            //   tempTree.tree[0].label = 'win: 10';
+            //   tempTree.label = 'win: 10';
+            //   treeArray.value.push(tempTree);
+            // }
             return 10;
           }
           case 'O': {
             return -10;
           }
           case 'tie': {
-            tempTree.tree[0].label = 'tie: 0';
-            tempTree.label = 'tie: 0';
-            treeArray.value.push(tempTree);
+            // tempTree.tree[0].label = 'tie: 0';
+            // tempTree.label = 'tie: 0';
+            // treeArray.value.push(tempTree);
 
             return 0;
           }
@@ -700,9 +703,8 @@ export default defineComponent({
               alpha = Math.max(alpha, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                tempTree.label = 'pruned -> bestScore: ' + alpha.toString();
-                tempTree.tree[0].label =
-                  'pruned -> bestScore: ' + alpha.toString();
+                tempTree.label = 'pruned';
+                tempTree.tree[0].label = 'pruned';
                 tempTree.tree[0].disabled = true;
                 break;
               }
@@ -734,9 +736,8 @@ export default defineComponent({
               beta = Math.min(beta, bestScore);
               // Check for alpha beta pruning
               if (beta <= alpha) {
-                tempTree.label = 'pruned -> bestScore: ' + alpha.toString();
-                tempTree.tree[0].label =
-                  'pruned -> bestScore: ' + alpha.toString();
+                tempTree.label = 'pruned';
+                tempTree.tree[0].label = 'pruned';
                 tempTree.tree[0].disabled = true;
                 break;
               }
@@ -1152,7 +1153,7 @@ export default defineComponent({
     margin-bottom: 10px;
     min-height: inherit;
     min-width: 50%;
-    justify-content: space-between;
+    justify-content: space-around;
     //scrollbar machen
 
     .trueStyle {

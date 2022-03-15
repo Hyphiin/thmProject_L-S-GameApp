@@ -81,16 +81,16 @@ export default defineComponent({
     const checkChoosenMove = (entryState: Array<Array<string>>): boolean => {
       var temp = false;
       for (var i = 0; i < 4; i++) {
-        if (
-          entryState[0][i] === board[0][i] &&
-          entryState[1][i] === board[1][i] &&
-          entryState[2][i] === board[2][i]
-        ) {
-          temp = true;
-        } else {
-          temp = false;
-          return temp;
-        }
+        entryState.forEach((entry) => {
+          board.forEach((element) => {
+            if (entry === element) {
+              temp = true;
+            } else {
+              temp = false;
+              return temp;
+            }
+          });
+        });
       }
       return temp;
     };

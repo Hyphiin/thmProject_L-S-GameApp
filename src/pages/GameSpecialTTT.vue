@@ -1215,12 +1215,12 @@ main {
     margin-top: 10px;
     margin-left: 10px;
     justify-content: center;
-    background-color: whitesmoke;
-    box-shadow: 1px 1px 20px rgb(211, 211, 211);
 
     .container__container {
       border-radius: 12px;
       padding: 50px;
+      background-color: whitesmoke;
+      box-shadow: 1px 1px 20px rgb(211, 211, 211);
       .text-message {
         margin-bottom: 50px;
       }
