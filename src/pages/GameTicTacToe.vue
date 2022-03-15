@@ -481,11 +481,17 @@ export default defineComponent({
                     key: element.tree[0].key + 0.1 * index + 1,
                     icon: 'star',
                   });
-                } else if (element.tree[0].label.includes('pruned')) {
+                } else if (element.tree[0].label.includes('-10')) {
                   tempTree.tree[0].children?.push({
                     label: element.tree[0].label,
                     key: element.tree[0].key + 0.1 * index + 1,
                     icon: 'clear',
+                  });
+                } else if (element.tree[0].label.includes('pruned')) {
+                  tempTree.tree[0].children?.push({
+                    label: element.tree[0].label,
+                    key: element.tree[0].key + 0.1 * index + 1,
+                    icon: 'block',
                   });
                 } else {
                   tempTree.tree[0].children?.push({
@@ -530,6 +536,12 @@ export default defineComponent({
                   icon: 'star',
                 });
               } else if (element.tree[0].label.includes('pruned')) {
+                tempTree.tree[0].children?.push({
+                  label: element.tree[0].label,
+                  key: element.tree[0].key + 0.1 * index + 1,
+                  icon: 'block',
+                });
+              } else if (element.tree[0].label.includes('-10')) {
                 tempTree.tree[0].children?.push({
                   label: element.tree[0].label,
                   key: element.tree[0].key + 0.1 * index + 1,
@@ -593,28 +605,25 @@ export default defineComponent({
         winMessage.value = 'Unentschieden!';
       }
 
-      //check which tree is the choosen one
-      let tempKey = -1;
-      for (let i = 0; i < boardStates.value.length; i++) {
-        if (checkChoosenMove(boardStates.value[i].state)) {
-          tempKey = boardStates.value[i].key;
-        }
-      }
+      // check which tree is the choosen one
+      // let tempKey = -1;
+      // for (let i = 0; i < boardStates.value.length; i++) {
+      //   if (checkChoosenMove(boardStates.value[i].state)) {
+      //     tempKey = boardStates.value[i].key;
+      //   }
+      // }
 
       for (let i = 0; i < treeArrayFinal.value.length; i++) {
         treeArrayFinal.value[i].tree[0].label =
           boardStates.value[i].score.toString();
         treeArrayFinal.value[i].tree[0].key = boardStates.value[i].key;
-
-        // if (treeArrayFinal.value[i].key === tempKey.toString()) {
-        //   treeArrayFinal.value[i].tree[0].icon = 'star';
-        // }
       }
 
       treeArrayFinal.value.forEach((tree) => {
         if (tree.tree[0].label === '10') {
           tree.tree[0].icon = 'star';
-          console.log('moin');
+        } else if (tree.tree[0].label === '-10') {
+          tree.tree[0].icon = 'clear';
         }
       });
 
