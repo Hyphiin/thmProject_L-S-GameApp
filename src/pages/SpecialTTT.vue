@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh lpR fFf " class="row">
     <q-page-container class="game col">
-      <game-tic-tac-toe
+      <game-special-t-t-t
         @possible-moves="receivePossibleMoves($event)"
         @board="receiveBoard($event)"
         @boardState="receiveBoardState($event)"
@@ -9,13 +9,28 @@
         :board-game="currentBoard"
       />
     </q-page-container>
+    <q-page-container class="tree col text-center">
+      <div class="possibleMoves__container">
+        <h5>Auswahl an Zügen:</h5>
+        <div class="possibleMoves" v-if="boardStates.length > 1">
+          <div v-for="(entry, index) in boardStates" :key="index">
+            <view-board-large
+              :current-board="entry.state"
+              :id="index"
+              :score="entry.score"
+              :class="checkChoosenMove(entry.state) ? 'trueStyle' : ''"
+            />
+          </div>
+        </div>
+      </div>
+    </q-page-container>
   </q-layout>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import GameTicTacToe from './GameTicTacToe.vue';
-//import viewBoard from './viewBoard.vue';
+import GameSpecialTTT from './GameSpecialTTT.vue';
+import viewBoardLarge from './viewBoardLarge.vue';
 import { aiMove } from './aiMove';
 
 interface boardState {
@@ -25,8 +40,8 @@ interface boardState {
 }
 
 export default defineComponent({
-  name: 'TicTacToe',
-  components: { GameTicTacToe },
+  name: 'SpecialTTT',
+  components: { GameSpecialTTT, viewBoardLarge },
   setup() {
     let board: Array<Array<string>> = [
       ['', '', ''],
@@ -51,6 +66,7 @@ export default defineComponent({
     const receiveBoardState = (boardState: boardState) => {
       if (round.value === boardState.round) {
         boardStates.value.push(boardState);
+        // console.log(boardStates.value);
       } else {
         boardStates.value = [];
         round.value++;
@@ -62,6 +78,23 @@ export default defineComponent({
       return boardStates;
     });
 
+    const checkChoosenMove = (entryState: Array<Array<string>>): boolean => {
+      var temp = false;
+      for (var i = 0; i < 4; i++) {
+        entryState.forEach((entry) => {
+          board.forEach((element) => {
+            if (entry === element) {
+              temp = true;
+            } else {
+              temp = false;
+              return temp;
+            }
+          });
+        });
+      }
+      return temp;
+    };
+
     return {
       board,
       possibleMoves,
@@ -71,6 +104,7 @@ export default defineComponent({
       receiveBoard,
       receiveBoardState,
       states,
+      checkChoosenMove,
     };
   },
 });
@@ -254,35 +288,21 @@ export default defineComponent({
 .possibleMoves__container {
   display: flex;
   flex-direction: column;
-  background-color: whitesmoke;
   border-radius: 12px;
   padding: 50px;
-  box-shadow: 0px 0px 10px whitesmoke;
   margin-top: 10px;
   margin-bottom: 10px;
-  min-height: 90%;
+  min-height: 100vh;
   min-width: 50%;
-  //scrollbar machen
 
-  .trueStyle {
-    background-color: goldenrod;
+  .possibleMoves {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    .trueStyle {
+      background-color: goldenrod;
+    }
   }
-}
-
-.possibleMoves {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  flex-wrap: wrap;
-}
-
-.chosenMove__container {
-  display: flex;
-  flex-direction: column;
-  background-color: whitesmoke;
-  border-radius: 12px;
-  padding: 50px;
-  box-shadow: 0px 0px 10px whitesmoke;
-  min-height: 50%;
 }
 </style>
