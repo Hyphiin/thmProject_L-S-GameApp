@@ -604,14 +604,6 @@ export default defineComponent({
         winMessage.value = 'Unentschieden!';
       }
 
-      // check which tree is the choosen one
-      // let tempKey = -1;
-      // for (let i = 0; i < boardStates.value.length; i++) {
-      //   if (checkChoosenMove(boardStates.value[i].state)) {
-      //     tempKey = boardStates.value[i].key;
-      //   }
-      // }
-
       for (let i = 0; i < treeArrayFinal.value.length; i++) {
         treeArrayFinal.value[i].tree[0].label =
           boardStates.value[i].score.toString();
@@ -643,66 +635,33 @@ export default defineComponent({
       beta: number,
       counter: number
     ) => {
-      let tempTree: tree;
-      if (searchDepth.value === 3) {
-        tempTree = {
-          label: '',
-          key: counter.toString(),
-          tree: [
-            {
-              label: '',
-              key: counter,
-              icon: 'share',
-              disabled: false,
-              children: [
-                {
-                  label: '',
-                  key: counter,
-                  icon: 'share',
-                },
-              ],
-            },
-          ],
-        };
-      } else {
-        tempTree = {
-          label: '',
-          key: counter.toString(),
-          tree: [
-            {
-              label: '',
-              key: counter,
-              icon: 'share',
-              disabled: false,
-            },
-          ],
-        };
-      }
+      let tempTree: tree = {
+        label: '',
+        key: counter.toString(),
+        tree: [
+          {
+            label: '',
+            key: counter,
+            icon: 'share',
+            disabled: false,
+          },
+        ],
+      };
 
       let result = checkWinner();
       if (result !== null) {
         switch (result) {
           case 'X': {
-            // if (searchDepth.value === 2 || searchDepth.value === 3) {
-            //   tempTree.tree[0].label = 'win: 10';
-            //   tempTree.label = 'win: 10';
-            //   treeArray.value.push(tempTree);
-            // }
             return 10;
           }
           case 'O': {
             return -10;
           }
           case 'tie': {
-            // tempTree.tree[0].label = 'tie: 0';
-            // tempTree.label = 'tie: 0';
-            // treeArray.value.push(tempTree);
-
             return 0;
           }
         }
       }
-      //winner tree fehlt,
 
       if (depth === 0) {
         return 0;
@@ -782,50 +741,6 @@ export default defineComponent({
         return bestScore;
       }
     };
-
-    // function findIcon(row: number, column: number) {
-    //   switch (row) {
-    //     case 0: {
-    //       switch (column) {
-    //         case 0: {
-    //           return 'oben_links.png';
-    //         }
-    //         case 1: {
-    //           return 'oben_mitte.png';
-    //         }
-    //         case 2: {
-    //           return 'oben_rechts.png';
-    //         }
-    //       }
-    //     }
-    //     case 1: {
-    //       switch (column) {
-    //         case 0: {
-    //           return 'mitte_links.png';
-    //         }
-    //         case 1: {
-    //           return 'mitte_mitte.png';
-    //         }
-    //         case 2: {
-    //           return 'mitte_rechts.png';
-    //         }
-    //       }
-    //     }
-    //     case 2: {
-    //       switch (column) {
-    //         case 0: {
-    //           return 'unten_links.png';
-    //         }
-    //         case 1: {
-    //           return 'unten_mitte.png';
-    //         }
-    //         case 2: {
-    //           return 'unten_rechts.png';
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
 
     function equals3(a: string, b: string, c: string) {
       return a == b && b == c && a != '';
